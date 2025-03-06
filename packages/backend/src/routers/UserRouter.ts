@@ -6,13 +6,18 @@ import { UpdateUserByIdUseCase } from "../useCases/users/UpdateUserByIdUseCase";
 import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAccessCodeByIdUseCase";
 import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
 import { UpdateUserTokensByIdUseCase } from "../useCases/users/UpdateUserTokensByIdUseCase";
+import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 
 const UserRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get("/:id", async (request: Request, response: Response) => {
-			const { findUserById } = FindUserByIdUseCase();
-			await findUserById(request, response);
-		});
+		router.get(
+			"/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findUserById } = FindUserByIdUseCase();
+				await findUserById(request, response);
+			},
+		);
 
 		router.get(
 			"/access-code/:accessCode",
@@ -27,13 +32,18 @@ const UserRouter = () => {
 			await createUser(request, response);
 		});
 
-		router.put("/:id", async (request: Request, response: Response) => {
-			const { updateUserById } = UpdateUserByIdUseCase();
-			await updateUserById(request, response);
-		});
+		router.put(
+			"/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { updateUserById } = UpdateUserByIdUseCase();
+				await updateUserById(request, response);
+			},
+		);
 
 		router.put(
 			"/access-code/:id",
+			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
 				await updateUserAccessCodeById(request, response);
@@ -42,6 +52,7 @@ const UserRouter = () => {
 
 		router.put(
 			"/access-code/:username/:email/:phoneNumber",
+			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
 					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
