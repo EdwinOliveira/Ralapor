@@ -10,7 +10,10 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	const randomProvider = RandomProvider();
 
 	return {
-		updateUserAccessCodeById: async (request: Request, response: Response) => {
+		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async (
+			request: Request,
+			response: Response,
+		) => {
 			const { data: schemaArgs, error: schemaErrors } =
 				updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
 					body: request.body,
