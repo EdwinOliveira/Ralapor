@@ -112,12 +112,20 @@ const updateUserTokensByIdSchema = z.object({
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => Number.isNaN(id)),
 	}),
-	body: z.object({
-		strategy: z.enum(["createTokens", "refreshTokens", "destroyTokens"]),
-	}),
 });
 
 type UpdateUserTokensByIdRequest = z.infer<typeof updateUserTokensByIdSchema>;
+
+const destroyUserTokensByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+	}),
+});
+
+type DestroyUserTokensByIdRequest = z.infer<typeof destroyUserTokensByIdSchema>;
 
 interface UserRepository {
 	findUsers(): Promise<RepositoryResponse<UserEntity>>;
@@ -169,4 +177,6 @@ export {
 	type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
 	updateUserTokensByIdSchema,
 	type UpdateUserTokensByIdRequest,
+	destroyUserTokensByIdSchema,
+	type DestroyUserTokensByIdRequest,
 };

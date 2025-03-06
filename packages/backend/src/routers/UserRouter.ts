@@ -7,6 +7,7 @@ import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAcc
 import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
 import { UpdateUserTokensByIdUseCase } from "../useCases/users/UpdateUserTokensByIdUseCase";
 import { AccessTokenGuard } from "../guards/AccessTokenGuard";
+import { DestroyUserTokensByIdUseCase } from "../useCases/users/DestroyUserTokensByIdUseCase";
 
 const UserRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -68,6 +69,14 @@ const UserRouter = () => {
 			const { updateUserTokensById } = UpdateUserTokensByIdUseCase();
 			await updateUserTokensById(request, response);
 		});
+
+		router.delete(
+			"/:id/tokens",
+			async (request: Request, response: Response) => {
+				const { destroyUserTokensById } = DestroyUserTokensByIdUseCase();
+				await destroyUserTokensById(request, response);
+			},
+		);
 
 		return router;
 	};

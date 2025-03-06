@@ -2,10 +2,12 @@ import type { Request, Response } from "express";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { findUserByAccessCodeSchema, userDTOMapper } from "../../domains/User";
 import { HashProvider } from "../../providers/HashProvider";
+import { TokenProvider } from "../../providers/TokenProvider";
 
 const FindUserByAccessCodeUseCase = () => {
 	const repository = UserRemoteRepository();
 	const hashProvider = HashProvider();
+	const tokenProvider = TokenProvider();
 
 	return {
 		findUserByAccessCode: async (request: Request, response: Response) => {
@@ -25,8 +27,42 @@ const FindUserByAccessCodeUseCase = () => {
 				);
 
 				if (isSameAccessCode === true) {
-					const mappedUser = userDTOMapper(affectedRows[0]);
-					return response.status(200).json({ data: mappedUser });
+					const accessToken = tokenProvider.createToken(
+						{
+							userId: affectedRow.id,
+							username: affectedRow.username,
+							email: affectedRow.email,
+							phoneNumber: affectedRow.phoneNumber,
+						},
+						"1h",
+					);
+
+					const refreshToken = tokenProvider.createToken(
+						{
+							userId: affectedRow.id,
+							username: affectedRow.username,
+							email: affectedRow.email,
+							phoneNumber: affectedRow.phoneNumber,
+						},
+						"1d",
+					);
+
+					const [hashedAccessToken, hashedRefreshToken] = await Promise.all([
+						hashProvider.hash(accessToken),
+						hashProvider.hash(refreshToken),
+					]);
+
+					await repository.updateUserById({
+						args: {
+							accessToken: hashedAccessToken,
+							refreshToken: hashedRefreshToken,
+						},
+					});
+
+					return response.status(200).json({
+						data: userDTOMapper(affectedRow),
+						tokens: { accessToken, refreshToken },
+					});
 				}
 			}
 

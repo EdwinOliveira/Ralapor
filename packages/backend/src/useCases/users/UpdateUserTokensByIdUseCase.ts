@@ -2,13 +2,11 @@ import type { Request, Response } from "express";
 import { updateUserTokensByIdSchema } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
-import { RandomProvider } from "../../providers/RandomProvider";
 import { TokenProvider } from "../../providers/TokenProvider";
 
 const UpdateUserTokensByIdUseCase = () => {
 	const repository = UserRemoteRepository();
 	const hashProvider = HashProvider();
-	const randomProvider = RandomProvider();
 	const tokenProvider = TokenProvider();
 
 	return {
@@ -56,14 +54,8 @@ const UpdateUserTokensByIdUseCase = () => {
 
 			const { affectedIds: updatedUsersId } = await repository.updateUserById({
 				args: {
-					accessToken:
-						schemaArgs.body.strategy !== "destroyTokens"
-							? hashedAccessToken
-							: undefined,
-					refreshToken:
-						schemaArgs.body.strategy !== "destroyTokens"
-							? hashedRefreshToken
-							: undefined,
+					accessToken: hashedAccessToken,
+					refreshToken: hashedRefreshToken,
 				},
 			});
 
