@@ -31,7 +31,7 @@ const DestroyUserTokensByIdUseCase = () => {
 				return response.status(404).json();
 			}
 
-			return response.status(201).location(`/users/${affectedIds[0]}`).json();
+			return response.status(204).json();
 		},
 	};
 };
