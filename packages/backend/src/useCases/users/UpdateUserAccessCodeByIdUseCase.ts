@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import { updateUserByIdSchema } from "../../domains/User";
+import { updateUserAccessCodeByIdSchema } from "../../domains/User";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 
@@ -12,14 +12,14 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 	return {
 		updateUserAccessCodeById: async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				updateUserByIdSchema.safeParse({ body: request.body });
+				updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });
 			}
 
 			const { affectedIds: foundUsersId } = await repository.findUserById({
-				query: { id: schemaArgs.params.id },
+				query: schemaArgs.params,
 			});
 
 			if (foundUsersId.length === 0) {
@@ -30,7 +30,7 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 			const hashedAccessCode = await hashProvider.hash(accessCode);
 
 			const { affectedIds: updateUsersId } = await repository.updateUserById({
-				query: { id: schemaArgs.params.id },
+				query: schemaArgs.params,
 				args: { accessCode: hashedAccessCode },
 			});
 

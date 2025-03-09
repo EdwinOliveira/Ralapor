@@ -16,7 +16,7 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 		) => {
 			const { data: schemaArgs, error: schemaErrors } =
 				updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
-					body: request.body,
+					params: request.params,
 				});
 
 			if (schemaErrors !== undefined) {

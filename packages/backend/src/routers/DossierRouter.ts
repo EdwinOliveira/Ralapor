@@ -1,11 +1,7 @@
 import type { Request, Response, Router } from "express";
 import { AccessTokenGuard } from "../guards/AccessTokenGuard";
-import { FindProfileByIdUseCase } from "../useCases/profiles/FindProfileByIdUseCase";
-import { CreateProfileUseCase } from "../useCases/profiles/CreateProfileUseCase";
-import { UpdateProfileByIdUseCase } from "../useCases/profiles/UpdateProfileByIdUseCase";
-import { FindProfileByUserIdUseCase } from "../useCases/profiles/FindProfileByUserIdUseCase";
 
-const ProfileRouter = () => {
+const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
@@ -13,15 +9,6 @@ const ProfileRouter = () => {
 			async (request: Request, response: Response) => {
 				const { findProfileById } = FindProfileByIdUseCase();
 				await findProfileById(request, response);
-			},
-		);
-
-		router.get(
-			"/user/:userId",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { findProfileByUserId } = FindProfileByUserIdUseCase();
-				await findProfileByUserId(request, response);
 			},
 		);
 
@@ -49,4 +36,4 @@ const ProfileRouter = () => {
 	return { subscribe };
 };
 
-export { ProfileRouter };
+export { DossierRouter };

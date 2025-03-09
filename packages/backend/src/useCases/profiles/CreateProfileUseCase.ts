@@ -14,6 +14,15 @@ const CreateProfileUseCase = () => {
 				return response.status(400).json({ errors: schemaErrors.issues });
 			}
 
+			const { affectedIds: foundProfilesId } =
+				await repository.findProfileByUserId({
+					query: { userId: schemaArgs.body.userId },
+				});
+
+			if (foundProfilesId.length === 0) {
+				return response.status(404).json();
+			}
+
 			const { affectedIds: createdProfilesId } = await repository.createProfile(
 				{
 					args: {

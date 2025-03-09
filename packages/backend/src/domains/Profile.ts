@@ -39,6 +39,17 @@ const findProfileByIdSchema = z.object({
 
 type FindProfileByIdRequest = z.infer<typeof findProfileByIdSchema>;
 
+const findProfileByUserIdSchema = z.object({
+	params: z.object({
+		userId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+	}),
+});
+
+type FindProfileByUserIdRequest = z.infer<typeof findProfileByUserIdSchema>;
+
 const createProfileSchema = z.object({
 	body: z.object({
 		userId: z
@@ -75,6 +86,11 @@ interface ProfileRepository {
 	}: RepositoryRequest<Pick<ProfileEntity, "id">>): Promise<
 		RepositoryResponse<ProfileEntity>
 	>;
+	findProfileByUserId({
+		query,
+	}: RepositoryRequest<Pick<ProfileEntity, "userId">>): Promise<
+		RepositoryResponse<ProfileEntity>
+	>;
 	createProfile({
 		args,
 	}: RepositoryRequest<
@@ -85,7 +101,7 @@ interface ProfileRepository {
 		args,
 	}: RepositoryRequest<
 		Pick<ProfileEntity, "id">,
-		Partial<Omit<ProfileEntity, "id" | "createdAt" | "updatedAt">>
+		Partial<Omit<ProfileEntity, "id" | "userId" | "createdAt" | "updatedAt">>
 	>): Promise<RepositoryResponse<unknown>>;
 }
 
@@ -95,6 +111,8 @@ export {
 	profileDTOMapper,
 	findProfileByIdSchema,
 	type FindProfileByIdRequest,
+	findProfileByUserIdSchema,
+	type FindProfileByUserIdRequest,
 	createProfileSchema,
 	type CreateProfileRequest,
 	updateProfileByIdSchema,

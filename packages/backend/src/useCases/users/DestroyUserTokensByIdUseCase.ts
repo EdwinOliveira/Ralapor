@@ -8,7 +8,7 @@ const DestroyUserTokensByIdUseCase = () => {
 	return {
 		destroyUserTokensById: async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				destroyUserTokensByIdSchema.safeParse({ body: request.body });
+				destroyUserTokensByIdSchema.safeParse({ params: request.params });
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });

@@ -8,7 +8,10 @@ const UpdateUserByIdUseCase = () => {
 	return {
 		updateUserById: async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				updateUserByIdSchema.safeParse({ body: request.body });
+				updateUserByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
+				});
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });

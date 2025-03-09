@@ -8,7 +8,10 @@ const UpdateProfileByIdUseCase = () => {
 	return {
 		updateProfileById: async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				updateProfileByIdSchema.safeParse({ body: request.body });
+				updateProfileByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
+				});
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });

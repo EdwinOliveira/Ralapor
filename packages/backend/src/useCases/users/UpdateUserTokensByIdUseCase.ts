@@ -12,7 +12,7 @@ const UpdateUserTokensByIdUseCase = () => {
 	return {
 		updateUserTokensById: async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				updateUserTokensByIdSchema.safeParse({ body: request.body });
+				updateUserTokensByIdSchema.safeParse({ params: request.params });
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });
