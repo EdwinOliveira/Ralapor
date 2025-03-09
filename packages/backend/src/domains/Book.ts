@@ -1,0 +1,117 @@
+import { z } from "zod";
+import type {
+	RepositoryRequest,
+	RepositoryResponse,
+} from "../types/Repository";
+
+type BookEntity = {
+	id: number;
+	dossierId: number;
+	designation: string;
+	description: string;
+	createdAt: string;
+	updatedAt: string;
+};
+
+type BookDTO = Readonly<BookEntity>;
+
+const bookDTOMapper = (entity: BookEntity): BookDTO => {
+	return {
+		id: entity.id,
+		dossierId: entity.dossierId,
+		designation: entity.designation,
+		description: entity.description,
+		createdAt: entity.createdAt,
+		updatedAt: entity.updatedAt,
+	};
+};
+
+const findBookByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+	}),
+});
+
+type FindBookByIdRequest = z.infer<typeof findBookByIdSchema>;
+
+const findBookByDossierIdSchema = z.object({
+	params: z.object({
+		dossierId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+	}),
+});
+
+type FindBookByDossierIdRequest = z.infer<typeof findBookByDossierIdSchema>;
+
+const createBookSchema = z.object({
+	body: z.object({
+		dossierId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+		designation: z.string(),
+		description: z.string(),
+	}),
+});
+
+type CreateBookRequest = z.infer<typeof createBookSchema>;
+
+const updateBookByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => Number.isNaN(id)),
+	}),
+	body: z.object({
+		designation: z.string().optional(),
+		description: z.string().optional(),
+	}),
+});
+
+type UpdateBookByIdRequest = z.infer<typeof updateBookByIdSchema>;
+
+interface BookRepository {
+	findBookById({
+		query,
+	}: RepositoryRequest<Pick<BookEntity, "id">>): Promise<
+		RepositoryResponse<BookEntity>
+	>;
+	findBookByDossierId({
+		query,
+	}: RepositoryRequest<Pick<BookEntity, "dossierId">>): Promise<
+		RepositoryResponse<BookEntity>
+	>;
+	createBook({
+		args,
+	}: RepositoryRequest<
+		unknown,
+		Omit<BookEntity, "id" | "createdAt" | "updatedAt">
+	>): Promise<RepositoryResponse<unknown>>;
+	updateBookById({
+		args,
+	}: RepositoryRequest<
+		Pick<BookEntity, "id">,
+		Partial<Omit<BookEntity, "id" | "dossierId" | "createdAt" | "updatedAt">>
+	>): Promise<RepositoryResponse<unknown>>;
+}
+
+export {
+	type BookEntity,
+	type BookDTO,
+	bookDTOMapper,
+	findBookByIdSchema,
+	type FindBookByIdRequest,
+	findBookByDossierIdSchema,
+	type FindBookByDossierIdRequest,
+	createBookSchema,
+	type CreateBookRequest,
+	updateBookByIdSchema,
+	type UpdateBookByIdRequest,
+	type BookRepository,
+};
