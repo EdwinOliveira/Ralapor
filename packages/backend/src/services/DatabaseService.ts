@@ -15,9 +15,9 @@ const DatabaseService = () => {
 	};
 
 	const createUsersTable = async (connection: knex.Knex) => {
-		const usersTableExists = await connection.schema.hasTable("Users");
+		const tableExists = await connection.schema.hasTable("Users");
 
-		if (usersTableExists === false) {
+		if (tableExists === false) {
 			await connection.schema.createTable("Users", (table) => {
 				table.increments("id").primary();
 				table.string("username");
@@ -32,7 +32,94 @@ const DatabaseService = () => {
 		}
 	};
 
-	return { createConnection, createUsersTable };
+	const createProfilesTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Profiles");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Profiles", (table) => {
+				table.increments("id").primary();
+				table.integer("userId");
+				table.string("firstName");
+				table.string("lastName");
+				table.date("dateBirth");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createDossiersTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Dossiers");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Dossiers", (table) => {
+				table.increments("id").primary();
+				table.integer("userId");
+				table.string("designation");
+				table.string("description");
+				table.boolean("isVisible");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createBooksTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Books");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Books", (table) => {
+				table.increments("id").primary();
+				table.integer("dossierId");
+				table.string("designation");
+				table.string("description");
+				table.boolean("isVisible");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createChaptersTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Chapters");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Chapters", (table) => {
+				table.increments("id").primary();
+				table.integer("bookId");
+				table.string("designation");
+				table.string("description");
+				table.boolean("isVisible");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createPagesTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Pages");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Pages", (table) => {
+				table.increments("id").primary();
+				table.integer("chapterId");
+				table.string("designation");
+				table.string("description");
+				table.boolean("isVisible");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	return {
+		createConnection,
+		createUsersTable,
+		createProfilesTable,
+		createDossiersTable,
+		createBooksTable,
+		createChaptersTable,
+		createPagesTable,
+	};
 };
 
 export { DatabaseService };
