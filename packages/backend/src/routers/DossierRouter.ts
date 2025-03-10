@@ -1,5 +1,9 @@
 import type { Request, Response, Router } from "express";
 import { AccessTokenGuard } from "../guards/AccessTokenGuard";
+import { FindDossierByIdUseCase } from "../useCases/dossiers/FindDossierByIdUseCase";
+import { CreateDossierUseCase } from "../useCases/dossiers/CreateDossierUseCase";
+import { UpdateDossierByIdUseCase } from "../useCases/dossiers/UpdateDossierByIdUseCase";
+import { FindDossierByUserIdUseCase } from "../useCases/dossiers/FindDossierByUserIdUseCase";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -7,8 +11,17 @@ const DossierRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { findProfileById } = FindProfileByIdUseCase();
-				await findProfileById(request, response);
+				const { findDossierById } = FindDossierByIdUseCase();
+				await findDossierById(request, response);
+			},
+		);
+
+		router.get(
+			"/user/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findDossierByUserId } = FindDossierByUserIdUseCase();
+				await findDossierByUserId(request, response);
 			},
 		);
 
@@ -16,8 +29,8 @@ const DossierRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { createProfile } = CreateProfileUseCase();
-				await createProfile(request, response);
+				const { createDossier } = CreateDossierUseCase();
+				await createDossier(request, response);
 			},
 		);
 
@@ -25,8 +38,8 @@ const DossierRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { updateProfileById } = UpdateProfileByIdUseCase();
-				await updateProfileById(request, response);
+				const { updateDossierById } = UpdateDossierByIdUseCase();
+				await updateDossierById(request, response);
 			},
 		);
 
