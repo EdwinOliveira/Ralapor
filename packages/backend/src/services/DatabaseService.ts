@@ -14,7 +14,25 @@ const DatabaseService = () => {
 		});
 	};
 
-	return { createConnection };
+	const createUsersTable = async (connection: knex.Knex) => {
+		const usersTableExists = await connection.schema.hasTable("Users");
+
+		if (usersTableExists === false) {
+			await connection.schema.createTable("Users", (table) => {
+				table.increments("id").primary();
+				table.string("username");
+				table.string("email");
+				table.string("phoneNumber");
+				table.string("phoneNumberCode");
+				table.string("accessCode");
+				table.string("accessToken");
+				table.string("refreshToken");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	return { createConnection, createUsersTable };
 };
 
 export { DatabaseService };
