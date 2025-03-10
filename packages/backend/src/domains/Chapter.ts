@@ -9,6 +9,8 @@ type ChapterEntity = {
 	bookId: number;
 	designation: string;
 	description: string;
+	isVisible: boolean;
+	isActive: boolean;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -21,6 +23,8 @@ const chapterDTOMapper = (entity: ChapterEntity): ChapterDTO => {
 		bookId: entity.bookId,
 		designation: entity.designation,
 		description: entity.description,
+		isVisible: entity.isVisible,
+		isActive: entity.isActive,
 		createdAt: entity.createdAt,
 		updatedAt: entity.updatedAt,
 	};
@@ -71,6 +75,8 @@ const updateChapterByIdSchema = z.object({
 	body: z.object({
 		designation: z.string().optional(),
 		description: z.string().optional(),
+		isVisible: z.boolean().optional(),
+		isActive: z.boolean().optional(),
 	}),
 });
 
