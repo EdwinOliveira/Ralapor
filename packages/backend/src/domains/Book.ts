@@ -97,7 +97,10 @@ interface BookRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<BookEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			BookEntity,
+			"id" | "isVisible" | "isActive" | "createdAt" | "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateBookById({
 		args,

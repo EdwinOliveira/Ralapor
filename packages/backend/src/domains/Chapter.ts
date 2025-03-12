@@ -97,7 +97,10 @@ interface ChapterRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<ChapterEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			ChapterEntity,
+			"id" | "isVisible" | "isActive" | "createdAt" | "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateChapterById({
 		args,

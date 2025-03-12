@@ -97,7 +97,10 @@ interface DossierRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<DossierEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			DossierEntity,
+			"id" | "isVisible" | "isActive" | "createdAt" | "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateDossierById({
 		args,
