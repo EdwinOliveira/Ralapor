@@ -9,6 +9,7 @@ type PageEntity = {
 	chapterId: number;
 	designation: string;
 	description: string;
+	price: number;
 	isVisible: boolean;
 	isActive: boolean;
 	createdAt: string;
@@ -23,6 +24,7 @@ const pageDTOMapper = (entity: PageEntity): PageDTO => {
 		chapterId: entity.chapterId,
 		designation: entity.designation,
 		description: entity.description,
+		price: entity.price,
 		isVisible: entity.isVisible,
 		isActive: entity.isActive,
 		createdAt: entity.createdAt,
@@ -60,6 +62,7 @@ const createPageSchema = z.object({
 			.refine((id) => Number.isNaN(id)),
 		designation: z.string(),
 		description: z.string(),
+		price: z.number(),
 	}),
 });
 
@@ -75,6 +78,7 @@ const updatePageByIdSchema = z.object({
 	body: z.object({
 		designation: z.string().optional(),
 		description: z.string().optional(),
+		price: z.number().optional(),
 		isVisible: z.boolean().optional(),
 		isActive: z.boolean().optional(),
 	}),
