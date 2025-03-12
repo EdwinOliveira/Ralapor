@@ -97,7 +97,10 @@ interface PageRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<PageEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			PageEntity,
+			"id" | "isVisible" | "isActive" | "createdAt" | "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updatePageById({
 		args,
