@@ -24,11 +24,7 @@ const CreatePageUseCase = () => {
 			}
 
 			const { affectedIds: createdPagesId } = await repository.createPage({
-				args: {
-					chapterId: schemaArgs.body.chapterId,
-					designation: schemaArgs.body.designation,
-					description: schemaArgs.body.description,
-				},
+				args: schemaArgs.body,
 			});
 
 			if (createdPagesId.length === 0) {

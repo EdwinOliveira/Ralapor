@@ -24,13 +24,7 @@ const CreateDossierUseCase = () => {
 			}
 
 			const { affectedIds: createdDossiersId } = await repository.createDossier(
-				{
-					args: {
-						userId: schemaArgs.body.userId,
-						designation: schemaArgs.body.designation,
-						description: schemaArgs.body.description,
-					},
-				},
+				{ args: schemaArgs.body },
 			);
 
 			if (createdDossiersId.length === 0) {

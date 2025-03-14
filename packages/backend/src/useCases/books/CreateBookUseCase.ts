@@ -24,11 +24,7 @@ const CreateBookUseCase = () => {
 			}
 
 			const { affectedIds: createdBooksId } = await repository.createBook({
-				args: {
-					dossierId: schemaArgs.body.dossierId,
-					designation: schemaArgs.body.designation,
-					description: schemaArgs.body.description,
-				},
+				args: schemaArgs.body,
 			});
 
 			if (createdBooksId.length === 0) {

@@ -2,6 +2,9 @@ import type { Router } from "express";
 import { UserRouter } from "./routers/UserRouter";
 import { ProfileRouter } from "./routers/ProfileRouter";
 import { DossierRouter } from "./routers/DossierRouter";
+import { BookRouter } from "./routers/BookRouter";
+import { ChapterRouter } from "./routers/ChapterRouter";
+import { PageRouter } from "./routers/PageRouter";
 
 const BackendRouter = () => {
 	const subscribe = (router: Router): Router => {

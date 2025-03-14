@@ -24,13 +24,7 @@ const CreateChapterUseCase = () => {
 			}
 
 			const { affectedIds: createdChaptersId } = await repository.createChapter(
-				{
-					args: {
-						bookId: schemaArgs.body.bookId,
-						designation: schemaArgs.body.designation,
-						description: schemaArgs.body.description,
-					},
-				},
+				{ args: schemaArgs.body },
 			);
 
 			if (createdChaptersId.length === 0) {
