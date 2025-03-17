@@ -1,14 +1,17 @@
 {
-  "name": "@oliveira/ralapor",
-  "private": true,
-  "version": "alpha@0.0.1",
-  "author": {
-    "name": "Diogo Rafael Lourenço Oliveira",
-    "email": "diogorafaellourencooliveira97@gmail.com"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.7"
-  }
+	"name": "@oliveira/ralapor",
+	"private": true,
+	"version": "alpha@0.0.1",
+	"author": {
+		"name": "Diogo Rafael Lourenço Oliveira",
+		"email": "diogorafaellourencooliveira97@gmail.com"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"typescript": "^5.8.2",
+		"vitest": "^3.0.7"
+	},
+	"scripts": {
+		"unit:backend:test": "vitest packages"
+	}
 }

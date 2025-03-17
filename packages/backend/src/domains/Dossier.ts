@@ -37,7 +37,7 @@ const findDossierByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -48,7 +48,7 @@ const findDossierByUserIdSchema = z.object({
 		userId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -59,7 +59,7 @@ const createDossierSchema = z.object({
 		userId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 		designation: z.string(),
 		description: z.string(),
 		price: z.number(),
@@ -73,7 +73,7 @@ const updateDossierByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 	body: z.object({
 		designation: z.string().optional(),

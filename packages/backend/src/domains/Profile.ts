@@ -33,7 +33,7 @@ const findProfileByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -44,7 +44,7 @@ const findProfileByUserIdSchema = z.object({
 		userId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -55,7 +55,7 @@ const createProfileSchema = z.object({
 		userId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 		firstName: z.string(),
 		lastName: z.string(),
 		dateBirth: z.date(),
@@ -69,7 +69,7 @@ const updateProfileByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 	body: z.object({
 		firstName: z.string().optional(),

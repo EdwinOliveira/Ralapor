@@ -38,7 +38,7 @@ const findUserByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -68,7 +68,7 @@ const updateUserByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 	body: z.object({
 		username: z.string().optional(),
@@ -85,7 +85,7 @@ const updateUserAccessCodeByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -110,7 +110,7 @@ const updateUserTokensByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
@@ -121,7 +121,7 @@ const destroyUserTokensByIdSchema = z.object({
 		id: z
 			.string()
 			.transform((id) => Number.parseInt(id))
-			.refine((id) => Number.isNaN(id)),
+			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
