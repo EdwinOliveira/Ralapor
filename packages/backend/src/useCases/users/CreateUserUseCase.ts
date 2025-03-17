@@ -3,11 +3,13 @@ import { createUserSchema } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
+import { MailProvider } from "../../providers/MailProvider";
 
 const CreateUserUseCase = () => {
 	const repository = UserRemoteRepository();
 	const hashProvider = HashProvider();
 	const randomProvider = RandomProvider();
+	const mailProvider = MailProvider();
 
 	return {
 		createUser: async (request: Request, response: Response) => {
@@ -49,6 +51,12 @@ const CreateUserUseCase = () => {
 			if (createdUsersId.length === 0) {
 				return response.status(404).json();
 			}
+
+			await mailProvider.sendMail({
+				toAddress: schemaArgs.body.email,
+				subject: "Welcome to Ralapor!",
+				text: `Ralapor access code: ${accessCode}`,
+			});
 
 			return response
 				.status(201)
