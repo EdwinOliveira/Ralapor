@@ -117,6 +117,7 @@ interface SubscriptionRepository {
 		Omit<SubscriptionEntity, "id" | "isActive" | "createdAt" | "updatedAt">
 	>): Promise<RepositoryResponse<unknown>>;
 	updateSubscriptionById({
+		query,
 		args,
 	}: RepositoryRequest<
 		Pick<SubscriptionEntity, "id">,

@@ -1,4 +1,8 @@
 import { z } from "zod";
+import type {
+	RepositoryRequest,
+	RepositoryResponse,
+} from "../types/Repository";
 
 type WalletEntity = {
 	id: number;
@@ -70,6 +74,30 @@ const updateWalletByIdSchema = z.object({
 
 type UpdateWalletRequest = z.infer<typeof updateWalletByIdSchema>;
 
+interface WalletRepository {
+	findWalletById({
+		query,
+	}: RepositoryRequest<Pick<WalletEntity, "id">>): Promise<
+		RepositoryResponse<WalletEntity>
+	>;
+	findWalletByUserId({
+		query,
+	}: RepositoryRequest<Pick<WalletEntity, "userId">>): Promise<
+		RepositoryResponse<WalletEntity>
+	>;
+	createWallet({
+		args,
+	}: RepositoryRequest<unknown, Pick<WalletEntity, "userId">>): Promise<
+		RepositoryResponse<unknown>
+	>;
+	updateWalletById({
+		args,
+	}: RepositoryRequest<
+		Pick<WalletEntity, "id">,
+		Partial<Pick<WalletEntity, "funds" | "isActive">>
+	>): Promise<RepositoryResponse<unknown>>;
+}
+
 export {
 	type WalletEntity,
 	type WalletDTO,
@@ -82,4 +110,5 @@ export {
 	type FindWalletByUserIdRequest,
 	type CreateWalletRequest,
 	type UpdateWalletRequest,
+	type WalletRepository,
 };

@@ -111,6 +111,37 @@ const DatabaseService = () => {
 		}
 	};
 
+	const createSubscriptionTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Subscriptions");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Subscriptions", (table) => {
+				table.increments("id").primary();
+				table.integer("walletId");
+				table.integer("dossierId");
+				table.integer("bookId");
+				table.integer("chapterId");
+				table.integer("pageId");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createWalletTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Wallets");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Wallets", (table) => {
+				table.increments("id").primary();
+				table.integer("userId");
+				table.integer("funds");
+				table.boolean("isActive");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
 	return {
 		createConnection,
 		createUsersTable,
@@ -119,6 +150,8 @@ const DatabaseService = () => {
 		createBooksTable,
 		createChaptersTable,
 		createPagesTable,
+		createSubscriptionTable,
+		createWalletTable,
 	};
 };
 

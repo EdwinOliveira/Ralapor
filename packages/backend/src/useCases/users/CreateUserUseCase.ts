@@ -43,8 +43,6 @@ const CreateUserUseCase = () => {
 					phoneNumber: schemaArgs.body.phoneNumber,
 					phoneNumberCode: schemaArgs.body.phoneNumberCode,
 					accessCode: hashedAccessCode,
-					accessToken: "",
-					refreshToken: "",
 				},
 			});
 

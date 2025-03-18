@@ -148,7 +148,10 @@ interface UserRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<UserEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			UserEntity,
+			"id" | "accessToken" | "refreshToken" | "createdAt" | "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateUserById({
 		args,
