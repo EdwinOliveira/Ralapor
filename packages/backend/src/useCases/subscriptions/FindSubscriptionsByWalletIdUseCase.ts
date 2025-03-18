@@ -1,24 +1,27 @@
 import type { Request, Response } from "express";
 import {
 	subscriptionDTOMapper,
-	findSubscriptionsByUserIdSchema,
+	findSubscriptionsByWalletIdSchema,
 } from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
 
-const FindSubscriptionsByUserIdUseCase = () => {
+const FindSubscriptionsByWalletIdUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
 
 	return {
-		findSubscriptionsByUserId: async (request: Request, response: Response) => {
+		findSubscriptionsByWalletId: async (
+			request: Request,
+			response: Response,
+		) => {
 			const { data: schemaArgs, error: schemaErrors } =
-				findSubscriptionsByUserIdSchema.safeParse({ params: request.params });
+				findSubscriptionsByWalletIdSchema.safeParse({ params: request.params });
 
 			if (schemaErrors !== undefined) {
 				return response.status(400).json({ errors: schemaErrors.issues });
 			}
 
-			const { affectedRows } = await repository.findSubscriptionsByUserId({
-				query: { userId: schemaArgs.params.userId },
+			const { affectedRows } = await repository.findSubscriptionsByWalletId({
+				query: { walletId: schemaArgs.params.walletId },
 			});
 
 			if (affectedRows.length === 0) {
@@ -34,4 +37,4 @@ const FindSubscriptionsByUserIdUseCase = () => {
 	};
 };
 
-export { FindSubscriptionsByUserIdUseCase };
+export { FindSubscriptionsByWalletIdUseCase };

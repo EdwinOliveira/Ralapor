@@ -15,8 +15,8 @@ const CreateSubscriptionUseCase = () => {
 			}
 
 			const { affectedIds: foundSubscriptionsId } =
-				await repository.findSubscriptionsByUserId({
-					query: { userId: schemaArgs.body.userId },
+				await repository.findSubscriptionsByWalletId({
+					query: { walletId: schemaArgs.body.walletId },
 				});
 
 			if (foundSubscriptionsId.length === 0) {

@@ -6,7 +6,7 @@ import type {
 
 type SubscriptionEntity = {
 	id: number;
-	userId: number;
+	walletId: number;
 	dossierId: number;
 	bookId: number;
 	chapterId: number;
@@ -21,7 +21,7 @@ type SubscriptionDTO = Readonly<SubscriptionEntity>;
 const subscriptionDTOMapper = (entity: SubscriptionEntity): SubscriptionDTO => {
 	return {
 		id: entity.id,
-		userId: entity.userId,
+		walletId: entity.walletId,
 		dossierId: entity.dossierId,
 		bookId: entity.bookId,
 		chapterId: entity.chapterId,
@@ -43,22 +43,22 @@ const findSubscriptionByIdSchema = z.object({
 
 type FindSubscriptionByIdRequest = z.infer<typeof findSubscriptionByIdSchema>;
 
-const findSubscriptionsByUserIdSchema = z.object({
+const findSubscriptionsByWalletIdSchema = z.object({
 	params: z.object({
-		userId: z
+		walletId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
 	}),
 });
 
-type FindSubscriptionsByUserIdRequest = z.infer<
-	typeof findSubscriptionsByUserIdSchema
+type FindSubscriptionsByWalletIdRequest = z.infer<
+	typeof findSubscriptionsByWalletIdSchema
 >;
 
 const createSubscriptionSchema = z.object({
 	body: z.object({
-		userId: z
+		walletId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
@@ -105,9 +105,9 @@ interface SubscriptionRepository {
 	}: RepositoryRequest<Pick<SubscriptionEntity, "id">>): Promise<
 		RepositoryResponse<SubscriptionEntity>
 	>;
-	findSubscriptionsByUserId({
+	findSubscriptionsByWalletId({
 		query,
-	}: RepositoryRequest<Pick<SubscriptionEntity, "userId">>): Promise<
+	}: RepositoryRequest<Pick<SubscriptionEntity, "walletId">>): Promise<
 		RepositoryResponse<SubscriptionEntity>
 	>;
 	createSubscription({
@@ -130,8 +130,8 @@ export {
 	subscriptionDTOMapper,
 	findSubscriptionByIdSchema,
 	type FindSubscriptionByIdRequest,
-	findSubscriptionsByUserIdSchema,
-	type FindSubscriptionsByUserIdRequest,
+	findSubscriptionsByWalletIdSchema,
+	type FindSubscriptionsByWalletIdRequest,
 	createSubscriptionSchema,
 	type CreateSubscriptionRequest,
 	updateSubscriptionByIdSchema,
