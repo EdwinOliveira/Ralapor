@@ -15,7 +15,7 @@ const CreateBookUseCase = () => {
 			}
 
 			const { affectedIds: foundBooksId } =
-				await repository.findBookByDossierId({
+				await repository.findBooksByDossierId({
 					query: { dossierId: schemaArgs.body.dossierId },
 				});
 

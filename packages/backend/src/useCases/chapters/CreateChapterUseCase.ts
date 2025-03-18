@@ -15,7 +15,7 @@ const CreateChapterUseCase = () => {
 			}
 
 			const { affectedIds: foundChaptersId } =
-				await repository.findChapterByBookId({
+				await repository.findChaptersByBookId({
 					query: { bookId: schemaArgs.body.bookId },
 				});
 

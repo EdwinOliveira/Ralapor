@@ -15,7 +15,7 @@ const CreateDossierUseCase = () => {
 			}
 
 			const { affectedIds: foundDossiersId } =
-				await repository.findDossierByUserId({
+				await repository.findDossiersByUserId({
 					query: { userId: schemaArgs.body.userId },
 				});
 

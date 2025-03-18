@@ -32,7 +32,7 @@ const subscriptionDTOMapper = (entity: SubscriptionEntity): SubscriptionDTO => {
 	};
 };
 
-const findSubscriptionsByIdSchema = z.object({
+const findSubscriptionByIdSchema = z.object({
 	params: z.object({
 		id: z
 			.string()
@@ -41,9 +41,9 @@ const findSubscriptionsByIdSchema = z.object({
 	}),
 });
 
-type FindSubscriptionsByIdRequest = z.infer<typeof findSubscriptionsByIdSchema>;
+type FindSubscriptionByIdRequest = z.infer<typeof findSubscriptionByIdSchema>;
 
-const findSubscriptionByUserIdSchema = z.object({
+const findSubscriptionsByUserIdSchema = z.object({
 	params: z.object({
 		userId: z
 			.string()
@@ -52,8 +52,8 @@ const findSubscriptionByUserIdSchema = z.object({
 	}),
 });
 
-type FindSubscriptionByUserIdRequest = z.infer<
-	typeof findSubscriptionByUserIdSchema
+type FindSubscriptionsByUserIdRequest = z.infer<
+	typeof findSubscriptionsByUserIdSchema
 >;
 
 const createSubscriptionSchema = z.object({
@@ -82,6 +82,22 @@ const createSubscriptionSchema = z.object({
 });
 
 type CreateSubscriptionRequest = z.infer<typeof createSubscriptionSchema>;
+
+const updateSubscriptionByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+	body: z.object({
+		isActive: z.boolean().optional(),
+	}),
+});
+
+type UpdateSubscriptionByIdRequest = z.infer<
+	typeof updateSubscriptionByIdSchema
+>;
 
 interface SubscriptionRepository {
 	findSubscriptionById({
@@ -112,11 +128,13 @@ export {
 	type SubscriptionEntity,
 	type SubscriptionDTO,
 	subscriptionDTOMapper,
-	findSubscriptionsByIdSchema,
-	type FindSubscriptionsByIdRequest,
-	findSubscriptionByUserIdSchema,
-	type FindSubscriptionByUserIdRequest,
+	findSubscriptionByIdSchema,
+	type FindSubscriptionByIdRequest,
+	findSubscriptionsByUserIdSchema,
+	type FindSubscriptionsByUserIdRequest,
 	createSubscriptionSchema,
 	type CreateSubscriptionRequest,
+	updateSubscriptionByIdSchema,
+	type UpdateSubscriptionByIdRequest,
 	type SubscriptionRepository,
 };

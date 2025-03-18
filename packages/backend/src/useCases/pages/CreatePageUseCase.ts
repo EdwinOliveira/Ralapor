@@ -15,7 +15,7 @@ const CreatePageUseCase = () => {
 			}
 
 			const { affectedIds: foundPagesId } =
-				await repository.findPageByChapterId({
+				await repository.findPagesByChapterId({
 					query: { chapterId: schemaArgs.body.chapterId },
 				});
 
