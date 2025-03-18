@@ -3,7 +3,7 @@ import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindPageByIdUseCase } from "../useCases/pages/FindPageByIdUseCase";
 import { CreatePageUseCase } from "../useCases/pages/CreatePageUseCase";
 import { UpdatePageByIdUseCase } from "../useCases/pages/UpdatePageByIdUseCase";
-import { FindPageByChapterIdUseCase } from "../useCases/pages/FindPageByChapterIdUseCase";
+import { FindPagesByChapterIdUseCase } from "../useCases/pages/FindPagesByChapterIdUseCase";
 
 const PageRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -20,8 +20,8 @@ const PageRouter = () => {
 			"/chapter/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { findPageByChapterId } = FindPageByChapterIdUseCase();
-				await findPageByChapterId(request, response);
+				const { findPagesByChapterId } = FindPagesByChapterIdUseCase();
+				await findPagesByChapterId(request, response);
 			},
 		);
 

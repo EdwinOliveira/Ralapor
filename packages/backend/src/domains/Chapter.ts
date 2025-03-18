@@ -43,7 +43,7 @@ const findChapterByIdSchema = z.object({
 
 type FindChapterByIdRequest = z.infer<typeof findChapterByIdSchema>;
 
-const findChapterByBookIdSchema = z.object({
+const findChaptersByBookIdSchema = z.object({
 	params: z.object({
 		bookId: z
 			.string()
@@ -52,7 +52,7 @@ const findChapterByBookIdSchema = z.object({
 	}),
 });
 
-type FindChapterByBookIdRequest = z.infer<typeof findChapterByBookIdSchema>;
+type FindChaptersByBookIdRequest = z.infer<typeof findChaptersByBookIdSchema>;
 
 const createChapterSchema = z.object({
 	body: z.object({
@@ -92,7 +92,7 @@ interface ChapterRepository {
 	}: RepositoryRequest<Pick<ChapterEntity, "id">>): Promise<
 		RepositoryResponse<ChapterEntity>
 	>;
-	findChapterByBookId({
+	findChaptersByBookId({
 		query,
 	}: RepositoryRequest<Pick<ChapterEntity, "bookId">>): Promise<
 		RepositoryResponse<ChapterEntity>
@@ -120,8 +120,8 @@ export {
 	chapterDTOMapper,
 	findChapterByIdSchema,
 	type FindChapterByIdRequest,
-	findChapterByBookIdSchema,
-	type FindChapterByBookIdRequest,
+	findChaptersByBookIdSchema,
+	type FindChaptersByBookIdRequest,
 	createChapterSchema,
 	type CreateChapterRequest,
 	updateChapterByIdSchema,

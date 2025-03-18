@@ -43,7 +43,7 @@ const findPageByIdSchema = z.object({
 
 type FindPageByIdRequest = z.infer<typeof findPageByIdSchema>;
 
-const findPageByChapterIdSchema = z.object({
+const findPagesByChapterIdSchema = z.object({
 	params: z.object({
 		chapterId: z
 			.string()
@@ -52,7 +52,7 @@ const findPageByChapterIdSchema = z.object({
 	}),
 });
 
-type FindPageByChapterIdRequest = z.infer<typeof findPageByChapterIdSchema>;
+type FindPagesByChapterIdRequest = z.infer<typeof findPagesByChapterIdSchema>;
 
 const createPageSchema = z.object({
 	body: z.object({
@@ -92,7 +92,7 @@ interface PageRepository {
 	}: RepositoryRequest<Pick<PageEntity, "id">>): Promise<
 		RepositoryResponse<PageEntity>
 	>;
-	findPageByChapterId({
+	findPagesByChapterId({
 		query,
 	}: RepositoryRequest<Pick<PageEntity, "chapterId">>): Promise<
 		RepositoryResponse<PageEntity>
@@ -120,8 +120,8 @@ export {
 	pageDTOMapper,
 	findPageByIdSchema,
 	type FindPageByIdRequest,
-	findPageByChapterIdSchema,
-	type FindPageByChapterIdRequest,
+	findPagesByChapterIdSchema,
+	type FindPagesByChapterIdRequest,
 	createPageSchema,
 	type CreatePageRequest,
 	updatePageByIdSchema,

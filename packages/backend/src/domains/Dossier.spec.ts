@@ -5,7 +5,7 @@ import {
 	dossierDTOMapper,
 	type DossierEntity,
 	findDossierByIdSchema,
-	findDossierByUserIdSchema,
+	findDossiersByUserIdSchema,
 	updateDossierByIdSchema,
 } from "./Dossier";
 
@@ -99,9 +99,9 @@ describe("Dossier", () => {
 		});
 	});
 
-	describe("findDossierByUserIdSchema", () => {
+	describe("findDossiersByUserIdSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
-			return findDossierByUserIdSchema.safeParse(data);
+			return findDossiersByUserIdSchema.safeParse(data);
 		};
 
 		it("returns schema parse for valid input", () => {

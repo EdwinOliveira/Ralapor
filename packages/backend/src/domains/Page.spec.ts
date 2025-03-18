@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	createPageSchema,
 	findPageByIdSchema,
-	findPageByChapterIdSchema,
+	findPagesByChapterIdSchema,
 	pageDTOMapper,
 	updatePageByIdSchema,
 	type PageDTO,
@@ -67,9 +67,9 @@ describe("Page", () => {
 		});
 	});
 
-	describe("findPageByChapterIdSchema", () => {
+	describe("findPagesByChapterIdSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
-			return findPageByChapterIdSchema.safeParse(data);
+			return findPagesByChapterIdSchema.safeParse(data);
 		};
 
 		it("returns schema parse", () => {

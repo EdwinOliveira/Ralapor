@@ -43,7 +43,7 @@ const findBookByIdSchema = z.object({
 
 type FindBookByIdRequest = z.infer<typeof findBookByIdSchema>;
 
-const findBookByDossierIdSchema = z.object({
+const findBooksByDossierIdSchema = z.object({
 	params: z.object({
 		dossierId: z
 			.string()
@@ -52,7 +52,7 @@ const findBookByDossierIdSchema = z.object({
 	}),
 });
 
-type FindBookByDossierIdRequest = z.infer<typeof findBookByDossierIdSchema>;
+type FindBooksByDossierIdRequest = z.infer<typeof findBooksByDossierIdSchema>;
 
 const createBookSchema = z.object({
 	body: z.object({
@@ -92,7 +92,7 @@ interface BookRepository {
 	}: RepositoryRequest<Pick<BookEntity, "id">>): Promise<
 		RepositoryResponse<BookEntity>
 	>;
-	findBookByDossierId({
+	findBooksByDossierId({
 		query,
 	}: RepositoryRequest<Pick<BookEntity, "dossierId">>): Promise<
 		RepositoryResponse<BookEntity>
@@ -120,8 +120,8 @@ export {
 	bookDTOMapper,
 	findBookByIdSchema,
 	type FindBookByIdRequest,
-	findBookByDossierIdSchema,
-	type FindBookByDossierIdRequest,
+	findBooksByDossierIdSchema,
+	type FindBooksByDossierIdRequest,
 	createBookSchema,
 	type CreateBookRequest,
 	updateBookByIdSchema,

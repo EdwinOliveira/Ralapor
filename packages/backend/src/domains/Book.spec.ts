@@ -4,7 +4,7 @@ import {
 	bookDTOMapper,
 	type BookEntity,
 	createBookSchema,
-	findBookByDossierIdSchema,
+	findBooksByDossierIdSchema,
 	findBookByIdSchema,
 	updateBookByIdSchema,
 } from "./Book";
@@ -99,9 +99,9 @@ describe("Book", () => {
 		});
 	});
 
-	describe("findBookByDossierIdSchema", () => {
+	describe("findBooksByDossierIdSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
-			return findBookByDossierIdSchema.safeParse(data);
+			return findBooksByDossierIdSchema.safeParse(data);
 		};
 
 		it("returns schema parse for valid input", () => {

@@ -3,7 +3,7 @@ import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindBookByIdUseCase } from "../useCases/books/FindBookByIdUseCase";
 import { CreateBookUseCase } from "../useCases/books/CreateBookUseCase";
 import { UpdateBookByIdUseCase } from "../useCases/books/UpdateBookByIdUseCase";
-import { FindBookByDossierIdUseCase } from "../useCases/books/FindBookByDossierIdUseCase";
+import { FindBooksByDossierIdUseCase } from "../useCases/books/FindBooksByDossierIdUseCase";
 
 const BookRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -20,8 +20,8 @@ const BookRouter = () => {
 			"/dossier/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { findBookByDossierId } = FindBookByDossierIdUseCase();
-				await findBookByDossierId(request, response);
+				const { findBooksByDossierId } = FindBooksByDossierIdUseCase();
+				await findBooksByDossierId(request, response);
 			},
 		);
 

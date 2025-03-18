@@ -4,7 +4,7 @@ import {
 	chapterDTOMapper,
 	type ChapterEntity,
 	createChapterSchema,
-	findChapterByBookIdSchema,
+	findChaptersByBookIdSchema,
 	findChapterByIdSchema,
 	updateChapterByIdSchema,
 } from "./Chapter";
@@ -93,9 +93,9 @@ describe("Chapter", () => {
 		});
 	});
 
-	describe("findChapterByBookIdSchema", () => {
+	describe("findChaptersByBookIdSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
-			return findChapterByBookIdSchema.safeParse(data);
+			return findChaptersByBookIdSchema.safeParse(data);
 		};
 
 		it("returns schema parse for valid input", () => {

@@ -25,7 +25,7 @@ const DossierRemoteRepository = (): DossierRepository => {
 
 			return { affectedIds: [foundDossier.id], affectedRows: [foundDossier] };
 		},
-		findDossierByUserId: async ({ query }) => {
+		findDossiersByUserId: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };
 			}
@@ -33,17 +33,21 @@ const DossierRemoteRepository = (): DossierRepository => {
 			const dbConnection = createConnection();
 			await createDossiersTable(dbConnection);
 
-			const foundDossier = await dbConnection<DossierEntity>("Dossiers")
-				.where("userId", query.userId)
-				.first();
+			const foundDossiers = await dbConnection<DossierEntity>("Dossiers").where(
+				"userId",
+				query.userId,
+			);
 
 			await dbConnection.destroy();
 
-			if (foundDossier === undefined) {
+			if (foundDossiers.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [foundDossier.id], affectedRows: [foundDossier] };
+			return {
+				affectedIds: foundDossiers.map((foundDossier) => foundDossier.id),
+				affectedRows: foundDossiers,
+			};
 		},
 		createDossier: async ({ args }) => {
 			if (args === undefined) {

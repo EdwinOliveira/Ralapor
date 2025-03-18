@@ -25,7 +25,7 @@ const PageRemoteRepository = (): PageRepository => {
 
 			return { affectedIds: [foundPage.id], affectedRows: [foundPage] };
 		},
-		findPageByChapterId: async ({ query }) => {
+		findPagesByChapterId: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };
 			}
@@ -33,17 +33,21 @@ const PageRemoteRepository = (): PageRepository => {
 			const dbConnection = createConnection();
 			await createPagesTable(dbConnection);
 
-			const foundPage = await dbConnection<PageEntity>("Pages")
-				.where("chapterId", query.chapterId)
-				.first();
+			const foundPages = await dbConnection<PageEntity>("Pages").where(
+				"chapterId",
+				query.chapterId,
+			);
 
 			await dbConnection.destroy();
 
-			if (foundPage === undefined) {
+			if (foundPages.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [foundPage.id], affectedRows: [foundPage] };
+			return {
+				affectedIds: foundPages.map((foundPage) => foundPage.id),
+				affectedRows: foundPages,
+			};
 		},
 		createPage: async ({ args }) => {
 			if (args === undefined) {

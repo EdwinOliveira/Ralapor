@@ -43,7 +43,7 @@ const findDossierByIdSchema = z.object({
 
 type FindDossierByIdRequest = z.infer<typeof findDossierByIdSchema>;
 
-const findDossierByUserIdSchema = z.object({
+const findDossiersByUserIdSchema = z.object({
 	params: z.object({
 		userId: z
 			.string()
@@ -52,7 +52,7 @@ const findDossierByUserIdSchema = z.object({
 	}),
 });
 
-type FindDossierByUserIdRequest = z.infer<typeof findDossierByUserIdSchema>;
+type FindDossiersByUserIdRequest = z.infer<typeof findDossiersByUserIdSchema>;
 
 const createDossierSchema = z.object({
 	body: z.object({
@@ -92,7 +92,7 @@ interface DossierRepository {
 	}: RepositoryRequest<Pick<DossierEntity, "id">>): Promise<
 		RepositoryResponse<DossierEntity>
 	>;
-	findDossierByUserId({
+	findDossiersByUserId({
 		query,
 	}: RepositoryRequest<Pick<DossierEntity, "userId">>): Promise<
 		RepositoryResponse<DossierEntity>
@@ -120,8 +120,8 @@ export {
 	dossierDTOMapper,
 	findDossierByIdSchema,
 	type FindDossierByIdRequest,
-	findDossierByUserIdSchema,
-	type FindDossierByUserIdRequest,
+	findDossiersByUserIdSchema,
+	type FindDossiersByUserIdRequest,
 	createDossierSchema,
 	type CreateDossierRequest,
 	updateDossierByIdSchema,

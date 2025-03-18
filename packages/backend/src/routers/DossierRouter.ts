@@ -3,7 +3,7 @@ import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindDossierByIdUseCase } from "../useCases/dossiers/FindDossierByIdUseCase";
 import { CreateDossierUseCase } from "../useCases/dossiers/CreateDossierUseCase";
 import { UpdateDossierByIdUseCase } from "../useCases/dossiers/UpdateDossierByIdUseCase";
-import { FindDossierByUserIdUseCase } from "../useCases/dossiers/FindDossierByUserIdUseCase";
+import { FindDossiersByUserIdUseCase } from "../useCases/dossiers/FindDossiersByUserIdUseCase";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -20,8 +20,8 @@ const DossierRouter = () => {
 			"/user/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
-				const { findDossierByUserId } = FindDossierByUserIdUseCase();
-				await findDossierByUserId(request, response);
+				const { findDossiersByUserId } = FindDossiersByUserIdUseCase();
+				await findDossiersByUserId(request, response);
 			},
 		);
 

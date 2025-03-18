@@ -25,7 +25,7 @@ const BookRemoteRepository = (): BookRepository => {
 
 			return { affectedIds: [foundBook.id], affectedRows: [foundBook] };
 		},
-		findBookByDossierId: async ({ query }) => {
+		findBooksByDossierId: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };
 			}
@@ -33,17 +33,21 @@ const BookRemoteRepository = (): BookRepository => {
 			const dbConnection = createConnection();
 			await createBooksTable(dbConnection);
 
-			const foundBook = await dbConnection<BookEntity>("Books")
-				.where("dossierId", query.dossierId)
-				.first();
+			const foundBooks = await dbConnection<BookEntity>("Books").where(
+				"dossierId",
+				query.dossierId,
+			);
 
 			await dbConnection.destroy();
 
-			if (foundBook === undefined) {
+			if (foundBooks.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [foundBook.id], affectedRows: [foundBook] };
+			return {
+				affectedIds: foundBooks.map((foundBook) => foundBook.id),
+				affectedRows: foundBooks,
+			};
 		},
 		createBook: async ({ args }) => {
 			if (args === undefined) {
