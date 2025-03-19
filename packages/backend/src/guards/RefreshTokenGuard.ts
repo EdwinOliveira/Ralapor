@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { TokenProvider } from "../providers/TokenProvider";
 
-const RefreshTokenGuard = (
+const RefreshTokenGuard = async (
 	request: Request,
 	response: Response,
 	next: NextFunction,
@@ -11,7 +11,7 @@ const RefreshTokenGuard = (
 
 		if (authorizationToken) {
 			const { checkToken } = TokenProvider();
-			checkToken(authorizationToken, process.env.REFRESH_TOKEN_SECRET);
+			await checkToken(authorizationToken, process.env.REFRESH_TOKEN_SECRET);
 			return next();
 		}
 

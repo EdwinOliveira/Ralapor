@@ -8,7 +8,7 @@ const TokenProvider = () => {
 			tokenSecret = "JWTtokenSecret",
 		) => sign(data, tokenSecret, { expiresIn }),
 		checkToken: (token: string, tokenSecret = "JWTtokenSecret") =>
-			verify(token, tokenSecret),
+			verify(token, tokenSecret) as Promise<JwtPayload | string>, // I don't like this. I'm thinking on how to improve this
 	};
 };
 
