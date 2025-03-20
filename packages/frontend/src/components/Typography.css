@@ -1,0 +1,20 @@
+.brand {
+	font-size: clamp(1rem, 1rem + 0.5vh, 2rem);
+}
+
+.header {
+	font-size: clamp(0.9rem, 0.9rem + 0.5vh, 1.9rem);
+}
+
+.subheader {
+	font-size: clamp(0.8rem, 0.8rem + 0.5vh, 1.8rem);
+}
+
+.label {
+	opacity: 0.3;
+	font-size: clamp(0.5rem, 0.5rem + 0.5vh, 1.5rem);
+}
+
+.paragraph {
+	font-size: clamp(0.7rem, 0.7rem + 0.5vh, 1.7rem);
+}
