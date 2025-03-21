@@ -1,0 +1,20 @@
+.header {
+	font-size: clamp(1.05rem, 1.05rem + 0.5vw, 2.05rem);
+	font-weight: 700;
+}
+
+.sub-header {
+	font-size: clamp(0.9rem, 0.9rem + 0.5vw, 1.9rem);
+	font-weight: 600;
+}
+
+.designation {
+	font-size: clamp(0.6rem, 0.6rem + 0.5vw, 1.6rem);
+	opacity: 0.35;
+	font-weight: 900;
+}
+
+.description {
+	font-size: clamp(0.75rem, 0.75rem + 0.5vw, 1.75rem);
+	font-weight: 500;
+}
