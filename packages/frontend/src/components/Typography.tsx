@@ -1,16 +1,14 @@
 import "./Typography.css";
 
 export type TypographyProps = {
-	content: string;
-	segment:
-		| "header"
-		| "sub-header"
-		| "designation"
-		| "description"
-		| "button"
-		| "link";
+	text: string;
+	segment: "brand";
 };
 
-export default function Typography({ content, segment }: TypographyProps) {
-	return <span className={segment}>{content}</span>;
+export default function Typography({ text, segment }: TypographyProps) {
+	return (
+		<span id="typography" className={segment}>
+			{text}
+		</span>
+	);
 }

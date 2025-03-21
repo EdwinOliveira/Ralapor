@@ -1,0 +1,11 @@
+#landing,
+#landing > * {
+	min-height: inherit;
+}
+
+#landing--brand {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
