@@ -1,5 +1,5 @@
 import "./Landing.css";
-import Brand from "../../components/Brand";
+import Brand from "../../components/brand/Brand";
 
 export default function Landing() {
 	return (
