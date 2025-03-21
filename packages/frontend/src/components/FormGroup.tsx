@@ -13,13 +13,15 @@ export default function FormGroup({ formLabel, formControls }: FormGroupProps) {
 		<>
 			<div id="form-group">
 				<FormLabel content={formLabel.content} />
-				{formControls.map((formControl) => (
-					<FormControl
-						key={formControl.id}
-						formParagraph={formControl.formParagraph}
-						formInput={formControl.formInput}
-					/>
-				))}
+				<div id="form-controls">
+					{formControls.map((formControl) => (
+						<FormControl
+							key={formControl.id}
+							formParagraph={formControl.formParagraph}
+							formInput={formControl.formInput}
+						/>
+					))}
+				</div>
 			</div>
 		</>
 	);
