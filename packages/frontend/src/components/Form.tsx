@@ -1,3 +1,4 @@
+import "./Form.css";
 import FormGroup, { type FormGroupProps } from "./FormGroup";
 
 type FormProps = {
@@ -12,7 +13,7 @@ export default function Form({ formGroups }: FormProps) {
 					<FormGroup
 						key={formGroup.id}
 						formLabel={formGroup.formLabel}
-						formControl={formGroup.formControl}
+						formControls={formGroup.formControls}
 					/>
 				))}
 			</div>

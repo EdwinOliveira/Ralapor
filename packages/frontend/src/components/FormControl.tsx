@@ -3,6 +3,7 @@ import type { FormParagraphProps } from "./FormParagraph";
 import FormParagraph from "./FormParagraph";
 
 export type FormControlProps = {
+	id?: number;
 	formParagraph: FormParagraphProps;
 	formInput: FormInputProps;
 };
