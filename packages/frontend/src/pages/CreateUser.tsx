@@ -1,7 +1,8 @@
+import "./CreateUser.css";
 import Form from "../components/Form";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormBrandProps } from "../components/FormBrand";
-import "./CreateUser.css";
+import type { FormActionProps } from "../components/FormAction";
 
 export default function CreateUser() {
 	const formBrand: FormBrandProps = {
@@ -15,27 +16,50 @@ export default function CreateUser() {
 			formControls: [
 				{
 					id: 1,
-					formParagraph: { content: "Username" },
 					formInput: { type: "text", placeholder: "Username..." },
 				},
 				{
 					id: 2,
-					formParagraph: { content: "Email" },
 					formInput: { type: "email", placeholder: "Email..." },
 				},
 				{
 					id: 3,
-					formParagraph: { content: "Phone Number" },
 					formInput: { type: "tel", placeholder: "Phone Number..." },
 				},
 			],
 		},
 	];
 
+	const formAction: FormActionProps = {
+		formButtons: [
+			{
+				id: 1,
+				content: "Continue",
+				onAction: () => {},
+			},
+		],
+		formLinks: [
+			{
+				id: 1,
+				content: "Already have an user? Click here.",
+				href: "/access-user",
+			},
+			{
+				id: 2,
+				content: "Forgot your access code? Click here.",
+				href: "/recover-user",
+			},
+		],
+	};
+
 	return (
 		<>
 			<div id="create-user">
-				<Form formBrand={formBrand} formGroups={formGroups} />
+				<Form
+					formBrand={formBrand}
+					formGroups={formGroups}
+					formAction={formAction}
+				/>
 			</div>
 		</>
 	);

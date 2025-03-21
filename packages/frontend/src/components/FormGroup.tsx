@@ -17,7 +17,6 @@ export default function FormGroup({ formLabel, formControls }: FormGroupProps) {
 					{formControls.map((formControl) => (
 						<FormControl
 							key={formControl.id}
-							formParagraph={formControl.formParagraph}
 							formInput={formControl.formInput}
 						/>
 					))}

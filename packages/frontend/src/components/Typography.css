@@ -13,11 +13,22 @@
 
 .label {
 	opacity: 0.15;
-	font-weight: 900;
 	font-size: clamp(0.5rem, 0.5rem + 0.5vh, 1.5rem);
+	font-weight: 900;
+}
+
+.link {
+	opacity: 0.25;
+	font-size: clamp(0.5rem, 0.5rem + 0.5vh, 1.5rem);
+	font-weight: 900;
 }
 
 .paragraph {
 	font-size: clamp(0.6rem, 0.6rem + 0.5vh, 1.6rem);
 	font-weight: 400;
+}
+
+.placeholder {
+	font-size: clamp(0.6rem, 0.6rem + 0.5vh, 1.6rem);
+	font-weight: 900;
 }

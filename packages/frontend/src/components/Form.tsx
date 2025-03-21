@@ -1,13 +1,15 @@
 import "./Form.css";
 import FormGroup, { type FormGroupProps } from "./FormGroup";
 import FormBrand, { type FormBrandProps } from "./FormBrand";
+import FormAction, { type FormActionProps } from "./FormAction";
 
 type FormProps = {
 	formBrand: FormBrandProps;
 	formGroups: Array<FormGroupProps>;
+	formAction: FormActionProps;
 };
 
-export default function Form({ formBrand, formGroups }: FormProps) {
+export default function Form({ formBrand, formGroups, formAction }: FormProps) {
 	return (
 		<>
 			<div id="form">
@@ -19,6 +21,10 @@ export default function Form({ formBrand, formGroups }: FormProps) {
 						formControls={formGroup.formControls}
 					/>
 				))}
+				<FormAction
+					formButtons={formAction.formButtons}
+					formLinks={formAction.formLinks}
+				/>
 			</div>
 		</>
 	);
