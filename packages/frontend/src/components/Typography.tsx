@@ -15,9 +15,9 @@ export type TypographyProps = {
 export default function Typography({ content, signature }: TypographyProps) {
 	return (
 		<>
-			<p id="typography" className={signature}>
+			<span id="typography" className={signature}>
 				{content}
-			</p>
+			</span>
 		</>
 	);
 }

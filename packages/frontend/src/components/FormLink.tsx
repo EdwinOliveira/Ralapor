@@ -1,4 +1,5 @@
 import "./FormLink.css";
+import { Link } from "react-router-dom";
 import Typography from "./Typography";
 
 export type FormLinkProps = {
@@ -10,9 +11,9 @@ export type FormLinkProps = {
 export default function FormLink({ content, href }: FormLinkProps) {
 	return (
 		<>
-			<a href={href}>
+			<Link to={href}>
 				<Typography content={content} signature="link" />
-			</a>
+			</Link>
 		</>
 	);
 }

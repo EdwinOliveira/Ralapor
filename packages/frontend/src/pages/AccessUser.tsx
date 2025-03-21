@@ -1,15 +1,15 @@
-import "./CreateUser.css";
+import "./AccessUser.css";
 import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormBrandProps } from "../components/FormBrand";
 import type { FormActionProps } from "../components/FormAction";
 
-export default function CreateUser() {
+export default function AccessUser() {
 	const navigate = useNavigate();
 
 	const formBrand: FormBrandProps = {
-		content: "Create your Ralapor User",
+		content: "Access your Ralapor User",
 	};
 
 	const formGroups: Array<FormGroupProps> = [
@@ -19,15 +19,7 @@ export default function CreateUser() {
 			formControls: [
 				{
 					id: 1,
-					formInput: { type: "text", placeholder: "Username..." },
-				},
-				{
-					id: 2,
-					formInput: { type: "email", placeholder: "Email..." },
-				},
-				{
-					id: 3,
-					formInput: { type: "tel", placeholder: "Phone Number..." },
+					formInput: { type: "text", placeholder: "AccessCode..." },
 				},
 			],
 		},
@@ -46,7 +38,7 @@ export default function CreateUser() {
 		formLinks: [
 			{
 				id: 1,
-				content: "Already have an user? Click here.",
+				content: "Don't you have an user? Click here.",
 				href: "/access-user",
 			},
 			{

@@ -1,34 +1,38 @@
+#typography {
+	background: center;
+}
+
 .brand {
-	font-weight: 600;
-	font-size: clamp(1rem, 1rem + 0.5vh, 2rem);
+	font-weight: 700;
+	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
 }
 
 .header {
-	font-size: clamp(0.9rem, 0.9rem + 0.5vh, 1.9rem);
+	font-size: clamp(0.9rem, 0.9rem + 0.5vw, 1.9rem);
 }
 
 .subheader {
-	font-size: clamp(0.8rem, 0.8rem + 0.5vh, 1.8rem);
+	font-size: clamp(0.8rem, 0.8rem + 0.5vw, 1.8rem);
 }
 
 .label {
 	opacity: 0.15;
-	font-size: clamp(0.5rem, 0.5rem + 0.5vh, 1.5rem);
+	font-size: clamp(0.5rem, 0.5rem + 0.5vw, 1.5rem);
 	font-weight: 900;
 }
 
 .link {
 	opacity: 0.25;
-	font-size: clamp(0.5rem, 0.5rem + 0.5vh, 1.5rem);
+	font-size: clamp(0.5rem, 0.5rem + 0.5vw, 1.5rem);
 	font-weight: 900;
 }
 
 .paragraph {
-	font-size: clamp(0.6rem, 0.6rem + 0.5vh, 1.6rem);
+	font-size: clamp(0.6rem, 0.6rem + 0.5vw, 1.6rem);
 	font-weight: 400;
 }
 
 .placeholder {
-	font-size: clamp(0.6rem, 0.6rem + 0.5vh, 1.6rem);
+	font-size: clamp(0.6rem, 0.6rem + 0.5vw, 1.6rem);
 	font-weight: 900;
 }

@@ -1,5 +1,5 @@
-import type { HTMLInputTypeAttribute } from "react";
 import "./FormInput.css";
+import type { HTMLInputTypeAttribute } from "react";
 
 export type FormInputProps = {
 	placeholder: string;
