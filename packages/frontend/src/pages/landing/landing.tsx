@@ -1,10 +1,10 @@
-import "./Landing.css";
 import Brand from "../../components/brand/Brand";
+import "./Landing.css";
 
 export default function Landing() {
 	return (
-		<div id="landing">
-			<div id="landing--brand">
+		<div id="wrapper">
+			<div id="wrapper__brand">
 				<Brand />
 			</div>
 		</div>

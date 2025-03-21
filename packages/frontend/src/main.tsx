@@ -6,10 +6,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 /**
  * Pages
  */
-import CreateUser from "./pages/users/CreateUser.tsx";
-import AccessUser from "./pages/users/AccessUser.tsx";
-import RecoverUser from "./pages/users/RecoverUser.tsx";
-import Landing from "./pages/users/Landing.tsx";
+import CreateUser from "./pages/users/create-user/create-user.tsx";
+import AccessUser from "./pages/users/access-user/access-user.tsx";
+import RecoverUser from "./pages/users/recover-user/recover-user.tsx";
+import Landing from "./pages/landing/Landing.tsx";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById("root")!).render(
