@@ -1,9 +1,13 @@
 input {
-	padding: 0.35rem 0.25rem;
-	background-color: #fff;
+	padding: 1rem 0.35rem;
+	width: 100%;
 
-	box-shadow: 0 0 0.15rem 0 currentColor;
-	border-radius: 0.05rem;
+	background-color: #fff;
+	box-shadow: 0 0 0.10rem 0 currentColor;
+	border-radius: 0.10rem;
 
 	outline: none;
+
+	font-size: clamp(.75rem, .75rem + 0.5vw, .75rem);
+	letter-spacing: 0.05rem;
 }

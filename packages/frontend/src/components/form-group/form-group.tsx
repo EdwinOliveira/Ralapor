@@ -2,6 +2,7 @@ import FormControl, {
 	type FormControlProps,
 } from "../form-control/form-control";
 import Typography from "../typography/typography";
+import "./form-group.css";
 
 export type FormGroupProps = {
 	id?: number;
@@ -15,7 +16,11 @@ export default function FormGroup({ text, formControls }: FormGroupProps) {
 			<Typography text={text} segment="groupText" />
 			<div id="form-group__controls">
 				{formControls.map((formControl) => (
-					<FormControl key={formControl.id} input={formControl.input} />
+					<FormControl
+						key={formControl.id}
+						designation={formControl.designation}
+						input={formControl.input}
+					/>
 				))}
 			</div>
 		</div>

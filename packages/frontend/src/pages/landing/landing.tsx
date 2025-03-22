@@ -8,16 +8,16 @@ export default function Landing() {
 	const navigate = useNavigate();
 
 	return (
-		<div id="wrapper">
-			<div id="wrapper__brand">
-				<div id="wrapper__brand--block">
+		<div id="landing">
+			<div id="landing__brand">
+				<div id="landing__brand--block">
 					<Brand />
 					<Typography
 						text="Create and share your own stories"
 						segment="sub-brand"
 					/>
 				</div>
-				<div id="wrapper__brand--buttons">
+				<div id="landing__brand--buttons">
 					<Button text="Access User" onClick={() => navigate("/access-user")} />
 					<Button text="Create User" onClick={() => navigate("/create-user")} />
 				</div>
