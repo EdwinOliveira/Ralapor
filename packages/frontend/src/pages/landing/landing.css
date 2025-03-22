@@ -1,3 +1,7 @@
+#wrapper {
+	min-width: 30rem;
+}
+
 #wrapper,
 #wrapper > * {
 	min-height: inherit;
@@ -8,4 +12,17 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	gap: 2rem;
+}
+
+#wrapper__brand--block {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#wrapper__brand--buttons {
+	display: flex;
+	gap: 0.5rem;
 }

@@ -2,13 +2,9 @@ import "./Typography.css";
 
 export type TypographyProps = {
 	text: string;
-	segment: "brand";
+	segment: "brand" | "sub-brand" | "button";
 };
 
 export default function Typography({ text, segment }: TypographyProps) {
-	return (
-		<span id="typography" className={segment}>
-			{text}
-		</span>
-	);
+	return <span className={segment}>{text}</span>;
 }

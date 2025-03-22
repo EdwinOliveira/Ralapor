@@ -1,4 +1,4 @@
-import Typography from "../typography/Typography";
+import Typography from "../typography/typography";
 import "./Brand.css";
 
 export default function Brand() {

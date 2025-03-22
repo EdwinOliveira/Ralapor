@@ -1,4 +1,12 @@
-#brand {
+.brand {
 	font-size: clamp(2.5rem, 2.5rem + 0.5vw, 3.5rem);
 	font-weight: 700;
+}
+
+.sub-brand {
+	font-size: clamp(.8rem, .8rem + 0.5vw, 1rem);
+}
+
+.button {
+	font-size: clamp(.75rem, .75rem + 0.5vw, .75rem);
 }
