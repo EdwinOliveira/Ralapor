@@ -9,6 +9,8 @@
 
 .header {
 	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
+	font-weight: 600;
+	letter-spacing: 0.05rem;
 }
 
 .groupText {
@@ -19,4 +21,10 @@
 
 .button {
 	font-size: clamp(.75rem, .75rem + 0.5vw, .75rem);
+}
+
+.link {
+	font-size: clamp(.7rem, .7rem + 0.5vw, .7rem);
+	font-weight: 600;
+	opacity: 0.25;
 }
