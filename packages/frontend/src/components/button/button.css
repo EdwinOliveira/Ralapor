@@ -1,8 +1,13 @@
 #button {
 	cursor: pointer;
-	padding: 0.85rem 3rem;
-	background-color: #fff;
-
-	box-shadow: 0 0 0.15rem 0 currentColor;
+	padding: 1rem 2.5rem;
 	border-radius: 0.35rem;
+	background-color: var(--text--color--primary);
+	color: var(--text--color--secondary);
+	box-shadow: 0 0 0 0.035rem var(--text--color--primary);
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#button:hover {
+	box-shadow: 0 0 0 .45rem var(--text--color--primary);
 }

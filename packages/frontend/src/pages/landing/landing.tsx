@@ -18,8 +18,7 @@ export default function Landing() {
 					/>
 				</div>
 				<div id="landing__brand--buttons">
-					<Button text="Access User" onClick={() => navigate("/access-user")} />
-					<Button text="Create User" onClick={() => navigate("/create-user")} />
+					<Button text="GET STARTED" onClick={() => navigate("/access-user")} />
 				</div>
 			</div>
 		</div>
