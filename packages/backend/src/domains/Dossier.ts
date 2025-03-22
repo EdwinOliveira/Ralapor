@@ -7,6 +7,7 @@ import type {
 type DossierEntity = {
 	id: number;
 	userId: number;
+	categoryId: number;
 	designation: string;
 	description: string;
 	price: number;
@@ -22,6 +23,7 @@ const dossierDTOMapper = (entity: DossierEntity): DossierDTO => {
 	return {
 		id: entity.id,
 		userId: entity.userId,
+		categoryId: entity.categoryId,
 		designation: entity.designation,
 		description: entity.description,
 		price: entity.price,
@@ -54,9 +56,26 @@ const findDossiersByUserIdSchema = z.object({
 
 type FindDossiersByUserIdRequest = z.infer<typeof findDossiersByUserIdSchema>;
 
+const findDossiersByCategoryIdSchema = z.object({
+	params: z.object({
+		categoryId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type FindDossiersByCategoryIdRequest = z.infer<
+	typeof findDossiersByCategoryIdSchema
+>;
+
 const createDossierSchema = z.object({
 	body: z.object({
 		userId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+		categoryId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
@@ -97,6 +116,11 @@ interface DossierRepository {
 	}: RepositoryRequest<Pick<DossierEntity, "userId">>): Promise<
 		RepositoryResponse<DossierEntity>
 	>;
+	findDossiersByCategoryId({
+		query,
+	}: RepositoryRequest<Pick<DossierEntity, "categoryId">>): Promise<
+		RepositoryResponse<DossierEntity>
+	>;
 	createDossier({
 		args,
 	}: RepositoryRequest<
@@ -122,6 +146,8 @@ export {
 	type FindDossierByIdRequest,
 	findDossiersByUserIdSchema,
 	type FindDossiersByUserIdRequest,
+	findDossiersByCategoryIdSchema,
+	type FindDossiersByCategoryIdRequest,
 	createDossierSchema,
 	type CreateDossierRequest,
 	updateDossierByIdSchema,

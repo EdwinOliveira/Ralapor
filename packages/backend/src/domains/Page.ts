@@ -7,6 +7,7 @@ import type {
 type PageEntity = {
 	id: number;
 	chapterId: number;
+	categoryId: number;
 	designation: string;
 	description: string;
 	price: number;
@@ -22,6 +23,7 @@ const pageDTOMapper = (entity: PageEntity): PageDTO => {
 	return {
 		id: entity.id,
 		chapterId: entity.chapterId,
+		categoryId: entity.categoryId,
 		designation: entity.designation,
 		description: entity.description,
 		price: entity.price,
@@ -54,9 +56,24 @@ const findPagesByChapterIdSchema = z.object({
 
 type FindPagesByChapterIdRequest = z.infer<typeof findPagesByChapterIdSchema>;
 
+const findPagesByCategoryIdSchema = z.object({
+	params: z.object({
+		categoryId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type FindPagesByCategoryIdRequest = z.infer<typeof findPagesByCategoryIdSchema>;
+
 const createPageSchema = z.object({
 	body: z.object({
 		chapterId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+		categoryId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
@@ -97,6 +114,11 @@ interface PageRepository {
 	}: RepositoryRequest<Pick<PageEntity, "chapterId">>): Promise<
 		RepositoryResponse<PageEntity>
 	>;
+	findPagesByCategoryId({
+		query,
+	}: RepositoryRequest<Pick<PageEntity, "categoryId">>): Promise<
+		RepositoryResponse<PageEntity>
+	>;
 	createPage({
 		args,
 	}: RepositoryRequest<
@@ -122,6 +144,8 @@ export {
 	type FindPageByIdRequest,
 	findPagesByChapterIdSchema,
 	type FindPagesByChapterIdRequest,
+	findPagesByCategoryIdSchema,
+	type FindPagesByCategoryIdRequest,
 	createPageSchema,
 	type CreatePageRequest,
 	updatePageByIdSchema,

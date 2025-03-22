@@ -7,6 +7,7 @@ import type {
 type BookEntity = {
 	id: number;
 	dossierId: number;
+	categoryId: number;
 	designation: string;
 	description: string;
 	price: number;
@@ -22,6 +23,7 @@ const bookDTOMapper = (entity: BookEntity): BookDTO => {
 	return {
 		id: entity.id,
 		dossierId: entity.dossierId,
+		categoryId: entity.categoryId,
 		designation: entity.designation,
 		description: entity.description,
 		price: entity.price,
@@ -54,9 +56,24 @@ const findBooksByDossierIdSchema = z.object({
 
 type FindBooksByDossierIdRequest = z.infer<typeof findBooksByDossierIdSchema>;
 
+const findBooksByCategoryIdSchema = z.object({
+	params: z.object({
+		categoryId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type FindBooksByCategoryIdRequest = z.infer<typeof findBooksByCategoryIdSchema>;
+
 const createBookSchema = z.object({
 	body: z.object({
 		dossierId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+		categoryId: z
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
@@ -97,6 +114,11 @@ interface BookRepository {
 	}: RepositoryRequest<Pick<BookEntity, "dossierId">>): Promise<
 		RepositoryResponse<BookEntity>
 	>;
+	findBooksByCategoryId({
+		query,
+	}: RepositoryRequest<Pick<BookEntity, "categoryId">>): Promise<
+		RepositoryResponse<BookEntity>
+	>;
 	createBook({
 		args,
 	}: RepositoryRequest<
@@ -122,6 +144,8 @@ export {
 	type FindBookByIdRequest,
 	findBooksByDossierIdSchema,
 	type FindBooksByDossierIdRequest,
+	findBooksByCategoryIdSchema,
+	type FindBooksByCategoryIdRequest,
 	createBookSchema,
 	type CreateBookRequest,
 	updateBookByIdSchema,

@@ -7,6 +7,7 @@ import type {
 type ChapterEntity = {
 	id: number;
 	bookId: number;
+	categoryId: number;
 	designation: string;
 	description: string;
 	price: number;
@@ -22,6 +23,7 @@ const chapterDTOMapper = (entity: ChapterEntity): ChapterDTO => {
 	return {
 		id: entity.id,
 		bookId: entity.bookId,
+		categoryId: entity.categoryId,
 		designation: entity.designation,
 		description: entity.description,
 		price: entity.price,
@@ -53,6 +55,19 @@ const findChaptersByBookIdSchema = z.object({
 });
 
 type FindChaptersByBookIdRequest = z.infer<typeof findChaptersByBookIdSchema>;
+
+const findChaptersByCategoryIdSchema = z.object({
+	params: z.object({
+		categoryId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type FindChaptersByCategoryIdRequest = z.infer<
+	typeof findChaptersByCategoryIdSchema
+>;
 
 const createChapterSchema = z.object({
 	body: z.object({
@@ -97,6 +112,11 @@ interface ChapterRepository {
 	}: RepositoryRequest<Pick<ChapterEntity, "bookId">>): Promise<
 		RepositoryResponse<ChapterEntity>
 	>;
+	findChaptersByCategoryId({
+		query,
+	}: RepositoryRequest<Pick<ChapterEntity, "categoryId">>): Promise<
+		RepositoryResponse<ChapterEntity>
+	>;
 	createChapter({
 		args,
 	}: RepositoryRequest<
@@ -122,6 +142,8 @@ export {
 	type FindChapterByIdRequest,
 	findChaptersByBookIdSchema,
 	type FindChaptersByBookIdRequest,
+	findChaptersByCategoryIdSchema,
+	type FindChaptersByCategoryIdRequest,
 	createChapterSchema,
 	type CreateChapterRequest,
 	updateChapterByIdSchema,

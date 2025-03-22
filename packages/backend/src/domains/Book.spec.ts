@@ -7,6 +7,7 @@ import {
 	findBooksByDossierIdSchema,
 	findBookByIdSchema,
 	updateBookByIdSchema,
+	findBooksByCategoryIdSchema,
 } from "./Book";
 
 describe("Book", () => {
@@ -16,6 +17,7 @@ describe("Book", () => {
 		const bookEntity: BookEntity = {
 			id: 1,
 			dossierId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 1,
@@ -28,6 +30,7 @@ describe("Book", () => {
 		const bookDTO: BookDTO = {
 			id: 1,
 			dossierId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 1,
@@ -150,6 +153,57 @@ describe("Book", () => {
 		});
 	});
 
+	describe("findBooksByCategoryIdSchema", () => {
+		const parseSchema = (data: Record<string, unknown>) => {
+			return findBooksByCategoryIdSchema.safeParse(data);
+		};
+
+		it("returns schema parse for valid input", () => {
+			expect(
+				parseSchema({
+					params: {
+						categoryId: "123",
+					},
+				}),
+			).toEqual({
+				data: {
+					params: {
+						categoryId: 123,
+					},
+				},
+				success: true,
+			});
+		});
+
+		it("returns schema invalid categoryId error", () => {
+			expect(
+				parseSchema({
+					params: {
+						categoryId: "A",
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(parseSchema({})).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing categoryId field error", () => {
+			expect(
+				parseSchema({
+					params: {},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+	});
+
 	describe("createBookSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
 			return createBookSchema.safeParse(data);
@@ -160,6 +214,7 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "123",
+						categoryId: "123",
 						designation: "Book Title",
 						description: "This is a book description.",
 						price: 19.99,
@@ -169,6 +224,7 @@ describe("Book", () => {
 				data: {
 					body: {
 						dossierId: 123,
+						categoryId: "123",
 						designation: "Book Title",
 						description: "This is a book description.",
 						price: 19.99,
@@ -183,6 +239,33 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "A",
+						categoryId: "123",
+						designation: "Book Title",
+						description: "This is a book description.",
+						price: 19.99,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(
+				parseSchema({
+					body: {},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema invalid categoryId error", () => {
+			expect(
+				parseSchema({
+					body: {
+						dossierId: "123",
+						categoryId: "A",
 						designation: "Book Title",
 						description: "This is a book description.",
 						price: 19.99,
@@ -208,6 +291,7 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "123",
+						categoryId: "123",
 						designation: "Book Title",
 						description: "This is a book description.",
 						price: "19.99",
@@ -223,6 +307,7 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "123",
+						categoryId: "123",
 						description: "This is a book description.",
 						price: 19.99,
 					},
@@ -237,6 +322,7 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "123",
+						categoryId: "123",
 						designation: "Book Title",
 						price: 19.99,
 					},
@@ -251,6 +337,7 @@ describe("Book", () => {
 				parseSchema({
 					body: {
 						dossierId: "123",
+						categoryId: "123",
 						designation: "Book Title",
 						description: "This is a book description.",
 					},

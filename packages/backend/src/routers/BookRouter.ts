@@ -4,6 +4,7 @@ import { FindBookByIdUseCase } from "../useCases/books/FindBookByIdUseCase";
 import { CreateBookUseCase } from "../useCases/books/CreateBookUseCase";
 import { UpdateBookByIdUseCase } from "../useCases/books/UpdateBookByIdUseCase";
 import { FindBooksByDossierIdUseCase } from "../useCases/books/FindBooksByDossierIdUseCase";
+import { FindBooksByCategoryIdUseCase } from "../useCases/books/FindBooksByCategoryIdUseCase";
 
 const BookRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -22,6 +23,15 @@ const BookRouter = () => {
 			async (request: Request, response: Response) => {
 				const { findBooksByDossierId } = FindBooksByDossierIdUseCase();
 				await findBooksByDossierId(request, response);
+			},
+		);
+
+		router.get(
+			"/category/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findBooksByCategoryId } = FindBooksByCategoryIdUseCase();
+				await findBooksByCategoryId(request, response);
 			},
 		);
 

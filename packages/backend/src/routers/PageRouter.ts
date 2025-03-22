@@ -4,6 +4,7 @@ import { FindPageByIdUseCase } from "../useCases/pages/FindPageByIdUseCase";
 import { CreatePageUseCase } from "../useCases/pages/CreatePageUseCase";
 import { UpdatePageByIdUseCase } from "../useCases/pages/UpdatePageByIdUseCase";
 import { FindPagesByChapterIdUseCase } from "../useCases/pages/FindPagesByChapterIdUseCase";
+import { FindPagesByCategoryIdUseCase } from "../useCases/pages/FindPagesByCategoryIdUseCase";
 
 const PageRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -22,6 +23,15 @@ const PageRouter = () => {
 			async (request: Request, response: Response) => {
 				const { findPagesByChapterId } = FindPagesByChapterIdUseCase();
 				await findPagesByChapterId(request, response);
+			},
+		);
+
+		router.get(
+			"/category/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findPagesByCategoryId } = FindPagesByCategoryIdUseCase();
+				await findPagesByCategoryId(request, response);
 			},
 		);
 

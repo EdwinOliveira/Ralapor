@@ -49,6 +49,30 @@ const ChapterRemoteRepository = (): ChapterRepository => {
 				affectedRows: foundChapters,
 			};
 		},
+		findChaptersByCategoryId: async ({ query }) => {
+			if (query === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			const dbConnection = createConnection();
+			await createChaptersTable(dbConnection);
+
+			const foundChapters = await dbConnection<ChapterEntity>("Chapters").where(
+				"categoryId",
+				query.categoryId,
+			);
+
+			await dbConnection.destroy();
+
+			if (foundChapters.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundChapters.map((foundChapter) => foundChapter.id),
+				affectedRows: foundChapters,
+			};
+		},
 		createChapter: async ({ args }) => {
 			if (args === undefined) {
 				return { affectedIds: [], affectedRows: [] };
