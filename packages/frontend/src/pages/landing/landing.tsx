@@ -13,7 +13,7 @@ export default function Landing() {
 				<div id="wrapper__brand--block">
 					<Brand />
 					<Typography
-						text="Start creating and sharing your own stories"
+						text="Create and share your own stories"
 						segment="sub-brand"
 					/>
 				</div>
