@@ -1,8 +1,11 @@
-import type { Request, Response } from "express";
-import { updateUserTokensByIdSchema } from "../../domains/User";
+import type {
+	UpdateUserTokensByIdRequest,
+	UserEntity,
+} from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { TokenProvider } from "../../providers/TokenProvider";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateUserTokensByIdUseCase = () => {
 	const repository = UserRemoteRepository();
@@ -10,21 +13,20 @@ const UpdateUserTokensByIdUseCase = () => {
 	const tokenProvider = TokenProvider();
 
 	return {
-		updateUserTokensById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateUserTokensByIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateUserTokensById: async ({
+			schemaArgs: {
+				params: { id },
+			},
+		}: UseCaseRequest<UpdateUserTokensByIdRequest>): Promise<
+			UseCaseResponse<
+				Pick<UserEntity, "accessToken" | "refreshToken" | "updatedAt">
+			>
+		> => {
 			const { affectedIds: foundUsersId, affectedRows: foundUsers } =
-				await repository.findUserById({
-					query: { id: schemaArgs.params.id },
-				});
+				await repository.findUserById({ query: { id } });
 
 			if (foundUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const accessToken = tokenProvider.createToken(
@@ -52,21 +54,27 @@ const UpdateUserTokensByIdUseCase = () => {
 				hashProvider.hash(refreshToken),
 			]);
 
-			const { affectedIds: updatedUsersId } = await repository.updateUserById({
-				args: {
-					accessToken: hashedAccessToken,
-					refreshToken: hashedRefreshToken,
-				},
-			});
+			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
+				await repository.updateUserById({
+					args: {
+						accessToken: hashedAccessToken,
+						refreshToken: hashedRefreshToken,
+					},
+				});
 
 			if (updatedUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/users/${updatedUsersId[0]}`)
-				.json({ data: { accessToken, refreshToken } });
+			return {
+				statusCode: 201,
+				headers: { location: `/users/${updatedUsersId[0]}` },
+				args: {
+					accessToken,
+					refreshToken,
+					updatedAt: updatedUsersRow[0].updatedAt,
+				},
+			};
 		},
 	};
 };

@@ -10,36 +10,103 @@ import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { DestroyUserTokensByIdUseCase } from "../useCases/users/DestroyUserTokensByIdUseCase";
 import { RefreshTokenGuard } from "../guards/RefreshTokenGuard";
 
+/**
+ * Schemas
+ */
+import {
+	createUserSchema,
+	destroyUserTokensByIdSchema,
+	findUserByAccessCodeSchema,
+	findUserByIdSchema,
+	updateUserAccessCodeByIdSchema,
+	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
+	updateUserByIdSchema,
+	updateUserTokensByIdSchema,
+} from "../domains/User";
+
 const UserRouter = () => {
 	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findUserByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findUserById } = FindUserByIdUseCase();
-				await findUserById(request, response);
+				const { statusCode, args } = await findUserById({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
 		router.get(
 			"/access-code/:accessCode",
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findUserByAccessCodeSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
-				await findUserByAccessCode(request, response);
+				const { statusCode, args } = await findUserByAccessCode({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
 		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createUserSchema.safeParse({ body: request.body });
+
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
 			const { createUser } = CreateUserUseCase();
-			await createUser(request, response);
+			const { statusCode, headers } = await createUser({ schemaArgs });
+
+			return void response
+				.status(statusCode)
+				.location(headers ? headers.location : "")
+				.json();
 		});
 
 		router.put(
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateUserByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateUserById } = UpdateUserByIdUseCase();
-				await updateUserById(request, response);
+				const { statusCode, headers } = await updateUserById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -47,8 +114,24 @@ const UserRouter = () => {
 			"/access-code/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
-				await updateUserAccessCodeById(request, response);
+				const { statusCode, headers } = await updateUserAccessCodeById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -56,13 +139,29 @@ const UserRouter = () => {
 			"/access-code/:username/:email/:phoneNumber",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
 					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
-				await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber(
-					request,
-					response,
-				);
+				const { statusCode, headers } =
+					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
+						schemaArgs,
+					});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -70,8 +169,27 @@ const UserRouter = () => {
 			"/:id/tokens",
 			RefreshTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateUserTokensByIdSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateUserTokensById } = UpdateUserTokensByIdUseCase();
-				await updateUserTokensById(request, response);
+
+				const { statusCode, args, headers } = await updateUserTokensById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json(args);
 			},
 		);
 
@@ -79,8 +197,24 @@ const UserRouter = () => {
 			"/:id/tokens",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					destroyUserTokensByIdSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { destroyUserTokensById } = DestroyUserTokensByIdUseCase();
-				await destroyUserTokensById(request, response);
+
+				const { statusCode, args } = await destroyUserTokensById({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 

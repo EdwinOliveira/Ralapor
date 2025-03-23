@@ -1,9 +1,9 @@
-import type { Request, Response } from "express";
-import { createUserSchema } from "../../domains/User";
+import type { CreateUserRequest } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import { MailProvider } from "../../providers/MailProvider";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateUserUseCase = () => {
 	const repository = UserRemoteRepository();
@@ -12,25 +12,20 @@ const CreateUserUseCase = () => {
 	const mailProvider = MailProvider();
 
 	return {
-		createUser: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createUserSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createUser: async ({
+			schemaArgs: {
+				body: { username, email, phoneNumber, phoneNumberCode },
+			},
+		}: UseCaseRequest<CreateUserRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundUsersId } =
 				await repository.findUserByUsernameAndEmailAndPhoneNumber({
-					query: {
-						username: schemaArgs.body.username,
-						email: schemaArgs.body.email,
-						phoneNumber: schemaArgs.body.phoneNumber,
-					},
+					query: { username, email, phoneNumber },
 				});
 
 			if (foundUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const accessCode = randomProvider.createAccessCode(12);
@@ -38,28 +33,28 @@ const CreateUserUseCase = () => {
 
 			const { affectedIds: createdUsersId } = await repository.createUser({
 				args: {
-					username: schemaArgs.body.username,
-					email: schemaArgs.body.email,
-					phoneNumber: schemaArgs.body.phoneNumber,
-					phoneNumberCode: schemaArgs.body.phoneNumberCode,
+					username,
+					email,
+					phoneNumber,
+					phoneNumberCode,
 					accessCode: hashedAccessCode,
 				},
 			});
 
 			if (createdUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			await mailProvider.sendMail({
-				toAddress: schemaArgs.body.email,
+				toAddress: email,
 				subject: "Welcome to Ralapor!",
 				text: `Ralapor access code: ${accessCode}`,
 			});
 
-			return response
-				.status(201)
-				.location(`/users/${createdUsersId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/users/${createdUsersId[0]}` },
+			};
 		},
 	};
 };

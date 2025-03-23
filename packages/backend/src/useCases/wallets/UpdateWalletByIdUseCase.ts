@@ -1,44 +1,44 @@
-import type { Request, Response } from "express";
-import { updateWalletByIdSchema } from "../../domains/Wallet";
+import type { UpdateWalletByIdRequest, WalletDTO } from "../../domains/Wallet";
 import { WalletRemoteRepository } from "../../repositories/WalletRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateWalletByIdUseCase = () => {
 	const repository = WalletRemoteRepository();
 
 	return {
-		updateWalletById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateWalletByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateWalletById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { funds, isActive },
+			},
+		}: UseCaseRequest<UpdateWalletByIdRequest>): Promise<
+			UseCaseResponse<Pick<WalletDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundWalletsId } = await repository.findWalletById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (foundWalletsId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateWalletsById } =
+			const { affectedIds: updatedWalletsId, affectedRows: updatedWalletsRow } =
 				await repository.updateWalletById({
-					query: { id: schemaArgs.params.id },
-					args: schemaArgs.body,
+					query: { id },
+					args: { funds, isActive },
 				});
 
-			if (updateWalletsById.length === 0) {
-				return response.status(404).json();
+			if (updatedWalletsId.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/wallets/${updateWalletsById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: {
+					location: `/wallets/${updatedWalletsId[0]}`,
+				},
+				args: { updatedAt: updatedWalletsRow[0].updatedAt },
+			};
 		},
 	};
 };
