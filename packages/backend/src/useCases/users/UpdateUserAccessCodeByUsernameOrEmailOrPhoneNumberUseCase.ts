@@ -1,9 +1,9 @@
-import type { Request, Response } from "express";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import { updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema } from "../../domains/User";
+import type { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest } from "../../domains/User";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import { MailProvider } from "../../providers/MailProvider";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	const repository = UserRemoteRepository();
@@ -12,42 +12,33 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	const mailProvider = MailProvider();
 
 	return {
-		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async (
-			request: Request,
-			response: Response,
-		) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
-					params: request.params,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({
+			schemaArgs: {
+				params: { username, email, phoneNumber },
+			},
+		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRows } =
 				await repository.findUserByUsernameOrEmailOrPhoneNumber({
-					query: {
-						username: schemaArgs.params.username,
-						email: schemaArgs.params.email,
-						phoneNumber: schemaArgs.params.phoneNumber,
-					},
+					query: { username, email, phoneNumber },
 				});
 
 			if (foundUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);
 
-			const { affectedIds: updateUsersId } = await repository.updateUserById({
-				query: { id: foundUsersRows[0].id },
-				args: { accessCode: hashedAccessCode },
-			});
+			const { affectedIds: updateUsersId, affectedRows: updatedUsersRow } =
+				await repository.updateUserById({
+					query: { id: foundUsersRows[0].id },
+					args: { accessCode: hashedAccessCode },
+				});
 
 			if (updateUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			await mailProvider.sendMail({
@@ -56,7 +47,11 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				text: `Ralapor access code: ${accessCode}`,
 			});
 
-			return response.status(201).location(`/users/${updateUsersId[0]}`).json();
+			return {
+				statusCode: 201,
+				headers: { location: `/users/${updateUsersId[0]}` },
+				args: { updatedAt: updatedUsersRow[0].updatedAt },
+			};
 		},
 	};
 };

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	createPageSchema,
 	findPageByIdSchema,
+	findPagesByCategoryIdSchema,
 	findPagesByChapterIdSchema,
 	pageDTOMapper,
 	updatePageByIdSchema,
@@ -16,6 +17,7 @@ describe("Page", () => {
 		const pageEntity: PageEntity = {
 			id: 1,
 			chapterId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 1,
@@ -28,6 +30,7 @@ describe("Page", () => {
 		const pageDTO: PageDTO = {
 			id: 1,
 			chapterId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 1,
@@ -92,6 +95,31 @@ describe("Page", () => {
 		});
 	});
 
+	describe("findPagesByCategoryIdSchema", () => {
+		const parseSchema = (data: Record<string, unknown>) => {
+			return findPagesByCategoryIdSchema.safeParse(data);
+		};
+
+		it("returns schema parse", () => {
+			expect(parseSchema({ params: { categoryId: "1" } })).toEqual({
+				data: { params: { categoryId: 1 } },
+				success: true,
+			});
+		});
+
+		it("returns schema invalid string error", () => {
+			expect(parseSchema({ params: { categoryId: 1 } })).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema string parse error", () => {
+			expect(parseSchema({ params: { categoryId: "A" } })).containSubset({
+				success: false,
+			});
+		});
+	});
+
 	describe("createPageSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
 			return createPageSchema.safeParse(data);
@@ -102,6 +130,7 @@ describe("Page", () => {
 				parseSchema({
 					body: {
 						chapterId: "123",
+						categoryId: "123",
 						designation: "Chapter 1",
 						description: "This is the first chapter.",
 						price: 19.99,
@@ -111,6 +140,7 @@ describe("Page", () => {
 				data: {
 					body: {
 						chapterId: 123,
+						categoryId: "123",
 						designation: "Chapter 1",
 						description: "This is the first chapter.",
 						price: 19.99,
@@ -125,6 +155,23 @@ describe("Page", () => {
 				parseSchema({
 					body: {
 						chapterId: "A",
+						categoryId: "123",
+						designation: "Chapter 1",
+						description: "This is the first chapter.",
+						price: 19.99,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema invalid categoryId error", () => {
+			expect(
+				parseSchema({
+					body: {
+						chapterId: "123",
+						categoryId: "A",
 						designation: "Chapter 1",
 						description: "This is the first chapter.",
 						price: 19.99,
@@ -139,6 +186,7 @@ describe("Page", () => {
 			expect(
 				parseSchema({
 					body: {
+						categoryId: "123",
 						designation: "Chapter 1",
 						description: "This is the first chapter.",
 						price: 19.99,
@@ -154,6 +202,7 @@ describe("Page", () => {
 				parseSchema({
 					body: {
 						chapterId: "123",
+						categoryId: "123",
 						designation: "Chapter 1",
 						description: "This is the first chapter.",
 						price: "19.99",

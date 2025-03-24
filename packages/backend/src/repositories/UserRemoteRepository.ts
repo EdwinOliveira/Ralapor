@@ -137,7 +137,10 @@ const UserRemoteRepository = (): UserRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [updatedUser.id], affectedRows: [] };
+			return {
+				affectedIds: [updatedUser.id],
+				affectedRows: [{ updatedAt: updatedUser.updatedAt }],
+			};
 		},
 	};
 };

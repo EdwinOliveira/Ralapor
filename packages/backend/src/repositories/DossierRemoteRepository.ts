@@ -49,6 +49,30 @@ const DossierRemoteRepository = (): DossierRepository => {
 				affectedRows: foundDossiers,
 			};
 		},
+		findDossiersByCategoryId: async ({ query }) => {
+			if (query === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			const dbConnection = createConnection();
+			await createDossiersTable(dbConnection);
+
+			const foundDossiers = await dbConnection<DossierEntity>("Dossiers").where(
+				"categoryId",
+				query.categoryId,
+			);
+
+			await dbConnection.destroy();
+
+			if (foundDossiers.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundDossiers.map((foundDossier) => foundDossier.id),
+				affectedRows: foundDossiers,
+			};
+		},
 		createDossier: async ({ args }) => {
 			if (args === undefined) {
 				return { affectedIds: [], affectedRows: [] };

@@ -4,6 +4,7 @@ import { FindSubscriptionByIdUseCase } from "../useCases/subscriptions/FindSubsc
 import { CreateSubscriptionUseCase } from "../useCases/subscriptions/CreateSubscriptionUseCase";
 import { UpdateSubscriptionByIdUseCase } from "../useCases/subscriptions/UpdateSubscriptionByIdUseCase";
 import { FindSubscriptionsByWalletIdUseCase } from "../useCases/subscriptions/FindSubscriptionsByWalletIdUseCase";
+import { findSubscriptionByIdSchema } from "../domains/Subscription";
 
 const SubscriptionRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -11,8 +12,19 @@ const SubscriptionRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findSubscriptionByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findSubscriptionById } = FindSubscriptionByIdUseCase();
-				await findSubscriptionById(request, response);
+				const { statusCode, args } = await findSubscriptionById({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 

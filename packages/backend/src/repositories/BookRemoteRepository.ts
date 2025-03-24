@@ -49,6 +49,30 @@ const BookRemoteRepository = (): BookRepository => {
 				affectedRows: foundBooks,
 			};
 		},
+		findBooksByCategoryId: async ({ query }) => {
+			if (query === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			const dbConnection = createConnection();
+			await createBooksTable(dbConnection);
+
+			const foundBooks = await dbConnection<BookEntity>("Books").where(
+				"categoryId",
+				query.categoryId,
+			);
+
+			await dbConnection.destroy();
+
+			if (foundBooks.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundBooks.map((foundBook) => foundBook.id),
+				affectedRows: foundBooks,
+			};
+		},
 		createBook: async ({ args }) => {
 			if (args === undefined) {
 				return { affectedIds: [], affectedRows: [] };

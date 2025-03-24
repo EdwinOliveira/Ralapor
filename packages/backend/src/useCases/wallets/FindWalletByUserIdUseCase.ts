@@ -1,33 +1,34 @@
-import type { Request, Response } from "express";
 import {
+	type WalletDTO,
 	walletDTOMapper,
-	findWalletByUserIdSchema,
+	type FindWalletByUserIdRequest,
 } from "../../domains/Wallet";
 import { WalletRemoteRepository } from "../../repositories/WalletRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindWalletByUserIdUseCase = () => {
 	const repository = WalletRemoteRepository();
 
 	return {
-		findWalletByUserId: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findWalletByUserIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findWalletByUserId: async ({
+			schemaArgs: {
+				params: { userId },
+			},
+		}: UseCaseRequest<FindWalletByUserIdRequest>): Promise<
+			UseCaseResponse<WalletDTO>
+		> => {
 			const { affectedRows } = await repository.findWalletByUserId({
-				query: { userId: schemaArgs.params.userId },
+				query: { userId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) => walletDTOMapper(affectedRow)),
-			});
+			return {
+				statusCode: 200,
+				args: walletDTOMapper(affectedRows[0]),
+			};
 		},
 	};
 };

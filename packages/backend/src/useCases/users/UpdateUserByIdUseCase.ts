@@ -1,40 +1,42 @@
-import type { Request, Response } from "express";
+import type { UpdateUserByIdRequest } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import { updateUserByIdSchema } from "../../domains/User";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateUserByIdUseCase = () => {
 	const repository = UserRemoteRepository();
 
 	return {
-		updateUserById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateUserByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateUserById: async ({
+			schemaArgs: {
+				params: { id },
+				body: schemaArgsBody,
+			},
+		}: UseCaseRequest<UpdateUserByIdRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundUsersId } = await repository.findUserById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (foundUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateUsersId } = await repository.updateUserById({
-				query: { id: schemaArgs.params.id },
-				args: schemaArgs.body,
-			});
+			const { affectedIds: updateUsersId, affectedRows: updatedUsersRow } =
+				await repository.updateUserById({
+					query: { id },
+					args: schemaArgsBody,
+				});
 
 			if (updateUsersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(201).location(`/users/${updateUsersId[0]}`).json();
+			return {
+				statusCode: 201,
+				headers: { location: `/users/${updateUsersId[0]}` },
+				args: { updatedAt: updatedUsersRow[0].updatedAt },
+			};
 		},
 	};
 };

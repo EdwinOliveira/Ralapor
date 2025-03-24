@@ -4,6 +4,7 @@ import { FindDossierByIdUseCase } from "../useCases/dossiers/FindDossierByIdUseC
 import { CreateDossierUseCase } from "../useCases/dossiers/CreateDossierUseCase";
 import { UpdateDossierByIdUseCase } from "../useCases/dossiers/UpdateDossierByIdUseCase";
 import { FindDossiersByUserIdUseCase } from "../useCases/dossiers/FindDossiersByUserIdUseCase";
+import { FindDossiersByCategoryIdUseCase } from "../useCases/dossiers/FindDossiersByCategoryIdUseCase";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -22,6 +23,15 @@ const DossierRouter = () => {
 			async (request: Request, response: Response) => {
 				const { findDossiersByUserId } = FindDossiersByUserIdUseCase();
 				await findDossiersByUserId(request, response);
+			},
+		);
+
+		router.get(
+			"/category/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findDossiersByCategoryId } = FindDossiersByCategoryIdUseCase();
+				await findDossiersByCategoryId(request, response);
 			},
 		);
 

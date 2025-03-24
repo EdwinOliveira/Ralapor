@@ -72,7 +72,7 @@ const updateWalletByIdSchema = z.object({
 	}),
 });
 
-type UpdateWalletRequest = z.infer<typeof updateWalletByIdSchema>;
+type UpdateWalletByIdRequest = z.infer<typeof updateWalletByIdSchema>;
 
 interface WalletRepository {
 	findWalletById({
@@ -95,7 +95,7 @@ interface WalletRepository {
 	}: RepositoryRequest<
 		Pick<WalletEntity, "id">,
 		Partial<Pick<WalletEntity, "funds" | "isActive">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<WalletEntity, "updatedAt">>>;
 }
 
 export {
@@ -109,6 +109,6 @@ export {
 	type FindWalletByIdRequest,
 	type FindWalletByUserIdRequest,
 	type CreateWalletRequest,
-	type UpdateWalletRequest,
+	type UpdateWalletByIdRequest,
 	type WalletRepository,
 };

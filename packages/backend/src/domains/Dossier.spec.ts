@@ -5,6 +5,7 @@ import {
 	dossierDTOMapper,
 	type DossierEntity,
 	findDossierByIdSchema,
+	findDossiersByCategoryIdSchema,
 	findDossiersByUserIdSchema,
 	updateDossierByIdSchema,
 } from "./Dossier";
@@ -16,6 +17,7 @@ describe("Dossier", () => {
 		const dossierEntity: DossierEntity = {
 			id: 1,
 			userId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 19.99,
@@ -28,6 +30,7 @@ describe("Dossier", () => {
 		const dossierDTO: DossierDTO = {
 			id: 1,
 			userId: 101,
+			categoryId: 101,
 			designation: "dummyDesignation",
 			description: "dummyDescription",
 			price: 19.99,
@@ -156,6 +159,57 @@ describe("Dossier", () => {
 		});
 	});
 
+	describe("findDossiersByCategoryIdSchema", () => {
+		const parseSchema = (data: Record<string, unknown>) => {
+			return findDossiersByCategoryIdSchema.safeParse(data);
+		};
+
+		it("returns schema parse for valid input", () => {
+			expect(
+				parseSchema({
+					params: {
+						categoryId: "123",
+					},
+				}),
+			).toEqual({
+				data: {
+					params: {
+						categoryId: 123,
+					},
+				},
+				success: true,
+			});
+		});
+
+		it("returns schema invalid categoryId error", () => {
+			expect(
+				parseSchema({
+					params: {
+						categoryId: "A",
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(parseSchema({})).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing userId field error", () => {
+			expect(
+				parseSchema({
+					params: {},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+	});
+
 	describe("createDossierSchema", () => {
 		const parseSchema = (data: Record<string, unknown>) => {
 			return createDossierSchema.safeParse(data);
@@ -166,6 +220,7 @@ describe("Dossier", () => {
 				parseSchema({
 					body: {
 						userId: "123",
+						categoryId: "123",
 						designation: "Dossier Title",
 						description: "This is a dossier description.",
 						price: 29.99,
@@ -175,6 +230,7 @@ describe("Dossier", () => {
 				data: {
 					body: {
 						userId: 123,
+						categoryId: "123",
 						designation: "Dossier Title",
 						description: "This is a dossier description.",
 						price: 29.99,
@@ -199,12 +255,26 @@ describe("Dossier", () => {
 			});
 		});
 
-		it("returns schema missing required fields error", () => {
+		it("returns schema invalid categoryId error", () => {
 			expect(
 				parseSchema({
 					body: {
-						// Missing userId, designation, description, and price fields
+						userId: "123",
+						categoryId: "A",
+						designation: "Dossier Title",
+						description: "This is a dossier description.",
+						price: 29.99,
 					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(
+				parseSchema({
+					body: {},
 				}),
 			).containSubset({
 				success: false,
@@ -216,6 +286,7 @@ describe("Dossier", () => {
 				parseSchema({
 					body: {
 						userId: "123",
+						categoryId: "123",
 						designation: "Dossier Title",
 						description: "This is a dossier description.",
 						price: "29.99",
@@ -231,6 +302,7 @@ describe("Dossier", () => {
 				parseSchema({
 					body: {
 						userId: "123",
+						categoryId: "123",
 						description: "This is a dossier description.",
 						price: 29.99,
 					},
@@ -245,6 +317,7 @@ describe("Dossier", () => {
 				parseSchema({
 					body: {
 						userId: "123",
+						categoryId: "123",
 						designation: "Dossier Title",
 						price: 29.99,
 					},
@@ -259,6 +332,7 @@ describe("Dossier", () => {
 				parseSchema({
 					body: {
 						userId: "123",
+						categoryId: "123",
 						designation: "Dossier Title",
 						description: "This is a dossier description.",
 					},

@@ -1,40 +1,39 @@
-import type { Request, Response } from "express";
-import { createWalletSchema } from "../../domains/Wallet";
+import type { CreateWalletRequest } from "../../domains/Wallet";
 import { WalletRemoteRepository } from "../../repositories/WalletRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateWalletUseCase = () => {
 	const repository = WalletRemoteRepository();
 
 	return {
-		createWallet: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createWalletSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createWallet: async ({
+			schemaArgs: {
+				body: { userId },
+			},
+		}: UseCaseRequest<CreateWalletRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundWalletsId } =
 				await repository.findWalletByUserId({
-					query: { userId: schemaArgs.body.userId },
+					query: { userId },
 				});
 
 			if (foundWalletsId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const { affectedIds: createdWalletsId } = await repository.createWallet({
-				args: schemaArgs.body,
+				args: { userId },
 			});
 
 			if (createdWalletsId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/subscriptions/${createdWalletsId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/subscriptions/${createdWalletsId[0]}` },
+			};
 		},
 	};
 };

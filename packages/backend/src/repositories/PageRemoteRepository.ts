@@ -49,6 +49,30 @@ const PageRemoteRepository = (): PageRepository => {
 				affectedRows: foundPages,
 			};
 		},
+		findPagesByCategoryId: async ({ query }) => {
+			if (query === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			const dbConnection = createConnection();
+			await createPagesTable(dbConnection);
+
+			const foundPages = await dbConnection<PageEntity>("Pages").where(
+				"categoryId",
+				query.categoryId,
+			);
+
+			await dbConnection.destroy();
+
+			if (foundPages.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundPages.map((foundPage) => foundPage.id),
+				affectedRows: foundPages,
+			};
+		},
 		createPage: async ({ args }) => {
 			if (args === undefined) {
 				return { affectedIds: [], affectedRows: [] };

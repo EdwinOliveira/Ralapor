@@ -4,6 +4,7 @@ import { FindChapterByIdUseCase } from "../useCases/chapters/FindChapterByIdUseC
 import { CreateChapterUseCase } from "../useCases/chapters/CreateChapterUseCase";
 import { UpdateChapterByIdUseCase } from "../useCases/chapters/UpdateChapterByIdUseCase";
 import { FindChaptersByBookIdUseCase } from "../useCases/chapters/FindChaptersByBookIdUseCase";
+import { FindChaptersByCategoryIdUseCase } from "../useCases/chapters/FindChaptersByCategoryIdUseCase";
 
 const ChapterRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -22,6 +23,15 @@ const ChapterRouter = () => {
 			async (request: Request, response: Response) => {
 				const { findChaptersByBookId } = FindChaptersByBookIdUseCase();
 				await findChaptersByBookId(request, response);
+			},
+		);
+
+		router.get(
+			"/category/:id",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { findChaptersByCategoryId } = FindChaptersByCategoryIdUseCase();
+				await findChaptersByCategoryId(request, response);
 			},
 		);
 

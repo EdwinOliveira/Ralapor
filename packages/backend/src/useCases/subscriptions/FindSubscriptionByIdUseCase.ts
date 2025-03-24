@@ -1,33 +1,31 @@
-import type { Request, Response } from "express";
 import {
 	subscriptionDTOMapper,
-	findSubscriptionByIdSchema,
+	type FindSubscriptionByIdRequest,
+	type SubscriptionDTO,
 } from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindSubscriptionByIdUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
 
 	return {
-		findSubscriptionById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findSubscriptionByIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findSubscriptionById: async ({
+			schemaArgs: {
+				params: { id },
+			},
+		}: UseCaseRequest<FindSubscriptionByIdRequest>): Promise<
+			UseCaseResponse<SubscriptionDTO>
+		> => {
 			const { affectedRows } = await repository.findSubscriptionById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(200)
-				.json({ data: subscriptionDTOMapper(affectedRows[0]) });
+			return { statusCode: 200, args: subscriptionDTOMapper(affectedRows[0]) };
 		},
 	};
 };

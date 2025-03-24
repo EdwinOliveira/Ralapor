@@ -4,6 +4,12 @@ import { FindWalletByIdUseCase } from "../useCases/wallets/FindWalletByIdUseCase
 import { CreateWalletUseCase } from "../useCases/wallets/CreateWalletUseCase";
 import { UpdateWalletByIdUseCase } from "../useCases/wallets/UpdateWalletByIdUseCase";
 import { FindWalletByUserIdUseCase } from "../useCases/wallets/FindWalletByUserIdUseCase";
+import {
+	createWalletSchema,
+	findWalletByIdSchema,
+	findWalletByUserIdSchema,
+	updateWalletByIdSchema,
+} from "../domains/Wallet";
 
 const WalletRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -11,8 +17,19 @@ const WalletRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findWalletByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findWalletById } = FindWalletByIdUseCase();
-				await findWalletById(request, response);
+				const { statusCode, args } = await findWalletById({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -20,8 +37,19 @@ const WalletRouter = () => {
 			"/user/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findWalletByUserIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findWalletByUserId } = FindWalletByUserIdUseCase();
-				await findWalletByUserId(request, response);
+				const { statusCode, args } = await findWalletByUserId({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -29,8 +57,24 @@ const WalletRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createWalletSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { createWallet } = CreateWalletUseCase();
-				await createWallet(request, response);
+				const { statusCode, headers } = await createWallet({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -38,8 +82,24 @@ const WalletRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateWalletByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateWalletById } = UpdateWalletByIdUseCase();
-				await updateWalletById(request, response);
+				const { statusCode, headers, args } = await updateWalletById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json(args);
 			},
 		);
 
