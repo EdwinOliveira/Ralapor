@@ -1,4 +1,8 @@
 import { z } from "zod";
+import type {
+	RepositoryRequest,
+	RepositoryResponse,
+} from "../types/Repository";
 
 type CategoryEntity = {
 	id: number;
@@ -16,6 +20,9 @@ const categoryDTOMapper = (entity: CategoryEntity): CategoryDTO => {
 		updatedAt: entity.updatedAt,
 	};
 };
+
+const findCategoriesSchema = z.object({});
+type FindCategoriesRequest = z.infer<typeof findCategoriesSchema>;
 
 const findCategoryByIdSchema = z.object({
 	params: z.object({
@@ -47,14 +54,48 @@ const updateCategoryByIdSchema = z.object({
 });
 type UpdateCategoryByIdRequest = z.infer<typeof updateCategoryByIdSchema>;
 
+interface CategoryRepository {
+	findCategories(): Promise<RepositoryResponse<CategoryEntity>>;
+	findCategoryById({
+		query,
+	}: RepositoryRequest<Pick<CategoryEntity, "id">>): Promise<
+		RepositoryResponse<CategoryEntity>
+	>;
+	findCategoryByDesignation({
+		query,
+	}: RepositoryRequest<Pick<CategoryEntity, "designation">>): Promise<
+		RepositoryResponse<CategoryEntity>
+	>;
+	createCategory({
+		args,
+	}: RepositoryRequest<
+		unknown,
+		Omit<
+			CategoryEntity,
+			"id" | "isVisible" | "isActive" | "createdAt" | "updatedAt"
+		>
+	>): Promise<RepositoryResponse<unknown>>;
+	updateCategoryById({
+		args,
+	}: RepositoryRequest<
+		Pick<CategoryEntity, "id">,
+		Partial<
+			Omit<CategoryEntity, "id" | "dossierId" | "createdAt" | "updatedAt">
+		>
+	>): Promise<RepositoryResponse<Pick<CategoryDTO, "updatedAt">>>;
+}
+
 export {
 	type CategoryEntity,
 	type CategoryDTO,
 	categoryDTOMapper,
+	findCategoriesSchema,
+	type FindCategoriesRequest,
 	findCategoryByIdSchema,
 	type FindCategoryByIdRequest,
 	createCategorySchema,
 	type CreateCategoryRequest,
 	updateCategoryByIdSchema,
 	type UpdateCategoryByIdRequest,
+	type CategoryRepository,
 };

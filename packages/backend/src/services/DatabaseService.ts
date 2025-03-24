@@ -142,6 +142,18 @@ const DatabaseService = () => {
 		}
 	};
 
+	const createCategoryTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Categories");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Categories", (table) => {
+				table.increments("id").primary();
+				table.string("designation");
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
 	return {
 		createConnection,
 		createUsersTable,
@@ -152,6 +164,7 @@ const DatabaseService = () => {
 		createPagesTable,
 		createSubscriptionTable,
 		createWalletTable,
+		createCategoryTable,
 	};
 };
 
