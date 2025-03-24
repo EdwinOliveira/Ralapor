@@ -22,19 +22,19 @@ const UpdatePageByIdUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updatedPagesById, affectedRows: updatedPagesRow } =
+			const { affectedIds: updatedPagesId, affectedRows: updatedPagesRow } =
 				await repository.updatePageById({
 					query: { id },
 					args: { designation, description, price, isVisible, isActive },
 				});
 
-			if (updatedPagesById.length === 0) {
+			if (updatedPagesId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 201,
-				headers: { location: `/pages/${updatedPagesById[0]}` },
+				headers: { location: `/pages/${updatedPagesId[0]}` },
 				args: { updatedAt: updatedPagesRow[0].updatedAt },
 			};
 		},

@@ -27,7 +27,7 @@ const UpdateChapterByIdUseCase = () => {
 
 			const {
 				affectedIds: updatedChaptersId,
-				affectedRows: updatedChapterRows,
+				affectedRows: updatedChaptersRow,
 			} = await repository.updateChapterById({
 				query: { id },
 				args: { designation, description, price, isVisible, isActive },
@@ -40,7 +40,7 @@ const UpdateChapterByIdUseCase = () => {
 			return {
 				statusCode: 201,
 				headers: { location: `/chapters/${updatedChaptersId[0]}` },
-				args: { updatedAt: updatedChapterRows[0].updatedAt },
+				args: { updatedAt: updatedChaptersRow[0].updatedAt },
 			};
 		},
 	};

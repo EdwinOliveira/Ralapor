@@ -17,15 +17,19 @@ const FindSubscriptionByIdUseCase = () => {
 		}: UseCaseRequest<FindSubscriptionByIdRequest>): Promise<
 			UseCaseResponse<SubscriptionDTO>
 		> => {
-			const { affectedRows } = await repository.findSubscriptionById({
-				query: { id },
-			});
+			const { affectedRows: foundSubscriptionsRow } =
+				await repository.findSubscriptionById({
+					query: { id },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundSubscriptionsRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			return { statusCode: 200, args: subscriptionDTOMapper(affectedRows[0]) };
+			return {
+				statusCode: 200,
+				args: subscriptionDTOMapper(foundSubscriptionsRow[0]),
+			};
 		},
 	};
 };

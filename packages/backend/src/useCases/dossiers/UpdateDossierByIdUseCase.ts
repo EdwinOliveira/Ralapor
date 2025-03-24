@@ -26,20 +26,20 @@ const UpdateDossierByIdUseCase = () => {
 			}
 
 			const {
-				affectedIds: updatedDossiersById,
+				affectedIds: updatedDossiersId,
 				affectedRows: updatedDossiersRow,
 			} = await repository.updateDossierById({
 				query: { id },
 				args: { designation, description, price, isVisible, isActive },
 			});
 
-			if (updatedDossiersById.length === 0) {
+			if (updatedDossiersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 201,
-				headers: { location: `/dossiers/${updatedDossiersById[0]}` },
+				headers: { location: `/dossiers/${updatedDossiersId[0]}` },
 				args: { updatedAt: updatedDossiersRow[0].updatedAt },
 			};
 		},

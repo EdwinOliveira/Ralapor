@@ -17,17 +17,20 @@ const FindChaptersByCategoryIdUseCase = () => {
 		}: UseCaseRequest<FindChaptersByCategoryIdRequest>): Promise<
 			UseCaseResponse<Array<ChapterDTO>>
 		> => {
-			const { affectedRows } = await repository.findChaptersByCategoryId({
-				query: { categoryId },
-			});
+			const { affectedRows: foundChaptersId } =
+				await repository.findChaptersByCategoryId({
+					query: { categoryId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundChaptersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: affectedRows.map((affectedRow) => chapterDTOMapper(affectedRow)),
+				args: foundChaptersId.map((foundChapterId) =>
+					chapterDTOMapper(foundChapterId),
+				),
 			};
 		},
 	};

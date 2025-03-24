@@ -22,19 +22,19 @@ const UpdateUserByIdUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateUsersId, affectedRows: updatedUsersRow } =
+			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
 				await repository.updateUserById({
 					query: { id },
 					args: schemaArgsBody,
 				});
 
-			if (updateUsersId.length === 0) {
+			if (updatedUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updateUsersId[0]}` },
+				headers: { location: `/users/${updatedUsersId[0]}` },
 				args: { updatedAt: updatedUsersRow[0].updatedAt },
 			};
 		},

@@ -17,15 +17,15 @@ const FindPageByIdUseCase = () => {
 		}: UseCaseRequest<FindPageByIdRequest>): Promise<
 			UseCaseResponse<PageDTO>
 		> => {
-			const { affectedRows } = await repository.findPageById({
+			const { affectedRows: foundPagesRow } = await repository.findPageById({
 				query: { id },
 			});
 
-			if (affectedRows.length === 0) {
+			if (foundPagesRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			return { statusCode: 200, args: pageDTOMapper(affectedRows[0]) };
+			return { statusCode: 200, args: pageDTOMapper(foundPagesRow[0]) };
 		},
 	};
 };

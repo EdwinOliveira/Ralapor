@@ -17,17 +17,20 @@ const FindDossiersByCategoryIdUseCase = () => {
 		}: UseCaseRequest<FindDossiersByCategoryIdRequest>): Promise<
 			UseCaseResponse<Array<DossierDTO>>
 		> => {
-			const { affectedRows } = await repository.findDossiersByCategoryId({
-				query: { categoryId },
-			});
+			const { affectedRows: foundDossiersId } =
+				await repository.findDossiersByCategoryId({
+					query: { categoryId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundDossiersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: affectedRows.map((affectedRow) => dossierDTOMapper(affectedRow)),
+				args: foundDossiersId.map((foundDossierId) =>
+					dossierDTOMapper(foundDossierId),
+				),
 			};
 		},
 	};

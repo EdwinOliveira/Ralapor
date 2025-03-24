@@ -21,50 +21,46 @@ const FindUserByAccessCodeUseCase = () => {
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { affectedRows } = await repository.findUsers();
+			const { affectedRows: foundUsersRow } = await repository.findUsers();
 
-			for (const affectedRow of affectedRows) {
+			for (const foundUserRow of foundUsersRow) {
 				const isSameAccessCode = await hashProvider.compare(
 					accessCode,
-					affectedRow.accessCode,
+					foundUserRow.accessCode,
 				);
 
 				if (isSameAccessCode === true) {
-					const accessToken = tokenProvider.createToken(
-						{
-							userId: affectedRow.id,
-							username: affectedRow.username,
-							email: affectedRow.email,
-							phoneNumber: affectedRow.phoneNumber,
-						},
-						"1h",
-					);
+					const tokenPayload = {
+						userId: foundUserRow.id,
+						username: foundUserRow.username,
+						email: foundUserRow.email,
+						phoneNumber: foundUserRow.phoneNumber,
+					};
 
-					const refreshToken = tokenProvider.createToken(
-						{
-							userId: affectedRow.id,
-							username: affectedRow.username,
-							email: affectedRow.email,
-							phoneNumber: affectedRow.phoneNumber,
-						},
-						"1d",
-					);
+					const accessToken = tokenProvider.createToken(tokenPayload, "1h");
+					const refreshToken = tokenProvider.createToken(tokenPayload, "1d");
 
 					const [hashedAccessToken, hashedRefreshToken] = await Promise.all([
 						hashProvider.hash(accessToken),
 						hashProvider.hash(refreshToken),
 					]);
 
-					await repository.updateUserById({
-						args: {
-							accessToken: hashedAccessToken,
-							refreshToken: hashedRefreshToken,
-						},
-					});
+					const { affectedRows: updatedUsersRow } =
+						await repository.updateUserById({
+							args: {
+								accessToken: hashedAccessToken,
+								refreshToken: hashedRefreshToken,
+							},
+						});
 
 					return {
 						statusCode: 200,
-						args: { ...userDTOMapper(affectedRow), accessToken, refreshToken },
+						args: {
+							...userDTOMapper(foundUserRow),
+							accessToken,
+							refreshToken,
+							updatedAt: updatedUsersRow[0].updatedAt,
+						},
 					};
 				}
 			}

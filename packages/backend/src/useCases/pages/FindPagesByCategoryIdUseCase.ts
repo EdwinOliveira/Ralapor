@@ -17,17 +17,18 @@ const FindPagesByCategoryIdUseCase = () => {
 		}: UseCaseRequest<FindPagesByCategoryIdRequest>): Promise<
 			UseCaseResponse<Array<PageDTO>>
 		> => {
-			const { affectedRows } = await repository.findPagesByCategoryId({
-				query: { categoryId },
-			});
+			const { affectedRows: foundPagesRow } =
+				await repository.findPagesByCategoryId({
+					query: { categoryId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundPagesRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: affectedRows.map((affectedRow) => pageDTOMapper(affectedRow)),
+				args: foundPagesRow.map((foundPageRow) => pageDTOMapper(foundPageRow)),
 			};
 		},
 	};

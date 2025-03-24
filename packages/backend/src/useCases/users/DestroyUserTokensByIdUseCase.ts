@@ -21,18 +21,19 @@ const DestroyUserTokensByIdUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const { affectedIds, affectedRows } = await repository.updateUserById({
-				query: { id },
-				args: { accessToken: undefined, refreshToken: undefined },
-			});
+			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
+				await repository.updateUserById({
+					query: { id },
+					args: { accessToken: undefined, refreshToken: undefined },
+				});
 
-			if (affectedIds.length === 0) {
+			if (updatedUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 204,
-				args: { updatedAt: affectedRows[0].updatedAt },
+				args: { updatedAt: updatedUsersRow[0].updatedAt },
 			};
 		},
 	};

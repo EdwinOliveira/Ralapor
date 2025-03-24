@@ -17,15 +17,18 @@ const FindWalletByIdUseCase = () => {
 		}: UseCaseRequest<FindWalletByIdRequest>): Promise<
 			UseCaseResponse<WalletDTO>
 		> => {
-			const { affectedRows } = await repository.findWalletById({
+			const { affectedRows: foundWalletsId } = await repository.findWalletById({
 				query: { id },
 			});
 
-			if (affectedRows.length === 0) {
+			if (foundWalletsId.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			return { statusCode: 200, args: walletDTOMapper(affectedRows[0]) };
+			return {
+				statusCode: 200,
+				args: walletDTOMapper(foundWalletsId[0]),
+			};
 		},
 	};
 };

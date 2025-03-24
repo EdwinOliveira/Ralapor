@@ -19,7 +19,7 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
 			UseCaseResponse<unknown>
 		> => {
-			const { affectedIds: foundUsersId, affectedRows: foundUsersRows } =
+			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
 				await repository.findUserByUsernameOrEmailOrPhoneNumber({
 					query: { username, email, phoneNumber },
 				});
@@ -31,25 +31,25 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);
 
-			const { affectedIds: updateUsersId, affectedRows: updatedUsersRow } =
+			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
 				await repository.updateUserById({
-					query: { id: foundUsersRows[0].id },
+					query: { id: foundUsersRow[0].id },
 					args: { accessCode: hashedAccessCode },
 				});
 
-			if (updateUsersId.length === 0) {
+			if (updatedUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			await mailProvider.sendMail({
-				toAddress: foundUsersRows[0].email,
+				toAddress: foundUsersRow[0].email,
 				subject: "Regain access to Ralapor!",
 				text: `Ralapor access code: ${accessCode}`,
 			});
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updateUsersId[0]}` },
+				headers: { location: `/users/${updatedUsersId[0]}` },
 				args: { updatedAt: updatedUsersRow[0].updatedAt },
 			};
 		},

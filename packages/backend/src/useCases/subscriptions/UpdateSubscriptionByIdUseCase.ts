@@ -27,20 +27,20 @@ const UpdateSubscriptionByIdUseCase = () => {
 			}
 
 			const {
-				affectedIds: updatedSubscriptionsById,
+				affectedIds: updatedSubscriptionsId,
 				affectedRows: updatedSubscriptionsRow,
 			} = await repository.updateSubscriptionById({
 				query: { id },
 				args: { isActive },
 			});
 
-			if (updatedSubscriptionsById.length === 0) {
+			if (updatedSubscriptionsId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 201,
-				headers: { location: `/subscriptions/${updatedSubscriptionsById[0]}` },
+				headers: { location: `/subscriptions/${updatedSubscriptionsId[0]}` },
 				args: { updatedAt: updatedSubscriptionsRow[0].updatedAt },
 			};
 		},

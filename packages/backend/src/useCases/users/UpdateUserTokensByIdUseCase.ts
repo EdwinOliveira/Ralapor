@@ -22,32 +22,22 @@ const UpdateUserTokensByIdUseCase = () => {
 				Pick<UserEntity, "accessToken" | "refreshToken" | "updatedAt">
 			>
 		> => {
-			const { affectedIds: foundUsersId, affectedRows: foundUsers } =
+			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
 				await repository.findUserById({ query: { id } });
 
 			if (foundUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			const accessToken = tokenProvider.createToken(
-				{
-					userId: foundUsers[0].id,
-					username: foundUsers[0].username,
-					email: foundUsers[0].email,
-					phoneNumber: foundUsers[0].phoneNumber,
-				},
-				"1h",
-			);
+			const tokenPayload = {
+				userId: foundUsersRow[0].id,
+				username: foundUsersRow[0].username,
+				email: foundUsersRow[0].email,
+				phoneNumber: foundUsersRow[0].phoneNumber,
+			};
 
-			const refreshToken = tokenProvider.createToken(
-				{
-					userId: foundUsers[0].id,
-					username: foundUsers[0].username,
-					email: foundUsers[0].email,
-					phoneNumber: foundUsers[0].phoneNumber,
-				},
-				"1d",
-			);
+			const accessToken = tokenProvider.createToken(tokenPayload, "1h");
+			const refreshToken = tokenProvider.createToken(tokenPayload, "1d");
 
 			const [hashedAccessToken, hashedRefreshToken] = await Promise.all([
 				hashProvider.hash(accessToken),

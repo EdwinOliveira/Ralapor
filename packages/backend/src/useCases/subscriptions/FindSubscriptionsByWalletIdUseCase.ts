@@ -17,18 +17,19 @@ const FindSubscriptionsByWalletIdUseCase = () => {
 		}: UseCaseRequest<FindSubscriptionsByWalletIdRequest>): Promise<
 			UseCaseResponse<Array<SubscriptionDTO>>
 		> => {
-			const { affectedRows } = await repository.findSubscriptionsByWalletId({
-				query: { walletId },
-			});
+			const { affectedRows: foundSubscriptionsRow } =
+				await repository.findSubscriptionsByWalletId({
+					query: { walletId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundSubscriptionsRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: affectedRows.map((affectedRow) =>
-					subscriptionDTOMapper(affectedRow),
+				args: foundSubscriptionsRow.map((foundSubscriptionRow) =>
+					subscriptionDTOMapper(foundSubscriptionRow),
 				),
 			};
 		},

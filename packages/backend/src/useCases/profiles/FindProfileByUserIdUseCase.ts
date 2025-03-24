@@ -17,15 +17,19 @@ const FindProfileByUserIdUseCase = () => {
 		}: UseCaseRequest<FindProfileByUserIdRequest>): Promise<
 			UseCaseResponse<ProfileDTO>
 		> => {
-			const { affectedRows } = await repository.findProfileByUserId({
-				query: { userId },
-			});
+			const { affectedRows: foundProfilesRow } =
+				await repository.findProfileByUserId({
+					query: { userId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundProfilesRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			return { statusCode: 200, args: profileDTOMapper(affectedRows[0]) };
+			return {
+				statusCode: 200,
+				args: profileDTOMapper(foundProfilesRow[0]),
+			};
 		},
 	};
 };

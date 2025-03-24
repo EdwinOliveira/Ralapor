@@ -17,15 +17,18 @@ const FindUserByIdUseCase = () => {
 		}: UseCaseRequest<FindUserByIdRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { affectedRows } = await repository.findUserById({
+			const { affectedRows: foundUsersRow } = await repository.findUserById({
 				query: { id },
 			});
 
-			if (affectedRows.length === 0) {
+			if (foundUsersRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
-			return { statusCode: 200, args: userDTOMapper(affectedRows[0]) };
+			return {
+				statusCode: 200,
+				args: userDTOMapper(foundUsersRow[0]),
+			};
 		},
 	};
 };

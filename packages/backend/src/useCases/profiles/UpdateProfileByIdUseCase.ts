@@ -26,20 +26,20 @@ const UpdateProfileByIdUseCase = () => {
 			}
 
 			const {
-				affectedIds: updatedProfilesById,
+				affectedIds: updatedProfilesId,
 				affectedRows: updatedProfilesRow,
 			} = await repository.updateProfileById({
 				query: { id },
 				args: { firstName, lastName, dateBirth },
 			});
 
-			if (updatedProfilesById.length === 0) {
+			if (updatedProfilesId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 201,
-				headers: { location: `/profiles/${updatedProfilesById[0]}` },
+				headers: { location: `/profiles/${updatedProfilesId[0]}` },
 				args: { updatedAt: updatedProfilesRow[0].updatedAt },
 			};
 		},

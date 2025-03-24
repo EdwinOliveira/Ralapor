@@ -17,17 +17,18 @@ const FindBooksByDossierIdUseCase = () => {
 		}: UseCaseRequest<FindBooksByDossierIdRequest>): Promise<
 			UseCaseResponse<Array<BookDTO>>
 		> => {
-			const { affectedRows } = await repository.findBooksByDossierId({
-				query: { dossierId },
-			});
+			const { affectedRows: foundBooksId } =
+				await repository.findBooksByDossierId({
+					query: { dossierId },
+				});
 
-			if (affectedRows.length === 0) {
+			if (foundBooksId.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: affectedRows.map((affectedRow) => bookDTOMapper(affectedRow)),
+				args: foundBooksId.map((foundBookId) => bookDTOMapper(foundBookId)),
 			};
 		},
 	};
