@@ -22,6 +22,7 @@ const DestroyUserTokensByIdUseCase = () => {
 			}
 
 			const { affectedIds, affectedRows } = await repository.updateUserById({
+				query: { id },
 				args: { accessToken: undefined, refreshToken: undefined },
 			});
 

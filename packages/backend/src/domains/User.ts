@@ -154,6 +154,7 @@ interface UserRepository {
 		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateUserById({
+		query,
 		args,
 	}: RepositoryRequest<
 		Pick<UserEntity, "id">,
