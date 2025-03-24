@@ -1,43 +1,42 @@
-import type { Request, Response } from "express";
-import { updateBookByIdSchema } from "../../domains/Book";
 import { BookRemoteRepository } from "../../repositories/BookRemoteRepository";
+import type { BookDTO, UpdateBookByIdRequest } from "../../domains/Book";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateBookByIdUseCase = () => {
 	const repository = BookRemoteRepository();
 
 	return {
-		updateBookById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateBookByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateBookById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { designation, description, price, isVisible, isActive },
+			},
+		}: UseCaseRequest<UpdateBookByIdRequest>): Promise<
+			UseCaseResponse<Pick<BookDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundBooksId } = await repository.findBookById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (foundBooksId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateBooksById } = await repository.updateBookById({
-				query: schemaArgs.params,
-				args: schemaArgs.body,
-			});
+			const { affectedIds: updatedBooksId, affectedRows: updatedBooksRow } =
+				await repository.updateBookById({
+					query: { id },
+					args: { designation, description, price, isVisible, isActive },
+				});
 
-			if (updateBooksById.length === 0) {
-				return response.status(404).json();
+			if (updatedBooksId.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/books/${updateBooksById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/books/${updatedBooksId[0]}` },
+				args: { updatedAt: updatedBooksRow[0].updatedAt },
+			};
 		},
 	};
 };

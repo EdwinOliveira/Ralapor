@@ -1,30 +1,31 @@
-import type { Request, Response } from "express";
-import { findProfileByIdSchema, profileDTOMapper } from "../../domains/Profile";
+import {
+	type FindProfileByIdRequest,
+	type ProfileDTO,
+	profileDTOMapper,
+} from "../../domains/Profile";
 import { ProfileRemoteRepository } from "../../repositories/ProfileRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindProfileByIdUseCase = () => {
 	const repository = ProfileRemoteRepository();
 
 	return {
-		findProfileById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findProfileByIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findProfileById: async ({
+			schemaArgs: {
+				params: { id },
+			},
+		}: UseCaseRequest<FindProfileByIdRequest>): Promise<
+			UseCaseResponse<ProfileDTO>
+		> => {
 			const { affectedRows } = await repository.findProfileById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(200)
-				.json({ data: profileDTOMapper(affectedRows[0]) });
+			return { statusCode: 200, args: profileDTOMapper(affectedRows[0]) };
 		},
 	};
 };

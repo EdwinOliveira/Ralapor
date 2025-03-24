@@ -1,45 +1,48 @@
-import type { Request, Response } from "express";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
-import { updateSubscriptionByIdSchema } from "../../domains/Subscription";
+import type {
+	SubscriptionDTO,
+	UpdateSubscriptionByIdRequest,
+} from "../../domains/Subscription";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateSubscriptionByIdUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
 
 	return {
-		updateSubscriptionById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateSubscriptionByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateSubscriptionById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { isActive },
+			},
+		}: UseCaseRequest<UpdateSubscriptionByIdRequest>): Promise<
+			UseCaseResponse<Pick<SubscriptionDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundSubscriptionsId } =
 				await repository.findSubscriptionById({
-					query: { id: schemaArgs.params.id },
+					query: { id },
 				});
 
 			if (foundSubscriptionsId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateSubscriptionsById } =
-				await repository.updateSubscriptionById({
-					query: { id: schemaArgs.params.id },
-					args: schemaArgs.body,
-				});
+			const {
+				affectedIds: updatedSubscriptionsById,
+				affectedRows: updatedSubscriptionsRow,
+			} = await repository.updateSubscriptionById({
+				query: { id },
+				args: { isActive },
+			});
 
-			if (updateSubscriptionsById.length === 0) {
-				return response.status(404).json();
+			if (updatedSubscriptionsById.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/subscriptions/${updateSubscriptionsById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/subscriptions/${updatedSubscriptionsById[0]}` },
+				args: { updatedAt: updatedSubscriptionsRow[0].updatedAt },
+			};
 		},
 	};
 };

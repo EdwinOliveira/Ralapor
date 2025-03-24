@@ -1,40 +1,39 @@
-import type { Request, Response } from "express";
 import { DossierRemoteRepository } from "../../repositories/DossierRemoteRepository";
-import { createDossierSchema } from "../../domains/Dossier";
+import type { CreateDossierRequest } from "../../domains/Dossier";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateDossierUseCase = () => {
 	const repository = DossierRemoteRepository();
 
 	return {
-		createDossier: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createDossierSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createDossier: async ({
+			schemaArgs: {
+				body: { userId, categoryId, designation, description, price },
+			},
+		}: UseCaseRequest<CreateDossierRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundDossiersId } =
 				await repository.findDossiersByUserId({
-					query: { userId: schemaArgs.body.userId },
+					query: { userId },
 				});
 
 			if (foundDossiersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const { affectedIds: createdDossiersId } = await repository.createDossier(
-				{ args: schemaArgs.body },
+				{ args: { userId, categoryId, designation, description, price } },
 			);
 
 			if (createdDossiersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/dossiers/${createdDossiersId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/dossiers/${createdDossiersId[0]}` },
+			};
 		},
 	};
 };

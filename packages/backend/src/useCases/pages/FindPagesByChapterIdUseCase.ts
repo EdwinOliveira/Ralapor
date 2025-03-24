@@ -1,30 +1,34 @@
-import type { Request, Response } from "express";
-import { pageDTOMapper, findPagesByChapterIdSchema } from "../../domains/Page";
+import {
+	pageDTOMapper,
+	type FindPagesByChapterIdRequest,
+	type PageDTO,
+} from "../../domains/Page";
 import { PageRemoteRepository } from "../../repositories/PageRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindPagesByChapterIdUseCase = () => {
 	const repository = PageRemoteRepository();
 
 	return {
-		findPagesByChapterId: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findPagesByChapterIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findPagesByChapterId: async ({
+			schemaArgs: {
+				params: { chapterId },
+			},
+		}: UseCaseRequest<FindPagesByChapterIdRequest>): Promise<
+			UseCaseResponse<Array<PageDTO>>
+		> => {
 			const { affectedRows } = await repository.findPagesByChapterId({
-				query: schemaArgs.params,
+				query: { chapterId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) => pageDTOMapper(affectedRow)),
-			});
+			return {
+				statusCode: 200,
+				args: affectedRows.map((affectedRow) => pageDTOMapper(affectedRow)),
+			};
 		},
 	};
 };

@@ -102,7 +102,7 @@ interface ProfileRepository {
 	}: RepositoryRequest<
 		Pick<ProfileEntity, "id">,
 		Partial<Omit<ProfileEntity, "id" | "userId" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<ProfileEntity, "updatedAt">>>;
 }
 
 export {

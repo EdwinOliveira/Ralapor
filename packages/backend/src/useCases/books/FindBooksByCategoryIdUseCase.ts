@@ -1,30 +1,34 @@
-import type { Request, Response } from "express";
-import { bookDTOMapper, findBooksByCategoryIdSchema } from "../../domains/Book";
+import {
+	type BookDTO,
+	bookDTOMapper,
+	type FindBooksByCategoryIdRequest,
+} from "../../domains/Book";
 import { BookRemoteRepository } from "../../repositories/BookRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindBooksByCategoryIdUseCase = () => {
 	const repository = BookRemoteRepository();
 
 	return {
-		findBooksByCategoryId: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findBooksByCategoryIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findBooksByCategoryId: async ({
+			schemaArgs: {
+				params: { categoryId },
+			},
+		}: UseCaseRequest<FindBooksByCategoryIdRequest>): Promise<
+			UseCaseResponse<Array<BookDTO>>
+		> => {
 			const { affectedRows } = await repository.findBooksByCategoryId({
-				query: { categoryId: schemaArgs.params.categoryId },
+				query: { categoryId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) => bookDTOMapper(affectedRow)),
-			});
+			return {
+				statusCode: 200,
+				args: affectedRows.map((affectedRow) => bookDTOMapper(affectedRow)),
+			};
 		},
 	};
 };

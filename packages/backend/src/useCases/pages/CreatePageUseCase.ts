@@ -1,40 +1,39 @@
-import type { Request, Response } from "express";
 import { PageRemoteRepository } from "../../repositories/PageRemoteRepository";
-import { createPageSchema } from "../../domains/Page";
+import type { CreatePageRequest } from "../../domains/Page";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreatePageUseCase = () => {
 	const repository = PageRemoteRepository();
 
 	return {
-		createPage: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createPageSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createPage: async ({
+			schemaArgs: {
+				body: { chapterId, categoryId, designation, description, price },
+			},
+		}: UseCaseRequest<CreatePageRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundPagesId } =
 				await repository.findPagesByChapterId({
-					query: { chapterId: schemaArgs.body.chapterId },
+					query: { chapterId },
 				});
 
 			if (foundPagesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const { affectedIds: createdPagesId } = await repository.createPage({
-				args: schemaArgs.body,
+				args: { chapterId, categoryId, designation, description, price },
 			});
 
 			if (createdPagesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/pages/${createdPagesId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/pages/${createdPagesId[0]}` },
+			};
 		},
 	};
 };

@@ -133,7 +133,7 @@ interface PageRepository {
 	}: RepositoryRequest<
 		Pick<PageEntity, "id">,
 		Partial<Omit<PageEntity, "id" | "chapterId" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<PageEntity, "updatedAt">>>;
 }
 
 export {

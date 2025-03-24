@@ -133,7 +133,7 @@ interface BookRepository {
 	}: RepositoryRequest<
 		Pick<BookEntity, "id">,
 		Partial<Omit<BookEntity, "id" | "dossierId" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<BookDTO, "updatedAt">>>;
 }
 
 export {

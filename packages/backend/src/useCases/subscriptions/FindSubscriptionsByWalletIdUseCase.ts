@@ -1,38 +1,36 @@
-import type { Request, Response } from "express";
 import {
 	subscriptionDTOMapper,
-	findSubscriptionsByWalletIdSchema,
+	type FindSubscriptionsByWalletIdRequest,
+	type SubscriptionDTO,
 } from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindSubscriptionsByWalletIdUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
 
 	return {
-		findSubscriptionsByWalletId: async (
-			request: Request,
-			response: Response,
-		) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findSubscriptionsByWalletIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findSubscriptionsByWalletId: async ({
+			schemaArgs: {
+				params: { walletId },
+			},
+		}: UseCaseRequest<FindSubscriptionsByWalletIdRequest>): Promise<
+			UseCaseResponse<Array<SubscriptionDTO>>
+		> => {
 			const { affectedRows } = await repository.findSubscriptionsByWalletId({
-				query: { walletId: schemaArgs.params.walletId },
+				query: { walletId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) =>
+			return {
+				statusCode: 200,
+				args: affectedRows.map((affectedRow) =>
 					subscriptionDTOMapper(affectedRow),
 				),
-			});
+			};
 		},
 	};
 };

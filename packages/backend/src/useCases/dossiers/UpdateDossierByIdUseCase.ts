@@ -1,44 +1,47 @@
-import type { Request, Response } from "express";
-import { updateDossierByIdSchema } from "../../domains/Dossier";
+import type {
+	DossierDTO,
+	UpdateDossierByIdRequest,
+} from "../../domains/Dossier";
 import { DossierRemoteRepository } from "../../repositories/DossierRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateDossierByIdUseCase = () => {
 	const repository = DossierRemoteRepository();
 
 	return {
-		updateDossierById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateDossierByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateDossierById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { designation, description, price, isVisible, isActive },
+			},
+		}: UseCaseRequest<UpdateDossierByIdRequest>): Promise<
+			UseCaseResponse<Pick<DossierDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundDossiersId } = await repository.findDossierById(
-				{ query: { id: schemaArgs.params.id } },
+				{ query: { id } },
 			);
 
 			if (foundDossiersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateDossiersById } =
-				await repository.updateDossierById({
-					query: schemaArgs.params,
-					args: schemaArgs.body,
-				});
+			const {
+				affectedIds: updatedDossiersById,
+				affectedRows: updatedDossiersRow,
+			} = await repository.updateDossierById({
+				query: { id },
+				args: { designation, description, price, isVisible, isActive },
+			});
 
-			if (updateDossiersById.length === 0) {
-				return response.status(404).json();
+			if (updatedDossiersById.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/dossiers/${updateDossiersById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/dossiers/${updatedDossiersById[0]}` },
+				args: { updatedAt: updatedDossiersRow[0].updatedAt },
+			};
 		},
 	};
 };

@@ -1,44 +1,47 @@
-import type { Request, Response } from "express";
-import { updateChapterByIdSchema } from "../../domains/Chapter";
+import type {
+	ChapterDTO,
+	UpdateChapterByIdRequest,
+} from "../../domains/Chapter";
 import { ChapterRemoteRepository } from "../../repositories/ChapterRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateChapterByIdUseCase = () => {
 	const repository = ChapterRemoteRepository();
 
 	return {
-		updateChapterById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateChapterByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateChapterById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { designation, description, price, isVisible, isActive },
+			},
+		}: UseCaseRequest<UpdateChapterByIdRequest>): Promise<
+			UseCaseResponse<Pick<ChapterDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundChaptersId } = await repository.findChapterById(
-				{ query: schemaArgs.params },
+				{ query: { id } },
 			);
 
 			if (foundChaptersId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateChaptersById } =
-				await repository.updateChapterById({
-					query: schemaArgs.params,
-					args: schemaArgs.body,
-				});
+			const {
+				affectedIds: updatedChaptersId,
+				affectedRows: updatedChapterRows,
+			} = await repository.updateChapterById({
+				query: { id },
+				args: { designation, description, price, isVisible, isActive },
+			});
 
-			if (updateChaptersById.length === 0) {
-				return response.status(404).json();
+			if (updatedChaptersId.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/Chapters/${updateChaptersById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/chapters/${updatedChaptersId[0]}` },
+				args: { updatedAt: updatedChapterRows[0].updatedAt },
+			};
 		},
 	};
 };

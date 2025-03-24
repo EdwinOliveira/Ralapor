@@ -1,33 +1,34 @@
-import type { Request, Response } from "express";
 import {
+	type DossierDTO,
 	dossierDTOMapper,
-	findDossiersByCategoryIdSchema,
+	type FindDossiersByCategoryIdRequest,
 } from "../../domains/Dossier";
 import { DossierRemoteRepository } from "../../repositories/DossierRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindDossiersByCategoryIdUseCase = () => {
 	const repository = DossierRemoteRepository();
 
 	return {
-		findDossiersByCategoryId: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findDossiersByCategoryIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findDossiersByCategoryId: async ({
+			schemaArgs: {
+				params: { categoryId },
+			},
+		}: UseCaseRequest<FindDossiersByCategoryIdRequest>): Promise<
+			UseCaseResponse<Array<DossierDTO>>
+		> => {
 			const { affectedRows } = await repository.findDossiersByCategoryId({
-				query: { categoryId: schemaArgs.params.categoryId },
+				query: { categoryId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) => dossierDTOMapper(affectedRow)),
-			});
+			return {
+				statusCode: 200,
+				args: affectedRows.map((affectedRow) => dossierDTOMapper(affectedRow)),
+			};
 		},
 	};
 };

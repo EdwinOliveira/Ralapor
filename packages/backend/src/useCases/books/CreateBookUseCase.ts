@@ -1,40 +1,39 @@
-import type { Request, Response } from "express";
 import { BookRemoteRepository } from "../../repositories/BookRemoteRepository";
-import { createBookSchema } from "../../domains/Book";
+import type { CreateBookRequest } from "../../domains/Book";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateBookUseCase = () => {
 	const repository = BookRemoteRepository();
 
 	return {
-		createBook: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createBookSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createBook: async ({
+			schemaArgs: {
+				body: { dossierId, categoryId, designation, description, price },
+			},
+		}: UseCaseRequest<CreateBookRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundBooksId } =
 				await repository.findBooksByDossierId({
-					query: { dossierId: schemaArgs.body.dossierId },
+					query: { dossierId },
 				});
 
 			if (foundBooksId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const { affectedIds: createdBooksId } = await repository.createBook({
-				args: schemaArgs.body,
+				args: { dossierId, categoryId, designation, description, price },
 			});
 
 			if (createdBooksId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/books/${createdBooksId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/books/${createdBooksId[0]}` },
+			};
 		},
 	};
 };

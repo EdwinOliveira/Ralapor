@@ -75,6 +75,10 @@ const createChapterSchema = z.object({
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
+		categoryId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
 		designation: z.string(),
 		description: z.string(),
 		price: z.number(),
@@ -131,7 +135,7 @@ interface ChapterRepository {
 	}: RepositoryRequest<
 		Pick<ChapterEntity, "id">,
 		Partial<Omit<ChapterEntity, "id" | "bookId" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<ChapterEntity, "updatedAt">>>;
 }
 
 export {

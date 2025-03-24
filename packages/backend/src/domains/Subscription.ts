@@ -122,7 +122,7 @@ interface SubscriptionRepository {
 	}: RepositoryRequest<
 		Pick<SubscriptionEntity, "id">,
 		Partial<Pick<SubscriptionEntity, "isActive">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<SubscriptionEntity, "updatedAt">>>;
 }
 
 export {

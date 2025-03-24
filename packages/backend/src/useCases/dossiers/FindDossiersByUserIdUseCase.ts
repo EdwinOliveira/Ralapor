@@ -1,33 +1,34 @@
-import type { Request, Response } from "express";
 import {
+	type DossierDTO,
 	dossierDTOMapper,
-	findDossiersByUserIdSchema,
+	type FindDossiersByUserIdRequest,
 } from "../../domains/Dossier";
 import { DossierRemoteRepository } from "../../repositories/DossierRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindDossiersByUserIdUseCase = () => {
 	const repository = DossierRemoteRepository();
 
 	return {
-		findDossiersByUserId: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findDossiersByUserIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findDossiersByUserId: async ({
+			schemaArgs: {
+				params: { userId },
+			},
+		}: UseCaseRequest<FindDossiersByUserIdRequest>): Promise<
+			UseCaseResponse<Array<DossierDTO>>
+		> => {
 			const { affectedRows } = await repository.findDossiersByUserId({
-				query: { userId: schemaArgs.params.userId },
+				query: { userId },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response.status(200).json({
-				data: affectedRows.map((affectedRow) => dossierDTOMapper(affectedRow)),
-			});
+			return {
+				statusCode: 200,
+				args: affectedRows.map((affectedRow) => dossierDTOMapper(affectedRow)),
+			};
 		},
 	};
 };

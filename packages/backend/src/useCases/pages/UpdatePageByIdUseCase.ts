@@ -1,43 +1,42 @@
-import type { Request, Response } from "express";
-import { updatePageByIdSchema } from "../../domains/Page";
+import type { PageDTO, UpdatePageByIdRequest } from "../../domains/Page";
 import { PageRemoteRepository } from "../../repositories/PageRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdatePageByIdUseCase = () => {
 	const repository = PageRemoteRepository();
 
 	return {
-		updatePageById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updatePageByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updatePageById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { designation, description, price, isVisible, isActive },
+			},
+		}: UseCaseRequest<UpdatePageByIdRequest>): Promise<
+			UseCaseResponse<Pick<PageDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundPagesId } = await repository.findPageById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (foundPagesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updatePagesById } = await repository.updatePageById({
-				query: schemaArgs.params,
-				args: schemaArgs.body,
-			});
+			const { affectedIds: updatedPagesById, affectedRows: updatedPagesRow } =
+				await repository.updatePageById({
+					query: { id },
+					args: { designation, description, price, isVisible, isActive },
+				});
 
-			if (updatePagesById.length === 0) {
-				return response.status(404).json();
+			if (updatedPagesById.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/pages/${updatePagesById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/pages/${updatedPagesById[0]}` },
+				args: { updatedAt: updatedPagesRow[0].updatedAt },
+			};
 		},
 	};
 };

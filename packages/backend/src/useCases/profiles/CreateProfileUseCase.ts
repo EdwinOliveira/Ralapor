@@ -1,47 +1,42 @@
-import type { Request, Response } from "express";
 import { ProfileRemoteRepository } from "../../repositories/ProfileRemoteRepository";
-import { createProfileSchema } from "../../domains/Profile";
+import {
+	type CreateProfileRequest,
+	createProfileSchema,
+} from "../../domains/Profile";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateProfileUseCase = () => {
 	const repository = ProfileRemoteRepository();
 
 	return {
-		createProfile: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createProfileSchema.safeParse({ body: request.body });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		createProfile: async ({
+			schemaArgs: {
+				body: { userId, firstName, lastName, dateBirth },
+			},
+		}: UseCaseRequest<CreateProfileRequest>): Promise<
+			UseCaseResponse<unknown>
+		> => {
 			const { affectedIds: foundProfilesId } =
 				await repository.findProfileByUserId({
-					query: { userId: schemaArgs.body.userId },
+					query: { userId },
 				});
 
 			if (foundProfilesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
 			const { affectedIds: createdProfilesId } = await repository.createProfile(
-				{
-					args: {
-						userId: schemaArgs.body.userId,
-						firstName: schemaArgs.body.firstName,
-						lastName: schemaArgs.body.lastName,
-						dateBirth: schemaArgs.body.dateBirth,
-					},
-				},
+				{ args: { userId, firstName, lastName, dateBirth } },
 			);
 
 			if (createdProfilesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/profiles/${createdProfilesId[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/profiles/${createdProfilesId[0]}` },
+			};
 		},
 	};
 };

@@ -135,7 +135,7 @@ interface DossierRepository {
 	}: RepositoryRequest<
 		Pick<DossierEntity, "id">,
 		Partial<Omit<DossierEntity, "id" | "userId" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<unknown>>;
+	>): Promise<RepositoryResponse<Pick<DossierEntity, "updatedAt">>>;
 }
 
 export {

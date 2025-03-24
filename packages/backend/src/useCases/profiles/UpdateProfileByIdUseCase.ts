@@ -1,44 +1,47 @@
-import type { Request, Response } from "express";
-import { updateProfileByIdSchema } from "../../domains/Profile";
+import type {
+	ProfileDTO,
+	UpdateProfileByIdRequest,
+} from "../../domains/Profile";
 import { ProfileRemoteRepository } from "../../repositories/ProfileRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const UpdateProfileByIdUseCase = () => {
 	const repository = ProfileRemoteRepository();
 
 	return {
-		updateProfileById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateProfileByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
-				});
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		updateProfileById: async ({
+			schemaArgs: {
+				params: { id },
+				body: { firstName, lastName, dateBirth },
+			},
+		}: UseCaseRequest<UpdateProfileByIdRequest>): Promise<
+			UseCaseResponse<Pick<ProfileDTO, "updatedAt">>
+		> => {
 			const { affectedIds: foundProfilesId } = await repository.findProfileById(
-				{ query: { id: schemaArgs.params.id } },
+				{ query: { id } },
 			);
 
 			if (foundProfilesId.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			const { affectedIds: updateProfilesById } =
-				await repository.updateProfileById({
-					query: { id: schemaArgs.params.id },
-					args: schemaArgs.body,
-				});
+			const {
+				affectedIds: updatedProfilesById,
+				affectedRows: updatedProfilesRow,
+			} = await repository.updateProfileById({
+				query: { id },
+				args: { firstName, lastName, dateBirth },
+			});
 
-			if (updateProfilesById.length === 0) {
-				return response.status(404).json();
+			if (updatedProfilesById.length === 0) {
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(201)
-				.location(`/profiles/${updateProfilesById[0]}`)
-				.json();
+			return {
+				statusCode: 201,
+				headers: { location: `/profiles/${updatedProfilesById[0]}` },
+				args: { updatedAt: updatedProfilesRow[0].updatedAt },
+			};
 		},
 	};
 };

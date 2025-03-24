@@ -1,30 +1,31 @@
-import type { Request, Response } from "express";
-import { pageDTOMapper, findPageByIdSchema } from "../../domains/Page";
+import {
+	type PageDTO,
+	pageDTOMapper,
+	type FindPageByIdRequest,
+} from "../../domains/Page";
 import { PageRemoteRepository } from "../../repositories/PageRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const FindPageByIdUseCase = () => {
 	const repository = PageRemoteRepository();
 
 	return {
-		findPageById: async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findPageByIdSchema.safeParse({ params: request.params });
-
-			if (schemaErrors !== undefined) {
-				return response.status(400).json({ errors: schemaErrors.issues });
-			}
-
+		findPageById: async ({
+			schemaArgs: {
+				params: { id },
+			},
+		}: UseCaseRequest<FindPageByIdRequest>): Promise<
+			UseCaseResponse<PageDTO>
+		> => {
 			const { affectedRows } = await repository.findPageById({
-				query: { id: schemaArgs.params.id },
+				query: { id },
 			});
 
 			if (affectedRows.length === 0) {
-				return response.status(404).json();
+				return { statusCode: 404 };
 			}
 
-			return response
-				.status(200)
-				.json({ data: pageDTOMapper(affectedRows[0]) });
+			return { statusCode: 200, args: pageDTOMapper(affectedRows[0]) };
 		},
 	};
 };

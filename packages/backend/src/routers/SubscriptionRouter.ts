@@ -4,7 +4,16 @@ import { FindSubscriptionByIdUseCase } from "../useCases/subscriptions/FindSubsc
 import { CreateSubscriptionUseCase } from "../useCases/subscriptions/CreateSubscriptionUseCase";
 import { UpdateSubscriptionByIdUseCase } from "../useCases/subscriptions/UpdateSubscriptionByIdUseCase";
 import { FindSubscriptionsByWalletIdUseCase } from "../useCases/subscriptions/FindSubscriptionsByWalletIdUseCase";
-import { findSubscriptionByIdSchema } from "../domains/Subscription";
+
+/**
+ * Schemas
+ */
+import {
+	createSubscriptionSchema,
+	findSubscriptionByIdSchema,
+	findSubscriptionsByWalletIdSchema,
+	updateSubscriptionByIdSchema,
+} from "../domains/Subscription";
 
 const SubscriptionRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -32,9 +41,24 @@ const SubscriptionRouter = () => {
 			"/wallet/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findSubscriptionsByWalletIdSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findSubscriptionsByWalletId } =
 					FindSubscriptionsByWalletIdUseCase();
-				await findSubscriptionsByWalletId(request, response);
+				const { statusCode, args } = await findSubscriptionsByWalletId({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -42,8 +66,26 @@ const SubscriptionRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createSubscriptionSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { createSubscription } = CreateSubscriptionUseCase();
-				await createSubscription(request, response);
+				const { statusCode, headers } = await createSubscription({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -51,8 +93,26 @@ const SubscriptionRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateSubscriptionByIdSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateSubscriptionById } = UpdateSubscriptionByIdUseCase();
-				await updateSubscriptionById(request, response);
+				const { statusCode, headers, args } = await updateSubscriptionById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
