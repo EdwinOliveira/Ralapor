@@ -4,10 +4,6 @@ import { FindSubscriptionByIdUseCase } from "../useCases/subscriptions/FindSubsc
 import { CreateSubscriptionUseCase } from "../useCases/subscriptions/CreateSubscriptionUseCase";
 import { UpdateSubscriptionByIdUseCase } from "../useCases/subscriptions/UpdateSubscriptionByIdUseCase";
 import { FindSubscriptionsByWalletIdUseCase } from "../useCases/subscriptions/FindSubscriptionsByWalletIdUseCase";
-
-/**
- * Schemas
- */
 import {
 	createSubscriptionSchema,
 	findSubscriptionByIdSchema,
@@ -96,6 +92,7 @@ const SubscriptionRouter = () => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateSubscriptionByIdSchema.safeParse({
 						params: request.params,
+						body: request.body,
 					});
 
 				if (schemaErrors !== undefined) {
@@ -112,7 +109,7 @@ const SubscriptionRouter = () => {
 				return void response
 					.status(statusCode)
 					.location(headers ? headers.location : "")
-					.json();
+					.json(args);
 			},
 		);
 

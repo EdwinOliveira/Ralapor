@@ -9,10 +9,6 @@ import { UpdateUserTokensByIdUseCase } from "../useCases/users/UpdateUserTokensB
 import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { DestroyUserTokensByIdUseCase } from "../useCases/users/DestroyUserTokensByIdUseCase";
 import { RefreshTokenGuard } from "../guards/RefreshTokenGuard";
-
-/**
- * Schemas
- */
 import {
 	createUserSchema,
 	destroyUserTokensByIdSchema,
@@ -99,14 +95,14 @@ const UserRouter = () => {
 				}
 
 				const { updateUserById } = UpdateUserByIdUseCase();
-				const { statusCode, headers } = await updateUserById({
+				const { statusCode, headers, args } = await updateUserById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
 					.location(headers ? headers.location : "")
-					.json();
+					.json(args);
 			},
 		);
 
@@ -124,14 +120,14 @@ const UserRouter = () => {
 				}
 
 				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
-				const { statusCode, headers } = await updateUserAccessCodeById({
+				const { statusCode, headers, args } = await updateUserAccessCodeById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
 					.location(headers ? headers.location : "")
-					.json();
+					.json(args);
 			},
 		);
 
@@ -153,7 +149,7 @@ const UserRouter = () => {
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
 					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
-				const { statusCode, headers } =
+				const { statusCode, headers, args } =
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
 					});
@@ -161,7 +157,7 @@ const UserRouter = () => {
 				return void response
 					.status(statusCode)
 					.location(headers ? headers.location : "")
-					.json();
+					.json(args);
 			},
 		);
 

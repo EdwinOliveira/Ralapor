@@ -5,6 +5,13 @@ import { CreateDossierUseCase } from "../useCases/dossiers/CreateDossierUseCase"
 import { UpdateDossierByIdUseCase } from "../useCases/dossiers/UpdateDossierByIdUseCase";
 import { FindDossiersByUserIdUseCase } from "../useCases/dossiers/FindDossiersByUserIdUseCase";
 import { FindDossiersByCategoryIdUseCase } from "../useCases/dossiers/FindDossiersByCategoryIdUseCase";
+import {
+	createDossierSchema,
+	findDossierByIdSchema,
+	findDossiersByCategoryIdSchema,
+	findDossiersByUserIdSchema,
+	updateDossierByIdSchema,
+} from "../domains/Dossier";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -12,8 +19,19 @@ const DossierRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findDossierByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findDossierById } = FindDossierByIdUseCase();
-				await findDossierById(request, response);
+				const { statusCode, args } = await findDossierById({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -21,8 +39,19 @@ const DossierRouter = () => {
 			"/user/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findDossiersByUserIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findDossiersByUserId } = FindDossiersByUserIdUseCase();
-				await findDossiersByUserId(request, response);
+				const { statusCode, args } = await findDossiersByUserId({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -30,8 +59,21 @@ const DossierRouter = () => {
 			"/category/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findDossiersByCategoryIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findDossiersByCategoryId } = FindDossiersByCategoryIdUseCase();
-				await findDossiersByCategoryId(request, response);
+				const { statusCode, args } = await findDossiersByCategoryId({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -39,8 +81,26 @@ const DossierRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createDossierSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { createDossier } = CreateDossierUseCase();
-				await createDossier(request, response);
+				const { statusCode, headers } = await createDossier({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -48,8 +108,27 @@ const DossierRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateDossierByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateDossierById } = UpdateDossierByIdUseCase();
-				await updateDossierById(request, response);
+				const { statusCode, headers, args } = await updateDossierById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json(args);
 			},
 		);
 

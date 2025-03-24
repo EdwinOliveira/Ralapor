@@ -83,7 +83,10 @@ const WalletRouter = () => {
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
-					updateWalletByIdSchema.safeParse({ params: request.params });
+					updateWalletByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
 
 				if (schemaErrors !== undefined) {
 					return void response

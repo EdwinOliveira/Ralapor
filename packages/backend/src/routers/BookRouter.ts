@@ -5,6 +5,13 @@ import { CreateBookUseCase } from "../useCases/books/CreateBookUseCase";
 import { UpdateBookByIdUseCase } from "../useCases/books/UpdateBookByIdUseCase";
 import { FindBooksByDossierIdUseCase } from "../useCases/books/FindBooksByDossierIdUseCase";
 import { FindBooksByCategoryIdUseCase } from "../useCases/books/FindBooksByCategoryIdUseCase";
+import {
+	createBookSchema,
+	findBookByIdSchema,
+	findBooksByCategoryIdSchema,
+	findBooksByDossierIdSchema,
+	updateBookByIdSchema,
+} from "../domains/Book";
 
 const BookRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -12,8 +19,21 @@ const BookRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findBookByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findBookById } = FindBookByIdUseCase();
-				await findBookById(request, response);
+				const { statusCode, args } = await findBookById({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -21,8 +41,21 @@ const BookRouter = () => {
 			"/dossier/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findBooksByDossierIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findBooksByDossierId } = FindBooksByDossierIdUseCase();
-				await findBooksByDossierId(request, response);
+				const { statusCode, args } = await findBooksByDossierId({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -30,8 +63,21 @@ const BookRouter = () => {
 			"/category/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findBooksByCategoryIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findBooksByCategoryId } = FindBooksByCategoryIdUseCase();
-				await findBooksByCategoryId(request, response);
+				const { statusCode, args } = await findBooksByCategoryId({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -39,8 +85,26 @@ const BookRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createBookSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { createBook } = CreateBookUseCase();
-				await createBook(request, response);
+				const { statusCode, headers } = await createBook({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -48,8 +112,27 @@ const BookRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateBookByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateBookById } = UpdateBookByIdUseCase();
-				await updateBookById(request, response);
+				const { statusCode, headers, args } = await updateBookById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json(args);
 			},
 		);
 

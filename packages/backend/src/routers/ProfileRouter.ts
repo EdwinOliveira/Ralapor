@@ -4,6 +4,12 @@ import { FindProfileByIdUseCase } from "../useCases/profiles/FindProfileByIdUseC
 import { CreateProfileUseCase } from "../useCases/profiles/CreateProfileUseCase";
 import { UpdateProfileByIdUseCase } from "../useCases/profiles/UpdateProfileByIdUseCase";
 import { FindProfileByUserIdUseCase } from "../useCases/profiles/FindProfileByUserIdUseCase";
+import {
+	createProfileSchema,
+	findProfileByIdSchema,
+	findProfileByUserIdSchema,
+	updateProfileByIdSchema,
+} from "../domains/Profile";
 
 const ProfileRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -11,8 +17,19 @@ const ProfileRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findProfileByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findProfileById } = FindProfileByIdUseCase();
-				await findProfileById(request, response);
+				const { statusCode, args } = await findProfileById({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -20,8 +37,19 @@ const ProfileRouter = () => {
 			"/user/:userId",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findProfileByUserIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { findProfileByUserId } = FindProfileByUserIdUseCase();
-				await findProfileByUserId(request, response);
+				const { statusCode, args } = await findProfileByUserId({ schemaArgs });
+
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -29,8 +57,26 @@ const ProfileRouter = () => {
 			"/",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createProfileSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { createProfile } = CreateProfileUseCase();
-				await createProfile(request, response);
+				const { statusCode, headers } = await createProfile({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json();
 			},
 		);
 
@@ -38,8 +84,27 @@ const ProfileRouter = () => {
 			"/:id",
 			AccessTokenGuard,
 			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateProfileByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
 				const { updateProfileById } = UpdateProfileByIdUseCase();
-				await updateProfileById(request, response);
+				const { statusCode, headers, args } = await updateProfileById({
+					schemaArgs,
+				});
+
+				return void response
+					.status(statusCode)
+					.location(headers ? headers.location : "")
+					.json(args);
 			},
 		);
 
