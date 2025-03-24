@@ -6,11 +6,11 @@ import {
 import { CategoryRemoteRepository } from "../../repositories/CategoryRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
-const FindCategoryByIdUseCase = () => {
+const FindCategoriesUseCase = () => {
 	const repository = CategoryRemoteRepository();
 
 	return {
-		findCategoryById: async ({
+		findCategories: async ({
 			schemaArgs,
 		}: UseCaseRequest<FindCategoriesRequest>): Promise<
 			UseCaseResponse<Array<CategoryDTO>>
@@ -32,4 +32,4 @@ const FindCategoryByIdUseCase = () => {
 	};
 };
 
-export { FindCategoryByIdUseCase };
+export { FindCategoriesUseCase };
