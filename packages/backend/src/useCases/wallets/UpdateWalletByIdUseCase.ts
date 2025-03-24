@@ -12,7 +12,7 @@ const UpdateWalletByIdUseCase = () => {
 				body: { funds, isActive },
 			},
 		}: UseCaseRequest<UpdateWalletByIdRequest>): Promise<
-			UseCaseResponse<Pick<WalletDTO, "updatedAt">>
+			UseCaseResponse<Pick<WalletDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundWalletsId } = await repository.findWalletById({
 				query: { id },
@@ -34,10 +34,10 @@ const UpdateWalletByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: {
-					location: `/wallets/${updatedWalletsId[0]}`,
+				args: {
+					id: updatedWalletsId[0],
+					updatedAt: updatedWalletsRow[0].updatedAt,
 				},
-				args: { updatedAt: updatedWalletsRow[0].updatedAt },
 			};
 		},
 	};

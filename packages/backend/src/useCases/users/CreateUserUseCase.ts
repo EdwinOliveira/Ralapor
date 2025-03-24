@@ -1,4 +1,4 @@
-import type { CreateUserRequest } from "../../domains/User";
+import type { CreateUserRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
@@ -17,7 +17,7 @@ const CreateUserUseCase = () => {
 				body: { username, email, phoneNumber, phoneNumberCode },
 			},
 		}: UseCaseRequest<CreateUserRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<UserDTO, "id">>
 		> => {
 			const { affectedIds: foundUsersId } =
 				await repository.findUserByUsernameAndEmailAndPhoneNumber({
@@ -53,7 +53,7 @@ const CreateUserUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${createdUsersId[0]}` },
+				args: { id: createdUsersId[0] },
 			};
 		},
 	};

@@ -74,13 +74,13 @@ const SubscriptionRouter = () => {
 				}
 
 				const { createSubscription } = CreateSubscriptionUseCase();
-				const { statusCode, headers } = await createSubscription({
+				const { statusCode, args } = await createSubscription({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/subscriptions/${args?.id}`)
 					.json();
 			},
 		);
@@ -102,14 +102,14 @@ const SubscriptionRouter = () => {
 				}
 
 				const { updateSubscriptionById } = UpdateSubscriptionByIdUseCase();
-				const { statusCode, headers, args } = await updateSubscriptionById({
+				const { statusCode, args } = await updateSubscriptionById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/subscriptions/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

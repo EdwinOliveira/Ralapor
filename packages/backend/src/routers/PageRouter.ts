@@ -93,13 +93,13 @@ const PageRouter = () => {
 				}
 
 				const { createPage } = CreatePageUseCase();
-				const { statusCode, headers } = await createPage({
+				const { statusCode, args } = await createPage({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/pages/${args?.id}`)
 					.json();
 			},
 		);
@@ -121,14 +121,14 @@ const PageRouter = () => {
 				}
 
 				const { updatePageById } = UpdatePageByIdUseCase();
-				const { statusCode, headers, args } = await updatePageById({
+				const { statusCode, args } = await updatePageById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/pages/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

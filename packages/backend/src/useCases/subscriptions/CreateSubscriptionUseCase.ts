@@ -1,4 +1,7 @@
-import type { CreateSubscriptionRequest } from "../../domains/Subscription";
+import type {
+	CreateSubscriptionRequest,
+	SubscriptionDTO,
+} from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
@@ -11,7 +14,7 @@ const CreateSubscriptionUseCase = () => {
 				body: { walletId, dossierId, bookId, chapterId, pageId },
 			},
 		}: UseCaseRequest<CreateSubscriptionRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<SubscriptionDTO, "id">>
 		> => {
 			const { affectedIds: foundSubscriptionsId } =
 				await repository.findSubscriptionsByWalletId({
@@ -33,9 +36,7 @@ const CreateSubscriptionUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: {
-					location: `/subscriptions/${createdSubscriptionsId[0]}`,
-				},
+				args: { id: createdSubscriptionsId[0] },
 			};
 		},
 	};

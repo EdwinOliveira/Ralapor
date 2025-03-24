@@ -11,7 +11,7 @@ const DestroyUserTokensByIdUseCase = () => {
 				params: { id },
 			},
 		}: UseCaseRequest<DestroyUserTokensByIdRequest>): Promise<
-			UseCaseResponse<Pick<UserDTO, "updatedAt">>
+			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundUsersId } = await repository.findUserById({
 				query: { id },
@@ -33,7 +33,10 @@ const DestroyUserTokensByIdUseCase = () => {
 
 			return {
 				statusCode: 204,
-				args: { updatedAt: updatedUsersRow[0].updatedAt },
+				args: {
+					id: updatedUsersId[0],
+					updatedAt: updatedUsersRow[0].updatedAt,
+				},
 			};
 		},
 	};

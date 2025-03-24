@@ -70,11 +70,11 @@ const UserRouter = () => {
 			}
 
 			const { createUser } = CreateUserUseCase();
-			const { statusCode, headers } = await createUser({ schemaArgs });
+			const { statusCode, args } = await createUser({ schemaArgs });
 
 			return void response
 				.status(statusCode)
-				.location(headers ? headers.location : "")
+				.location(`/users/${args?.id}`)
 				.json();
 		});
 
@@ -95,14 +95,14 @@ const UserRouter = () => {
 				}
 
 				const { updateUserById } = UpdateUserByIdUseCase();
-				const { statusCode, headers, args } = await updateUserById({
+				const { statusCode, args } = await updateUserById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/users/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 
@@ -120,14 +120,14 @@ const UserRouter = () => {
 				}
 
 				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
-				const { statusCode, headers, args } = await updateUserAccessCodeById({
+				const { statusCode, args } = await updateUserAccessCodeById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/users/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 
@@ -149,15 +149,15 @@ const UserRouter = () => {
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
 					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
-				const { statusCode, headers, args } =
+				const { statusCode, args } =
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
 					});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/users/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 
@@ -178,14 +178,18 @@ const UserRouter = () => {
 
 				const { updateUserTokensById } = UpdateUserTokensByIdUseCase();
 
-				const { statusCode, args, headers } = await updateUserTokensById({
+				const { statusCode, args } = await updateUserTokensById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/users/${args?.id}`)
+					.json({
+						accessToken: args?.accessToken,
+						refreshToken: args?.refreshToken,
+						updatedAt: args?.updatedAt,
+					});
 			},
 		);
 

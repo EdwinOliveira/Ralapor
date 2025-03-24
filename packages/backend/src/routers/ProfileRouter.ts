@@ -69,13 +69,13 @@ const ProfileRouter = () => {
 				}
 
 				const { createProfile } = CreateProfileUseCase();
-				const { statusCode, headers } = await createProfile({
+				const { statusCode, args } = await createProfile({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/profiles/${args?.id}`)
 					.json();
 			},
 		);
@@ -97,14 +97,14 @@ const ProfileRouter = () => {
 				}
 
 				const { updateProfileById } = UpdateProfileByIdUseCase();
-				const { statusCode, headers, args } = await updateProfileById({
+				const { statusCode, args } = await updateProfileById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/profiles/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

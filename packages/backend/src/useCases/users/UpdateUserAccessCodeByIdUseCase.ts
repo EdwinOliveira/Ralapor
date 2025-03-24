@@ -20,7 +20,7 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 				params: { id },
 			},
 		}: UseCaseRequest<UpdateUserAccessCodeByIdRequest>): Promise<
-			UseCaseResponse<Pick<UserEntity, "updatedAt">>
+			UseCaseResponse<Pick<UserEntity, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
 				await repository.findUserById({ query: { id } });
@@ -50,8 +50,10 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updatedUsersId[0]}` },
-				args: { updatedAt: updatedUsersRow[0].updatedAt },
+				args: {
+					id: updatedUsersId[0],
+					updatedAt: updatedUsersRow[0].updatedAt,
+				},
 			};
 		},
 	};

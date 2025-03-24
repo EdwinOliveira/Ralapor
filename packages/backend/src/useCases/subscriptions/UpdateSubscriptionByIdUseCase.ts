@@ -15,7 +15,7 @@ const UpdateSubscriptionByIdUseCase = () => {
 				body: { isActive },
 			},
 		}: UseCaseRequest<UpdateSubscriptionByIdRequest>): Promise<
-			UseCaseResponse<Pick<SubscriptionDTO, "updatedAt">>
+			UseCaseResponse<Pick<SubscriptionDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundSubscriptionsId } =
 				await repository.findSubscriptionById({
@@ -40,8 +40,10 @@ const UpdateSubscriptionByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/subscriptions/${updatedSubscriptionsId[0]}` },
-				args: { updatedAt: updatedSubscriptionsRow[0].updatedAt },
+				args: {
+					id: updatedSubscriptionsId[0],
+					updatedAt: updatedSubscriptionsRow[0].updatedAt,
+				},
 			};
 		},
 	};

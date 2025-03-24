@@ -93,13 +93,13 @@ const DossierRouter = () => {
 				}
 
 				const { createDossier } = CreateDossierUseCase();
-				const { statusCode, headers } = await createDossier({
+				const { statusCode, args } = await createDossier({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/dossiers/${args?.id}`)
 					.json();
 			},
 		);
@@ -121,14 +121,14 @@ const DossierRouter = () => {
 				}
 
 				const { updateDossierById } = UpdateDossierByIdUseCase();
-				const { statusCode, headers, args } = await updateDossierById({
+				const { statusCode, args } = await updateDossierById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/dossiers/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

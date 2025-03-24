@@ -15,7 +15,7 @@ const UpdateDossierByIdUseCase = () => {
 				body: { designation, description, price, isVisible, isActive },
 			},
 		}: UseCaseRequest<UpdateDossierByIdRequest>): Promise<
-			UseCaseResponse<Pick<DossierDTO, "updatedAt">>
+			UseCaseResponse<Pick<DossierDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundDossiersId } = await repository.findDossierById(
 				{ query: { id } },
@@ -39,8 +39,10 @@ const UpdateDossierByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/dossiers/${updatedDossiersId[0]}` },
-				args: { updatedAt: updatedDossiersRow[0].updatedAt },
+				args: {
+					id: updatedDossiersId[0],
+					updatedAt: updatedDossiersRow[0].updatedAt,
+				},
 			};
 		},
 	};

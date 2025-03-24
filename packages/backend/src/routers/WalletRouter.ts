@@ -67,13 +67,13 @@ const WalletRouter = () => {
 				}
 
 				const { createWallet } = CreateWalletUseCase();
-				const { statusCode, headers } = await createWallet({
+				const { statusCode, args } = await createWallet({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/wallets/${args?.id}`)
 					.json();
 			},
 		);
@@ -95,14 +95,14 @@ const WalletRouter = () => {
 				}
 
 				const { updateWalletById } = UpdateWalletByIdUseCase();
-				const { statusCode, headers, args } = await updateWalletById({
+				const { statusCode, args } = await updateWalletById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/wallets/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

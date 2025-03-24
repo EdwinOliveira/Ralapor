@@ -1,8 +1,5 @@
 import { ProfileRemoteRepository } from "../../repositories/ProfileRemoteRepository";
-import {
-	type CreateProfileRequest,
-	createProfileSchema,
-} from "../../domains/Profile";
+import type { CreateProfileRequest, ProfileDTO } from "../../domains/Profile";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateProfileUseCase = () => {
@@ -14,7 +11,7 @@ const CreateProfileUseCase = () => {
 				body: { userId, firstName, lastName, dateBirth },
 			},
 		}: UseCaseRequest<CreateProfileRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<ProfileDTO, "id">>
 		> => {
 			const { affectedIds: foundProfilesId } =
 				await repository.findProfileByUserId({
@@ -35,7 +32,7 @@ const CreateProfileUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/profiles/${createdProfilesId[0]}` },
+				args: { id: createdProfilesId[0] },
 			};
 		},
 	};

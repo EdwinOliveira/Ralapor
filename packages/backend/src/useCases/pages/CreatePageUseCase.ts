@@ -1,5 +1,5 @@
 import { PageRemoteRepository } from "../../repositories/PageRemoteRepository";
-import type { CreatePageRequest } from "../../domains/Page";
+import type { CreatePageRequest, PageDTO } from "../../domains/Page";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreatePageUseCase = () => {
@@ -11,7 +11,7 @@ const CreatePageUseCase = () => {
 				body: { chapterId, categoryId, designation, description, price },
 			},
 		}: UseCaseRequest<CreatePageRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<PageDTO, "id">>
 		> => {
 			const { affectedIds: foundPagesId } =
 				await repository.findPagesByChapterId({
@@ -32,7 +32,7 @@ const CreatePageUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/pages/${createdPagesId[0]}` },
+				args: { id: createdPagesId[0] },
 			};
 		},
 	};

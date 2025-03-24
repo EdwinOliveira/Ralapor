@@ -19,7 +19,7 @@ const UpdateUserTokensByIdUseCase = () => {
 			},
 		}: UseCaseRequest<UpdateUserTokensByIdRequest>): Promise<
 			UseCaseResponse<
-				Pick<UserEntity, "accessToken" | "refreshToken" | "updatedAt">
+				Pick<UserEntity, "id" | "accessToken" | "refreshToken" | "updatedAt">
 			>
 		> => {
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
@@ -58,8 +58,8 @@ const UpdateUserTokensByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updatedUsersId[0]}` },
 				args: {
+					id: updatedUsersId[0],
 					accessToken,
 					refreshToken,
 					updatedAt: updatedUsersRow[0].updatedAt,

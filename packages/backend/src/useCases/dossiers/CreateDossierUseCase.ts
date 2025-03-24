@@ -1,5 +1,5 @@
 import { DossierRemoteRepository } from "../../repositories/DossierRemoteRepository";
-import type { CreateDossierRequest } from "../../domains/Dossier";
+import type { CreateDossierRequest, DossierDTO } from "../../domains/Dossier";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateDossierUseCase = () => {
@@ -11,7 +11,7 @@ const CreateDossierUseCase = () => {
 				body: { userId, categoryId, designation, description, price },
 			},
 		}: UseCaseRequest<CreateDossierRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<DossierDTO, "id">>
 		> => {
 			const { affectedIds: foundDossiersId } =
 				await repository.findDossiersByUserId({
@@ -32,7 +32,7 @@ const CreateDossierUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/dossiers/${createdDossiersId[0]}` },
+				args: { id: createdDossiersId[0] },
 			};
 		},
 	};

@@ -1,5 +1,8 @@
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest } from "../../domains/User";
+import type {
+	UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
+	UserDTO,
+} from "../../domains/User";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import { MailProvider } from "../../providers/MailProvider";
@@ -17,7 +20,7 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				params: { username, email, phoneNumber },
 			},
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
 				await repository.findUserByUsernameOrEmailOrPhoneNumber({
@@ -49,8 +52,10 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updatedUsersId[0]}` },
-				args: { updatedAt: updatedUsersRow[0].updatedAt },
+				args: {
+					id: updatedUsersId[0],
+					updatedAt: updatedUsersRow[0].updatedAt,
+				},
 			};
 		},
 	};

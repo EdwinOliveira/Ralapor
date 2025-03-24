@@ -1,5 +1,5 @@
 import { BookRemoteRepository } from "../../repositories/BookRemoteRepository";
-import type { CreateBookRequest } from "../../domains/Book";
+import type { BookEntity, CreateBookRequest } from "../../domains/Book";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateBookUseCase = () => {
@@ -11,7 +11,7 @@ const CreateBookUseCase = () => {
 				body: { dossierId, categoryId, designation, description, price },
 			},
 		}: UseCaseRequest<CreateBookRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<BookEntity, "id">>
 		> => {
 			const { affectedIds: foundBooksId } =
 				await repository.findBooksByDossierId({
@@ -32,7 +32,7 @@ const CreateBookUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/books/${createdBooksId[0]}` },
+				args: { id: createdBooksId[0] },
 			};
 		},
 	};

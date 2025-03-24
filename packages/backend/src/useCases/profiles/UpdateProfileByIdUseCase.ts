@@ -15,7 +15,7 @@ const UpdateProfileByIdUseCase = () => {
 				body: { firstName, lastName, dateBirth },
 			},
 		}: UseCaseRequest<UpdateProfileByIdRequest>): Promise<
-			UseCaseResponse<Pick<ProfileDTO, "updatedAt">>
+			UseCaseResponse<Pick<ProfileDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundProfilesId } = await repository.findProfileById(
 				{ query: { id } },
@@ -39,8 +39,10 @@ const UpdateProfileByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/profiles/${updatedProfilesId[0]}` },
-				args: { updatedAt: updatedProfilesRow[0].updatedAt },
+				args: {
+					id: updatedProfilesId[0],
+					updatedAt: updatedProfilesRow[0].updatedAt,
+				},
 			};
 		},
 	};

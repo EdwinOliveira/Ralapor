@@ -1,5 +1,5 @@
 import { ChapterRemoteRepository } from "../../repositories/ChapterRemoteRepository";
-import type { CreateChapterRequest } from "../../domains/Chapter";
+import type { ChapterDTO, CreateChapterRequest } from "../../domains/Chapter";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
 const CreateChapterUseCase = () => {
@@ -11,7 +11,7 @@ const CreateChapterUseCase = () => {
 				body: { bookId, categoryId, designation, description, price },
 			},
 		}: UseCaseRequest<CreateChapterRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<ChapterDTO, "id">>
 		> => {
 			const { affectedIds: foundChaptersId } =
 				await repository.findChaptersByBookId({
@@ -32,7 +32,7 @@ const CreateChapterUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/chapters/${createdChaptersId[0]}` },
+				args: { id: createdChaptersId[0] },
 			};
 		},
 	};

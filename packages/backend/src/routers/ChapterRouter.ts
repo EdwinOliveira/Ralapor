@@ -93,13 +93,13 @@ const ChapterRouter = () => {
 				}
 
 				const { createChapter } = CreateChapterUseCase();
-				const { statusCode, headers } = await createChapter({
+				const { statusCode, args } = await createChapter({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/chapters/${args?.id}`)
 					.json();
 			},
 		);
@@ -121,14 +121,14 @@ const ChapterRouter = () => {
 				}
 
 				const { updateChapterById } = UpdateChapterByIdUseCase();
-				const { statusCode, headers, args } = await updateChapterById({
+				const { statusCode, args } = await updateChapterById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/chapters/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

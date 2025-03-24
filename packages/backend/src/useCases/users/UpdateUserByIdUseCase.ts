@@ -1,4 +1,4 @@
-import type { UpdateUserByIdRequest } from "../../domains/User";
+import type { UpdateUserByIdRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 
@@ -12,7 +12,7 @@ const UpdateUserByIdUseCase = () => {
 				body: schemaArgsBody,
 			},
 		}: UseCaseRequest<UpdateUserByIdRequest>): Promise<
-			UseCaseResponse<unknown>
+			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundUsersId } = await repository.findUserById({
 				query: { id },
@@ -34,8 +34,10 @@ const UpdateUserByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/users/${updatedUsersId[0]}` },
-				args: { updatedAt: updatedUsersRow[0].updatedAt },
+				args: {
+					id: updatedUsersId[0],
+					updatedAt: updatedUsersRow[0].updatedAt,
+				},
 			};
 		},
 	};

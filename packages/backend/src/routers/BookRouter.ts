@@ -97,13 +97,13 @@ const BookRouter = () => {
 				}
 
 				const { createBook } = CreateBookUseCase();
-				const { statusCode, headers } = await createBook({
+				const { statusCode, args } = await createBook({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
+					.location(`/books/${args?.id}`)
 					.json();
 			},
 		);
@@ -125,14 +125,14 @@ const BookRouter = () => {
 				}
 
 				const { updateBookById } = UpdateBookByIdUseCase();
-				const { statusCode, headers, args } = await updateBookById({
+				const { statusCode, args } = await updateBookById({
 					schemaArgs,
 				});
 
 				return void response
 					.status(statusCode)
-					.location(headers ? headers.location : "")
-					.json(args);
+					.location(`/books/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
 			},
 		);
 

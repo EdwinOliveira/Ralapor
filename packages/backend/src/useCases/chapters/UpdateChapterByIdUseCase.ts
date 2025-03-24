@@ -15,7 +15,7 @@ const UpdateChapterByIdUseCase = () => {
 				body: { designation, description, price, isVisible, isActive },
 			},
 		}: UseCaseRequest<UpdateChapterByIdRequest>): Promise<
-			UseCaseResponse<Pick<ChapterDTO, "updatedAt">>
+			UseCaseResponse<Pick<ChapterDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundChaptersId } = await repository.findChapterById(
 				{ query: { id } },
@@ -39,8 +39,10 @@ const UpdateChapterByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/chapters/${updatedChaptersId[0]}` },
-				args: { updatedAt: updatedChaptersRow[0].updatedAt },
+				args: {
+					id: updatedChaptersId[0],
+					updatedAt: updatedChaptersRow[0].updatedAt,
+				},
 			};
 		},
 	};

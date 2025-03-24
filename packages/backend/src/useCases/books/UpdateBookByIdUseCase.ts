@@ -12,7 +12,7 @@ const UpdateBookByIdUseCase = () => {
 				body: { designation, description, price, isVisible, isActive },
 			},
 		}: UseCaseRequest<UpdateBookByIdRequest>): Promise<
-			UseCaseResponse<Pick<BookDTO, "updatedAt">>
+			UseCaseResponse<Pick<BookDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundBooksId } = await repository.findBookById({
 				query: { id },
@@ -34,8 +34,10 @@ const UpdateBookByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/books/${updatedBooksId[0]}` },
-				args: { updatedAt: updatedBooksRow[0].updatedAt },
+				args: {
+					id: updatedBooksId[0],
+					updatedAt: updatedBooksRow[0].updatedAt,
+				},
 			};
 		},
 	};

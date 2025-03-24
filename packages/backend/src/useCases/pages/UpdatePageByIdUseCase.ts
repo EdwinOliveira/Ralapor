@@ -12,7 +12,7 @@ const UpdatePageByIdUseCase = () => {
 				body: { designation, description, price, isVisible, isActive },
 			},
 		}: UseCaseRequest<UpdatePageByIdRequest>): Promise<
-			UseCaseResponse<Pick<PageDTO, "updatedAt">>
+			UseCaseResponse<Pick<PageDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundPagesId } = await repository.findPageById({
 				query: { id },
@@ -34,8 +34,10 @@ const UpdatePageByIdUseCase = () => {
 
 			return {
 				statusCode: 201,
-				headers: { location: `/pages/${updatedPagesId[0]}` },
-				args: { updatedAt: updatedPagesRow[0].updatedAt },
+				args: {
+					id: updatedPagesId[0],
+					updatedAt: updatedPagesRow[0].updatedAt,
+				},
 			};
 		},
 	};
