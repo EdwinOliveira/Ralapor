@@ -176,11 +176,10 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateUserTokensById } = UpdateUserTokensByIdUseCase();
-
-				const { statusCode, args } = await updateUserTokensById({
-					schemaArgs,
-				});
+				const { statusCode, args } =
+					await UpdateUserTokensByIdUseCase().updateUserTokensById({
+						schemaArgs,
+					});
 
 				return void response
 					.status(statusCode)

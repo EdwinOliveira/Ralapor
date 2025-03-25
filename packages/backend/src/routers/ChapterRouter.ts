@@ -28,8 +28,8 @@ const ChapterRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findChapterById } = FindChapterByIdUseCase();
-				const { statusCode, args } = await findChapterById({ schemaArgs });
+				const { statusCode, args } =
+					await FindChapterByIdUseCase().findChapterById({ schemaArgs });
 
 				return void response.status(statusCode).json(args);
 			},

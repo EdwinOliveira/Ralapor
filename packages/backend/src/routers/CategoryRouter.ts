@@ -48,10 +48,10 @@ const CategoryRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findCategoryById } = FindCategoryByIdUseCase();
-				const { statusCode, args } = await findCategoryById({
-					schemaArgs,
-				});
+				const { statusCode, args } =
+					await FindCategoryByIdUseCase().findCategoryById({
+						schemaArgs,
+					});
 
 				return void response.status(statusCode).json(args);
 			},

@@ -26,8 +26,8 @@ const ProfileRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findProfileById } = FindProfileByIdUseCase();
-				const { statusCode, args } = await findProfileById({ schemaArgs });
+				const { statusCode, args } =
+					await FindProfileByIdUseCase().findProfileById({ schemaArgs });
 
 				return void response.status(statusCode).json(args);
 			},

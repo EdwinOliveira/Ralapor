@@ -101,10 +101,10 @@ const SubscriptionRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateSubscriptionById } = UpdateSubscriptionByIdUseCase();
-				const { statusCode, args } = await updateSubscriptionById({
-					schemaArgs,
-				});
+				const { statusCode, args } =
+					await UpdateSubscriptionByIdUseCase().updateSubscriptionById({
+						schemaArgs,
+					});
 
 				return void response
 					.status(statusCode)

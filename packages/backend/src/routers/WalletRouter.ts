@@ -94,10 +94,10 @@ const WalletRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateWalletById } = UpdateWalletByIdUseCase();
-				const { statusCode, args } = await updateWalletById({
-					schemaArgs,
-				});
+				const { statusCode, args } =
+					await UpdateWalletByIdUseCase().updateWalletById({
+						schemaArgs,
+					});
 
 				return void response
 					.status(statusCode)

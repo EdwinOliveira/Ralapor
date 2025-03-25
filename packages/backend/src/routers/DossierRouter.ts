@@ -28,8 +28,8 @@ const DossierRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findDossierById } = FindDossierByIdUseCase();
-				const { statusCode, args } = await findDossierById({ schemaArgs });
+				const { statusCode, args } =
+					await FindDossierByIdUseCase().findDossierById({ schemaArgs });
 
 				return void response.status(statusCode).json(args);
 			},

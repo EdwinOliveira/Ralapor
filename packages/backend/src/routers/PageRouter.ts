@@ -28,8 +28,9 @@ const PageRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findPageById } = FindPageByIdUseCase();
-				const { statusCode, args } = await findPageById({ schemaArgs });
+				const { statusCode, args } = await FindPageByIdUseCase().findPageById({
+					schemaArgs,
+				});
 
 				return void response.status(statusCode).json(args);
 			},

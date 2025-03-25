@@ -28,8 +28,7 @@ const BookRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findBookById } = FindBookByIdUseCase();
-				const { statusCode, args } = await findBookById({
+				const { statusCode, args } = await FindBookByIdUseCase().findBookById({
 					schemaArgs,
 				});
 
