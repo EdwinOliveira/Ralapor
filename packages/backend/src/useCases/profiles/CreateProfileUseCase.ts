@@ -1,9 +1,11 @@
 import { ProfileRemoteRepository } from "../../repositories/ProfileRemoteRepository";
 import type { CreateProfileRequest, ProfileDTO } from "../../domains/Profile";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
+import { FindUserByIdUseCase } from "../users/FindUserByIdUseCase";
 
 const CreateProfileUseCase = () => {
 	const repository = ProfileRemoteRepository();
+	const { findUserById } = FindUserByIdUseCase();
 
 	return {
 		createProfile: async ({
@@ -13,6 +15,14 @@ const CreateProfileUseCase = () => {
 		}: UseCaseRequest<CreateProfileRequest>): Promise<
 			UseCaseResponse<Pick<ProfileDTO, "id">>
 		> => {
+			const { statusCode: foundUserStatusCode } = await findUserById({
+				schemaArgs: { params: { id: userId } },
+			});
+
+			if (foundUserStatusCode !== 200) {
+				return { statusCode: 404 };
+			}
+
 			const { affectedIds: foundProfilesId } =
 				await repository.findProfileByUserId({
 					query: { userId },

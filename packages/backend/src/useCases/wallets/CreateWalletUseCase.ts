@@ -2,9 +2,11 @@ import type { UserDTO } from "../../domains/User";
 import type { CreateWalletRequest } from "../../domains/Wallet";
 import { WalletRemoteRepository } from "../../repositories/WalletRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
+import { FindUserByIdUseCase } from "../users/FindUserByIdUseCase";
 
 const CreateWalletUseCase = () => {
 	const repository = WalletRemoteRepository();
+	const { findUserById } = FindUserByIdUseCase();
 
 	return {
 		createWallet: async ({
@@ -14,6 +16,14 @@ const CreateWalletUseCase = () => {
 		}: UseCaseRequest<CreateWalletRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id">>
 		> => {
+			const { statusCode } = await findUserById({
+				schemaArgs: { params: { id: userId } },
+			});
+
+			if (statusCode !== 200) {
+				return { statusCode: 404 };
+			}
+
 			const { affectedIds: foundWalletsId } =
 				await repository.findWalletByUserId({
 					query: { userId },
