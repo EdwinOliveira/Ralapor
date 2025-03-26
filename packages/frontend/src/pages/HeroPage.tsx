@@ -1,4 +1,4 @@
-import Brand from "../components/Brand";
+import Brand from "../components/brand/Brand";
 import "./HeroPage.css";
 
 export default function HeroPage() {

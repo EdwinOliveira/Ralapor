@@ -5,8 +5,9 @@
 	margin: 0;
 	box-sizing: border-box;
 
-	--brand-primary: #007fff;
+	--brand-primary: #00416a;
 	--brand-secondary: #ffbf00;
+	--default: #2a3439;
 
 	font-family: "Poppins", sans-serif;
 }
@@ -14,4 +15,13 @@
 #root {
 	min-height: 100vh;
 	width: 100vw;
+}
+
+a {
+	text-decoration: none;
+}
+
+button {
+	border: none;
+	background-color: transparent;
 }

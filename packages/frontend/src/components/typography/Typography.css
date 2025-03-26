@@ -3,9 +3,19 @@
 	font-weight: 700;
 }
 
+.button {
+	font-size: clamp(.65rem, .65rem + 0.5vw, 1.65rem);
+	font-weight: 600;
+}
+
 .brand-primary {
 	color: var(--brand-primary);
 }
+
 .brand-secondary {
 	color: var(--brand-secondary);
+}
+
+.button {
+	color: var(--default);
 }
