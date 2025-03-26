@@ -3,6 +3,7 @@ import type {
 	SubscriptionDTO,
 } from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
+import { CreateSubscriptionAndRemoveFundsTransaction } from "../../transations/CreateSubscriptionAndRemoveFundsTransaction";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 import { FindBookByIdUseCase } from "../books/FindBookByIdUseCase";
 import { FindChapterByIdUseCase } from "../chapters/FindChapterByIdUseCase";
@@ -13,6 +14,8 @@ import { UpdateWalletByIdUseCase } from "../wallets/UpdateWalletByIdUseCase";
 
 const CreateSubscriptionUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
+	const { createSubscriptionAndRemoveFunds } =
+		CreateSubscriptionAndRemoveFundsTransaction();
 	const { findDossierById } = FindDossierByIdUseCase();
 	const { findBookById } = FindBookByIdUseCase();
 	const { findChapterById } = FindChapterByIdUseCase();
@@ -65,31 +68,34 @@ const CreateSubscriptionUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const price =
+			const funds =
 				dossierArgs?.price ||
 				bookArgs?.price ||
 				chapterArgs?.price ||
 				pageArgs?.price;
 
-			if (walletArgs && price && walletArgs.funds >= price) {
+			if (walletArgs === undefined || funds === undefined) {
+				return { statusCode: 404 };
+			}
+
+			if (walletArgs.funds >= funds) {
 				return { statusCode: 422 };
 			}
 
 			const { affectedIds: createdSubscriptionsId } =
-				await repository.createSubscription({
-					args: { walletId, dossierId, bookId, chapterId, pageId },
+				await createSubscriptionAndRemoveFunds({
+					args: {
+						walletId,
+						dossierId,
+						bookId,
+						chapterId,
+						pageId,
+						funds,
+					},
 				});
 
 			if (createdSubscriptionsId.length === 0) {
 				return { statusCode: 404 };
-			}
-
-			const { statusCode } = await updateWalletById({
-				schemaArgs: { params: { id: walletId }, body: { funds: price } },
-			});
-
-			if (statusCode !== 201) {
-				return { statusCode: 500 };
 			}
 
 			return {
