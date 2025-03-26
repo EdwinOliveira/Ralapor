@@ -1,6 +1,6 @@
 import "./Typography.css";
 
-export type TypographySegment = "brand" | "button";
+export type TypographySegment = "brand" | "brand-sub-header";
 export type TypographyColor = "brand-primary" | "brand-secondary" | "default";
 
 export type TypographyProps = {

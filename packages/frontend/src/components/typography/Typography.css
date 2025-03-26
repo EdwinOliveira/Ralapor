@@ -3,9 +3,9 @@
 	font-weight: 700;
 }
 
-.button {
-	font-size: clamp(.65rem, .65rem + 0.5vw, 1.65rem);
-	font-weight: 600;
+.brand-sub-header {
+	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
+	font-weight: 100;
 }
 
 .brand-primary {
