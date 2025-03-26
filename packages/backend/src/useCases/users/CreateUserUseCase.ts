@@ -42,7 +42,7 @@ const CreateUserUseCase = () => {
 			});
 
 			if (createdUsersId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			await mailProvider.sendMail({

@@ -33,7 +33,7 @@ const UpdateCategoryByIdUseCase = () => {
 			});
 
 			if (updatedCategoriesId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

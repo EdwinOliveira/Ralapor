@@ -39,7 +39,7 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 				});
 
 			if (updatedUsersId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			await mailProvider.sendMail({

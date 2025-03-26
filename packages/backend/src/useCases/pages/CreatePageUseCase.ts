@@ -47,7 +47,7 @@ const CreatePageUseCase = () => {
 			});
 
 			if (createdPagesId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

@@ -53,7 +53,7 @@ const UpdateUserTokensByIdUseCase = () => {
 				});
 
 			if (updatedUsersId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

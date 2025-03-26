@@ -29,7 +29,7 @@ const UpdatePageByIdUseCase = () => {
 				});
 
 			if (updatedPagesId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

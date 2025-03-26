@@ -34,7 +34,7 @@ const UpdateProfileByIdUseCase = () => {
 			});
 
 			if (updatedProfilesId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

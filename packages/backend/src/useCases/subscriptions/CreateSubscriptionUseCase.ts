@@ -10,7 +10,6 @@ import { FindChapterByIdUseCase } from "../chapters/FindChapterByIdUseCase";
 import { FindDossierByIdUseCase } from "../dossiers/FindDossierByIdUseCase";
 import { FindPageByIdUseCase } from "../pages/FindPageByIdUseCase";
 import { FindWalletByIdUseCase } from "../wallets/FindWalletByIdUseCase";
-import { UpdateWalletByIdUseCase } from "../wallets/UpdateWalletByIdUseCase";
 
 const CreateSubscriptionUseCase = () => {
 	const repository = SubscriptionRemoteRepository();
@@ -21,7 +20,6 @@ const CreateSubscriptionUseCase = () => {
 	const { findChapterById } = FindChapterByIdUseCase();
 	const { findPageById } = FindPageByIdUseCase();
 	const { findWalletById } = FindWalletByIdUseCase();
-	const { updateWalletById } = UpdateWalletByIdUseCase();
 
 	return {
 		createSubscription: async ({
@@ -75,7 +73,7 @@ const CreateSubscriptionUseCase = () => {
 				pageArgs?.price;
 
 			if (walletArgs === undefined || funds === undefined) {
-				return { statusCode: 404 };
+				return { statusCode: 400 };
 			}
 
 			if (walletArgs.funds >= funds) {
@@ -95,7 +93,7 @@ const CreateSubscriptionUseCase = () => {
 				});
 
 			if (createdSubscriptionsId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {

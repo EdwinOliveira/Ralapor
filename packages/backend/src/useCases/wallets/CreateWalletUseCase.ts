@@ -38,7 +38,7 @@ const CreateWalletUseCase = () => {
 			});
 
 			if (createdWalletsId.length === 0) {
-				return { statusCode: 404 };
+				return { statusCode: 500 };
 			}
 
 			return {
