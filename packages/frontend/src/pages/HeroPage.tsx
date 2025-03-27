@@ -1,5 +1,5 @@
-import Brand from "../components/brand/Brand";
-import Typography from "../components/typography/Typography";
+import Brand from "../components/Brand";
+import Typography from "../components/Typography";
 import "./HeroPage.css";
 
 export default function HeroPage() {
