@@ -8,6 +8,7 @@
 	--brand-primary: #00416a;
 	--brand-secondary: #ffbf00;
 	--default: #2a3439;
+	--default-inverse: #fff;
 
 	font-family: "Poppins", sans-serif;
 	color: var(--default);

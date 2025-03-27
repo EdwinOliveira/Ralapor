@@ -1,7 +1,7 @@
 import "./Typography.css";
 
-export type TypographySegment = "form-header" | "group-header";
-export type TypographyColor = "default";
+export type TypographySegment = "form-header" | "group-header" | "button";
+export type TypographyColor = "default" | "default-inverse";
 
 export type TypographyProps = {
 	content: string;

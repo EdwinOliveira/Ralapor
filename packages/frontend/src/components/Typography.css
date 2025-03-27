@@ -1,10 +1,22 @@
 .form-header {
-	font-size: clamp(1.25rem, 1.25rem + 0.5vw, 2.25rem);
-	font-weight: 800;
+	font-size: 1.25rem;
+	font-weight: 600;
 }
 
 .group-header {
-	font-size: clamp(.65rem, .65rem + 0.5vw, .65rem);
+	font-size: .65rem;
 	font-weight: 800;
 	opacity: 0.25;
+}
+
+.button {
+	font-size: .65rem;
+}
+
+.default {
+	color: var(--default);
+}
+
+.default-inverse {
+	color: var(--default-inverse);
 }
