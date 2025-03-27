@@ -5,6 +5,22 @@ const BookRemoteRepository = (): BookRepository => {
 	const { createConnection, createBooksTable } = DatabaseService();
 
 	return {
+		findBooks: async () => {
+			const dbConnection = createConnection();
+			await createBooksTable(dbConnection);
+
+			const foundBooks = await dbConnection<BookEntity>("Books");
+			await dbConnection.destroy();
+
+			if (foundBooks.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundBooks.map((foundBook) => foundBook.id),
+				affectedRows: foundBooks,
+			};
+		},
 		findBookById: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };

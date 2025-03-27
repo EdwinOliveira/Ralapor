@@ -34,6 +34,14 @@ const bookDTOMapper = (entity: BookEntity): BookDTO => {
 	};
 };
 
+const findBooksSchema = z.object({
+	query: z.object({
+		minLimit: z.number().optional(),
+		maxLimit: z.number().optional(),
+	}),
+});
+type FindBooksRequest = z.infer<typeof findBooksSchema>;
+
 const findBookByIdSchema = z.object({
 	params: z.object({
 		id: z
@@ -104,6 +112,7 @@ const updateBookByIdSchema = z.object({
 type UpdateBookByIdRequest = z.infer<typeof updateBookByIdSchema>;
 
 interface BookRepository {
+	findBooks(): Promise<RepositoryResponse<BookEntity>>;
 	findBookById({
 		query,
 	}: RepositoryRequest<Pick<BookEntity, "id">>): Promise<
@@ -140,6 +149,8 @@ export {
 	type BookEntity,
 	type BookDTO,
 	bookDTOMapper,
+	findBooksSchema,
+	type FindBooksRequest,
 	findBookByIdSchema,
 	type FindBookByIdRequest,
 	findBooksByDossierIdSchema,

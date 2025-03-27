@@ -34,6 +34,14 @@ const chapterDTOMapper = (entity: ChapterEntity): ChapterDTO => {
 	};
 };
 
+const findChaptersSchema = z.object({
+	query: z.object({
+		minLimit: z.number().optional(),
+		maxLimit: z.number().optional(),
+	}),
+});
+type FindChaptersRequest = z.infer<typeof findChaptersSchema>;
+
 const findChapterByIdSchema = z.object({
 	params: z.object({
 		id: z
@@ -106,6 +114,7 @@ const updateChapterByIdSchema = z.object({
 type UpdateChapterByIdRequest = z.infer<typeof updateChapterByIdSchema>;
 
 interface ChapterRepository {
+	findChapters(): Promise<RepositoryResponse<ChapterEntity>>;
 	findChapterById({
 		query,
 	}: RepositoryRequest<Pick<ChapterEntity, "id">>): Promise<
@@ -142,6 +151,8 @@ export {
 	type ChapterEntity,
 	type ChapterDTO,
 	chapterDTOMapper,
+	findChaptersSchema,
+	type FindChaptersRequest,
 	findChapterByIdSchema,
 	type FindChapterByIdRequest,
 	findChaptersByBookIdSchema,

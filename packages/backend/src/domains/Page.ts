@@ -34,6 +34,14 @@ const pageDTOMapper = (entity: PageEntity): PageDTO => {
 	};
 };
 
+const findPagesSchema = z.object({
+	query: z.object({
+		minLimit: z.number().optional(),
+		maxLimit: z.number().optional(),
+	}),
+});
+type FindPagesRequest = z.infer<typeof findPagesSchema>;
+
 const findPageByIdSchema = z.object({
 	params: z.object({
 		id: z
@@ -104,6 +112,7 @@ const updatePageByIdSchema = z.object({
 type UpdatePageByIdRequest = z.infer<typeof updatePageByIdSchema>;
 
 interface PageRepository {
+	findPages(): Promise<RepositoryResponse<PageEntity>>;
 	findPageById({
 		query,
 	}: RepositoryRequest<Pick<PageEntity, "id">>): Promise<
@@ -140,6 +149,8 @@ export {
 	type PageEntity,
 	type PageDTO,
 	pageDTOMapper,
+	findPagesSchema,
+	type FindPagesRequest,
 	findPageByIdSchema,
 	type FindPageByIdRequest,
 	findPagesByChapterIdSchema,

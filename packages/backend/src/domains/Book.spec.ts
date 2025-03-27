@@ -8,6 +8,7 @@ import {
 	findBookByIdSchema,
 	updateBookByIdSchema,
 	findBooksByCategoryIdSchema,
+	findBooksSchema,
 } from "./Book";
 
 describe("Book", () => {
@@ -42,6 +43,87 @@ describe("Book", () => {
 
 		it("returns bookDTO", () => {
 			expect(bookDTOMapper(bookEntity)).toEqual(bookDTO);
+		});
+	});
+
+	describe("findBooksSchema", () => {
+		const parseSchema = (data: Record<string, unknown>) => {
+			return findBooksSchema.safeParse(data);
+		};
+
+		it("returns schema parse for valid input", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+						maxLimit: 100,
+					},
+				}),
+			).toEqual({
+				data: {
+					params: {
+						minLimit: 0,
+						maxLimit: 100,
+					},
+				},
+				success: true,
+			});
+		});
+
+		it("returns schema invalid minLimit error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: "0",
+						maxLimit: 100,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema invalid maxLimit error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+						maxLimit: "100",
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(parseSchema({})).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing minLimit field error", () => {
+			expect(
+				parseSchema({
+					params: {
+						maxLimit: 100,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing maxLimit field error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
 		});
 	});
 

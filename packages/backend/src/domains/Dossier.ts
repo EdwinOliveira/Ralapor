@@ -34,6 +34,14 @@ const dossierDTOMapper = (entity: DossierEntity): DossierDTO => {
 	};
 };
 
+const findDossiersSchema = z.object({
+	query: z.object({
+		minLimit: z.number().optional(),
+		maxLimit: z.number().optional(),
+	}),
+});
+type FindDossiersRequest = z.infer<typeof findDossiersSchema>;
+
 const findDossierByIdSchema = z.object({
 	params: z.object({
 		id: z
@@ -106,6 +114,7 @@ const updateDossierByIdSchema = z.object({
 type UpdateDossierByIdRequest = z.infer<typeof updateDossierByIdSchema>;
 
 interface DossierRepository {
+	findDossiers(): Promise<RepositoryResponse<DossierEntity>>;
 	findDossierById({
 		query,
 	}: RepositoryRequest<Pick<DossierEntity, "id">>): Promise<
@@ -142,6 +151,8 @@ export {
 	type DossierEntity,
 	type DossierDTO,
 	dossierDTOMapper,
+	findDossiersSchema,
+	type FindDossiersRequest,
 	findDossierByIdSchema,
 	type FindDossierByIdRequest,
 	findDossiersByUserIdSchema,

@@ -5,6 +5,22 @@ const PageRemoteRepository = (): PageRepository => {
 	const { createConnection, createPagesTable } = DatabaseService();
 
 	return {
+		findPages: async () => {
+			const dbConnection = createConnection();
+			await createPagesTable(dbConnection);
+
+			const foundPages = await dbConnection<PageEntity>("Pages");
+			await dbConnection.destroy();
+
+			if (foundPages.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundPages.map((foundPage) => foundPage.id),
+				affectedRows: foundPages,
+			};
+		},
 		findPageById: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };

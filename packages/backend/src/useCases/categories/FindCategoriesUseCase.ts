@@ -11,7 +11,9 @@ const FindCategoriesUseCase = () => {
 
 	return {
 		findCategories: async ({
-			schemaArgs,
+			schemaArgs: {
+				query: { minLimit, maxLimit },
+			},
 		}: UseCaseRequest<FindCategoriesRequest>): Promise<
 			UseCaseResponse<Array<CategoryDTO>>
 		> => {
@@ -22,11 +24,17 @@ const FindCategoriesUseCase = () => {
 				return { statusCode: 404 };
 			}
 
+			const categoryDTOs = [];
+			const minLimitValue = minLimit ?? 0;
+			const maxLimitValue = maxLimit ?? foundCategoriesRow.length;
+
+			for (let i = minLimitValue; i < maxLimitValue; i++) {
+				categoryDTOs.push(categoryDTOMapper(foundCategoriesRow[i]));
+			}
+
 			return {
 				statusCode: 200,
-				args: foundCategoriesRow.map((foundCategoryRow) =>
-					categoryDTOMapper(foundCategoryRow),
-				),
+				args: categoryDTOs,
 			};
 		},
 	};

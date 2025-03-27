@@ -21,7 +21,12 @@ const categoryDTOMapper = (entity: CategoryEntity): CategoryDTO => {
 	};
 };
 
-const findCategoriesSchema = z.object({});
+const findCategoriesSchema = z.object({
+	query: z.object({
+		minLimit: z.number().optional(),
+		maxLimit: z.number().optional(),
+	}),
+});
 type FindCategoriesRequest = z.infer<typeof findCategoriesSchema>;
 
 const findCategoryByIdSchema = z.object({

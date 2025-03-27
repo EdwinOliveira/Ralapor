@@ -4,6 +4,7 @@ import {
 	findPageByIdSchema,
 	findPagesByCategoryIdSchema,
 	findPagesByChapterIdSchema,
+	findPagesSchema,
 	pageDTOMapper,
 	updatePageByIdSchema,
 	type PageDTO,
@@ -42,6 +43,87 @@ describe("Page", () => {
 
 		it("returns pageDTO", () => {
 			expect(pageDTOMapper(pageEntity)).toEqual(pageDTO);
+		});
+	});
+
+	describe("findPagesSchema", () => {
+		const parseSchema = (data: Record<string, unknown>) => {
+			return findPagesSchema.safeParse(data);
+		};
+
+		it("returns schema parse for valid input", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+						maxLimit: 100,
+					},
+				}),
+			).toEqual({
+				data: {
+					params: {
+						minLimit: 0,
+						maxLimit: 100,
+					},
+				},
+				success: true,
+			});
+		});
+
+		it("returns schema invalid minLimit error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: "0",
+						maxLimit: 100,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema invalid maxLimit error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+						maxLimit: "100",
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing required fields error", () => {
+			expect(parseSchema({})).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing minLimit field error", () => {
+			expect(
+				parseSchema({
+					params: {
+						maxLimit: 100,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
+		});
+
+		it("returns schema missing maxLimit field error", () => {
+			expect(
+				parseSchema({
+					params: {
+						minLimit: 0,
+					},
+				}),
+			).containSubset({
+				success: false,
+			});
 		});
 	});
 

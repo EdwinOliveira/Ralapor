@@ -5,6 +5,22 @@ const DossierRemoteRepository = (): DossierRepository => {
 	const { createConnection, createDossiersTable } = DatabaseService();
 
 	return {
+		findDossiers: async () => {
+			const dbConnection = createConnection();
+			await createDossiersTable(dbConnection);
+
+			const foundDossiers = await dbConnection<DossierEntity>("Dossiers");
+			await dbConnection.destroy();
+
+			if (foundDossiers.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundDossiers.map((foundDossier) => foundDossier.id),
+				affectedRows: foundDossiers,
+			};
+		},
 		findDossierById: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };

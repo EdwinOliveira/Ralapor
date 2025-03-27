@@ -5,6 +5,22 @@ const ChapterRemoteRepository = (): ChapterRepository => {
 	const { createConnection, createChaptersTable } = DatabaseService();
 
 	return {
+		findChapters: async () => {
+			const dbConnection = createConnection();
+			await createChaptersTable(dbConnection);
+
+			const foundChapters = await dbConnection<ChapterEntity>("Chapters");
+			await dbConnection.destroy();
+
+			if (foundChapters.length === 0) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return {
+				affectedIds: foundChapters.map((foundChapter) => foundChapter.id),
+				affectedRows: foundChapters,
+			};
+		},
 		findChapterById: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };
