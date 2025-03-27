@@ -1,4 +1,5 @@
 import type { HTMLInputTypeAttribute } from "react";
+import "./FormControl.css";
 
 export type FormControlProps = {
 	id?: number;

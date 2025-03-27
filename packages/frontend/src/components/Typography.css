@@ -1,5 +1,5 @@
 .form-header {
-	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
+	font-size: clamp(1.25rem, 1.25rem + 0.5vw, 2.25rem);
 	font-weight: 800;
 }
 

@@ -1,0 +1,6 @@
+#form-group {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.35rem;
+}

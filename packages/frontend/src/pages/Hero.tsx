@@ -1,3 +1,4 @@
+import "./Hero.css";
 import Form from "../components/Form";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
@@ -24,15 +25,15 @@ export default function Hero() {
 					id: 1,
 					name: "access-code",
 					type: "password",
-					placeholder: "Access Code...",
+					placeholder: "Ralapor code...",
 				},
 			],
 		},
 	];
 
 	return (
-		<>
+		<div id="hero">
 			<Form formHeader={formHeader} formGroups={formGroups} />
-		</>
+		</div>
 	);
 }

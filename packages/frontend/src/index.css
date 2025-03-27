@@ -22,7 +22,9 @@ a {
 	text-decoration: none;
 }
 
-button {
+button,
+input {
 	border: none;
 	background-color: transparent;
+	outline: none;
 }
