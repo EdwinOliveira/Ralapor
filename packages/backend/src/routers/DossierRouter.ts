@@ -10,11 +10,35 @@ import {
 	findDossierByIdSchema,
 	findDossiersByCategoryIdSchema,
 	findDossiersByUserIdSchema,
+	findDossiersSchema,
 	updateDossierByIdSchema,
 } from "../domains/Dossier";
+import { FindDossiersUseCase } from "../useCases/dossiers/FindDossiersUseCase";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
+		router.get(
+			"/",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findDossiersSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { findDossiers } = FindDossiersUseCase();
+				const { statusCode, args } = await findDossiers({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
+			},
+		);
+
 		router.get(
 			"/:id",
 			AccessTokenGuard,

@@ -10,11 +10,35 @@ import {
 	findBookByIdSchema,
 	findBooksByCategoryIdSchema,
 	findBooksByDossierIdSchema,
+	findBooksSchema,
 	updateBookByIdSchema,
 } from "../domains/Book";
+import { FindBooksUseCase } from "../useCases/books/FindBooksUseCase";
 
 const BookRouter = () => {
 	const subscribe = (router: Router): Router => {
+		router.get(
+			"/",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findBooksSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { findBooks } = FindBooksUseCase();
+				const { statusCode, args } = await findBooks({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
+			},
+		);
+
 		router.get(
 			"/:id",
 			AccessTokenGuard,

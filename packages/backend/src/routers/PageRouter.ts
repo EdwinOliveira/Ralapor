@@ -10,11 +10,35 @@ import {
 	findPageByIdSchema,
 	findPagesByCategoryIdSchema,
 	findPagesByChapterIdSchema,
+	findPagesSchema,
 	updatePageByIdSchema,
 } from "../domains/Page";
+import { FindPagesUseCase } from "../useCases/pages/FindPagesUseCase";
 
 const PageRouter = () => {
 	const subscribe = (router: Router): Router => {
+		router.get(
+			"/",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findPagesSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { findPages } = FindPagesUseCase();
+				const { statusCode, args } = await findPages({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
+			},
+		);
+
 		router.get(
 			"/:id",
 			AccessTokenGuard,

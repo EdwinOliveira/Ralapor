@@ -10,11 +10,35 @@ import {
 	findChapterByIdSchema,
 	findChaptersByBookIdSchema,
 	findChaptersByCategoryIdSchema,
+	findChaptersSchema,
 	updateChapterByIdSchema,
 } from "../domains/Chapter";
+import { FindChaptersUseCase } from "../useCases/chapters/FindChaptersUseCase";
 
 const ChapterRouter = () => {
 	const subscribe = (router: Router): Router => {
+		router.get(
+			"/",
+			AccessTokenGuard,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findChaptersSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { findChapters } = FindChaptersUseCase();
+				const { statusCode, args } = await findChapters({
+					schemaArgs,
+				});
+
+				return void response.status(statusCode).json(args);
+			},
+		);
+
 		router.get(
 			"/:id",
 			AccessTokenGuard,
