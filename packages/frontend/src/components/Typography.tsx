@@ -1,7 +1,7 @@
 import "./Typography.css";
 
-export type TypographySegment = "brand" | "brand-sub-header";
-export type TypographyColor = "brand-primary" | "brand-secondary" | "default";
+export type TypographySegment = "form-header" | "group-header";
+export type TypographyColor = "default";
 
 export type TypographyProps = {
 	content: string;

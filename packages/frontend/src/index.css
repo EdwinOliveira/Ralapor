@@ -10,6 +10,7 @@
 	--default: #2a3439;
 
 	font-family: "Poppins", sans-serif;
+	color: var(--default);
 }
 
 #root {

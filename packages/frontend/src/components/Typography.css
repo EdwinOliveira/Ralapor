@@ -1,21 +1,10 @@
-.brand {
-	font-size: clamp(3rem, 3rem + 0.5vw, 4rem);
-	font-weight: 700;
-}
-
-.brand-sub-header {
+.form-header {
 	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
-	font-weight: 100;
+	font-weight: 800;
 }
 
-.brand-primary {
-	color: var(--brand-primary);
-}
-
-.brand-secondary {
-	color: var(--brand-secondary);
-}
-
-.button {
-	color: var(--default);
+.group-header {
+	font-size: clamp(.65rem, .65rem + 0.5vw, .65rem);
+	font-weight: 800;
+	opacity: 0.25;
 }
