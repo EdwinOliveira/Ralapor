@@ -55,7 +55,26 @@ export default function CreateUser() {
 				},
 			},
 		],
-		formLinks: [],
+		formLinks: [
+			{
+				id: 1,
+				routePath: "/access-user",
+				typography: {
+					content: "Already have an access code? Click here to access it!",
+					segment: "link",
+					color: "default",
+				},
+			},
+			{
+				id: 2,
+				routePath: "/recover-user",
+				typography: {
+					content: "Forgot your access accode? Click here to recover it!",
+					segment: "link",
+					color: "default",
+				},
+			},
+		],
 	};
 
 	return (

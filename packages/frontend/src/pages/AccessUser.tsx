@@ -33,8 +33,36 @@ export default function AccessUser() {
 	];
 
 	const formAction: FormActionProps = {
-		formButtons: [],
-		formLinks: [],
+		formButtons: [
+			{
+				id: 1,
+				typography: {
+					content: "Continue",
+					segment: "button",
+					color: "default-inverse",
+				},
+			},
+		],
+		formLinks: [
+			{
+				id: 1,
+				routePath: "/create-user",
+				typography: {
+					content: "Don't have an access code? Click here to create it!",
+					segment: "link",
+					color: "default",
+				},
+			},
+			{
+				id: 2,
+				routePath: "/recover-user",
+				typography: {
+					content: "Forgot your access accode? Click here to recover it!",
+					segment: "link",
+					color: "default",
+				},
+			},
+		],
 	};
 
 	return (

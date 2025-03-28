@@ -13,6 +13,12 @@
 	font-size: .65rem;
 }
 
+.link {
+	font-size: .65rem;
+	font-weight: 400;
+	opacity: 0.5;
+}
+
 .default {
 	color: var(--default);
 }

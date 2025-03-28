@@ -1,6 +1,10 @@
 import "./Typography.css";
 
-export type TypographySegment = "form-header" | "group-header" | "button";
+export type TypographySegment =
+	| "form-header"
+	| "group-header"
+	| "button"
+	| "link";
 export type TypographyColor = "default" | "default-inverse";
 
 export type TypographyProps = {
@@ -14,5 +18,5 @@ export default function Typography({
 	segment,
 	color,
 }: TypographyProps) {
-	return <span className={`${segment} ${color}`}>{content}</span>;
+	return <p className={`${segment} ${color}`}>{content}</p>;
 }

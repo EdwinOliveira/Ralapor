@@ -1,7 +1,6 @@
-import type { FormButtonProps } from "./FormButton";
-import FormButton from "./FormButton";
-import type { FormLinkProps } from "./FormLink";
-import FormLink from "./FormLink";
+import FormButton, { type FormButtonProps } from "./FormButton";
+import FormLink, { type FormLinkProps } from "./FormLink";
+import "./FormAction.css";
 
 export type FormActionProps = {
 	formButtons: Array<FormButtonProps>;
@@ -16,12 +15,12 @@ export default function FormAction({
 		<div id="form-action">
 			<div id="form-buttons">
 				{formButtons.map((formButton) => (
-					<FormButton key={formButton.id} typography={formButton.typography} />
+					<FormButton key={formButton.id} {...formButton} />
 				))}
 			</div>
 			<div id="form-links">
 				{formLinks.map((formLink) => (
-					<FormLink key={formLink.id} />
+					<FormLink key={formLink.id} {...formLink} />
 				))}
 			</div>
 		</div>
