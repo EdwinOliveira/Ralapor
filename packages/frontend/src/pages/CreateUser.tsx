@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import Form from "../components/Form";
 import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
@@ -5,6 +6,8 @@ import type { FormHeaderProps } from "../components/FormHeader";
 import "./CreateUser.css";
 
 export default function CreateUser() {
+	const navigate = useNavigate();
+
 	const formHeader: FormHeaderProps = {
 		typography: {
 			content: "Create Ralapor User",
@@ -52,6 +55,9 @@ export default function CreateUser() {
 					content: "Continue",
 					segment: "button",
 					color: "default-inverse",
+				},
+				onAction: async () => {
+					await navigate("/access-user");
 				},
 			},
 		],

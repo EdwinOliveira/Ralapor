@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import Form from "../components/Form";
 import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
@@ -5,6 +6,8 @@ import type { FormHeaderProps } from "../components/FormHeader";
 import "./RecoverUser.css";
 
 export default function RecoverUser() {
+	const navigate = useNavigate();
+
 	const formHeader: FormHeaderProps = {
 		typography: {
 			content: "Recover Ralapor User",
@@ -52,6 +55,9 @@ export default function RecoverUser() {
 					content: "Continue",
 					segment: "button",
 					color: "default-inverse",
+				},
+				onAction: async () => {
+					await navigate("/access-user");
 				},
 			},
 		],

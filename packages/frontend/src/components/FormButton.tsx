@@ -4,12 +4,13 @@ import "./FormButton.css";
 export type FormButtonProps = {
 	id?: number;
 	typography: TypographyProps;
+	onAction: () => Promise<void>;
 };
 
-export default function FormButton({ typography }: FormButtonProps) {
+export default function FormButton({ typography, onAction }: FormButtonProps) {
 	return (
 		<div id="form-button">
-			<button type="button">
+			<button type="button" onClick={onAction}>
 				<Typography
 					content={typography.content}
 					color={typography.color}

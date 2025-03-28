@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import Form from "../components/Form";
 import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
@@ -5,6 +6,8 @@ import type { FormHeaderProps } from "../components/FormHeader";
 import "./AccessUser.css";
 
 export default function AccessUser() {
+	const navigate = useNavigate();
+
 	const formHeader: FormHeaderProps = {
 		typography: {
 			content: "Access Ralapor User",
@@ -40,6 +43,9 @@ export default function AccessUser() {
 					content: "Continue",
 					segment: "button",
 					color: "default-inverse",
+				},
+				onAction: async () => {
+					await navigate("/create-profile");
 				},
 			},
 		],
