@@ -6,17 +6,21 @@ import Hero from "./pages/Hero";
 import CreateUser from "./pages/CreateUser";
 import AccessUser from "./pages/AccessUser";
 import RecoverUser from "./pages/RecoverUser";
+import { Provider } from "react-redux";
+import { store } from "./state/Store";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Hero />} />
-				<Route path="/create-user" element={<CreateUser />} />
-				<Route path="/access-user" element={<AccessUser />} />
-				<Route path="/recover-user" element={<RecoverUser />} />
-			</Routes>
-		</BrowserRouter>
+		<Provider store={store}>
+			<BrowserRouter>
+				<Routes>
+					<Route path="/" element={<Hero />} />
+					<Route path="/create-user" element={<CreateUser />} />
+					<Route path="/access-user" element={<AccessUser />} />
+					<Route path="/recover-user" element={<RecoverUser />} />
+				</Routes>
+			</BrowserRouter>
+		</Provider>
 	</StrictMode>,
 );
