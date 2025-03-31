@@ -7,15 +7,17 @@ type FormProps = {
 	formHeader: FormHeaderProps;
 	formGroups: Array<FormGroupProps>;
 	formAction: FormActionProps;
+	onAction: (data: FormData) => void;
 };
 
 export default function Form({
 	formHeader,
 	formGroups,
 	formAction,
+	onAction,
 }: FormProps) {
 	return (
-		<div id="form">
+		<form id="form" action={onAction}>
 			<FormHeader {...formHeader} />
 			{formGroups.map((formGroup) => (
 				<FormGroup key={formGroup.id} {...formGroup} />
@@ -24,6 +26,6 @@ export default function Form({
 				formButtons={formAction.formButtons}
 				formLinks={formAction.formLinks}
 			/>
-		</div>
+		</form>
 	);
 }

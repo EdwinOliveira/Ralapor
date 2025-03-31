@@ -20,6 +20,9 @@ const FetchProvider = () => {
 
 		return fetch(buildedURL, {
 			method: httpMethod,
+			headers: {
+				"Content-Type": "application/json",
+			},
 			body: JSON.stringify(httpBody),
 		});
 	};

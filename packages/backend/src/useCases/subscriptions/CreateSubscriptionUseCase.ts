@@ -3,7 +3,7 @@ import type {
 	SubscriptionDTO,
 } from "../../domains/Subscription";
 import { SubscriptionRemoteRepository } from "../../repositories/SubscriptionRemoteRepository";
-import { CreateSubscriptionAndRemoveFundsTransaction } from "../../transations/CreateSubscriptionAndRemoveFundsTransaction";
+import { CreateSubscriptionAndRemoveFundsTransaction } from "../../transactions/CreateSubscriptionAndRemoveFundsTransaction";
 import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
 import { FindBookByIdUseCase } from "../books/FindBookByIdUseCase";
 import { FindChapterByIdUseCase } from "../chapters/FindChapterByIdUseCase";

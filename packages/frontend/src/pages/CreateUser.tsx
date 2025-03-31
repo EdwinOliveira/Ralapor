@@ -4,9 +4,15 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./CreateUser.css";
+import { UserState } from "../state/UserState";
+import { useDispatch } from "react-redux";
+import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 
 export default function CreateUser() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { addUser } = UserState();
+	const { createUser } = CreateUserUseCase();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -33,13 +39,13 @@ export default function CreateUser() {
 				},
 				{
 					id: 2,
-					name: "Email",
+					name: "email",
 					type: "email",
 					placeholder: "Email...",
 				},
 				{
 					id: 3,
-					name: "Phone Number",
+					name: "phoneNumber",
 					type: "tel",
 					placeholder: "Phone Number...",
 				},
@@ -55,9 +61,6 @@ export default function CreateUser() {
 					content: "Continue",
 					segment: "button",
 					color: "default-inverse",
-				},
-				onAction: async () => {
-					await navigate("/access-user");
 				},
 			},
 		],
@@ -83,6 +86,24 @@ export default function CreateUser() {
 		],
 	};
 
+	const onAction = async (formData: FormData) => {
+		try {
+			const response = await createUser({
+				username: formData.get("username") as string,
+				email: formData.get("email") as string,
+				phoneNumber: formData.get("phoneNumber") as string,
+				phoneNumberCode: "+351",
+			});
+
+			console.log(response);
+
+			// dispatch(addUser(user));
+			// await navigate("/access-user");
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<div id="wrapper">
 			<div id="wrapper__form">
@@ -90,6 +111,7 @@ export default function CreateUser() {
 					formHeader={formHeader}
 					formGroups={formGroups}
 					formAction={formAction}
+					onAction={onAction}
 				/>
 			</div>
 			<div id="wrapper__background">hello</div>

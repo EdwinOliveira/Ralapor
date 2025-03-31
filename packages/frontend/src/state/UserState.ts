@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type UserEntity = {
 	id: number;
@@ -18,10 +18,16 @@ const UserState = () => {
 	const userSlice = createSlice({
 		name: "users",
 		initialState,
-		reducers: {},
+		reducers: {
+			addUser: (users, action: PayloadAction<UserEntity>) => {
+				users.push(action.payload);
+			},
+		},
 	});
 
-	return { reducer: userSlice.reducer };
+	const { addUser } = userSlice.actions;
+
+	return { reducer: userSlice.reducer, addUser };
 };
 
 export { UserState, type UserEntity };
