@@ -1,6 +1,7 @@
 import Express, { json, Router } from "express";
 import cors from "cors";
 import { BackendRouter } from "./BackendRouter";
+import "dotenv/config";
 
 const BackendApplication = () => {
 	const httpApplication = Express();
