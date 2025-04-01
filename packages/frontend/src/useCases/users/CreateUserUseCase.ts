@@ -11,12 +11,8 @@ const CreateUserUseCase = () => {
 
 	return {
 		createUser: async (args: CreateUserRequest) => {
-			try {
-				const response = await createRequest("/users", "POST", args);
-				return await response.json();
-			} catch (error) {
-				console.log(error);
-			}
+			const response = await createRequest("users", "POST", args);
+			await response.json();
 		},
 	};
 };

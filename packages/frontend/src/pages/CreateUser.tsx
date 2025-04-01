@@ -4,14 +4,10 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./CreateUser.css";
-import { UserState } from "../state/UserState";
-import { useDispatch } from "react-redux";
 import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 
 export default function CreateUser() {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const { addUser } = UserState();
 	const { createUser } = CreateUserUseCase();
 
 	const formHeader: FormHeaderProps = {
@@ -87,21 +83,17 @@ export default function CreateUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
-		try {
-			const response = await createUser({
-				username: formData.get("username") as string,
-				email: formData.get("email") as string,
-				phoneNumber: formData.get("phoneNumber") as string,
-				phoneNumberCode: "+351",
-			});
+		const usernameRaw = formData.get("username");
+		const username = usernameRaw ? usernameRaw.toString() : "";
 
-			console.log(response);
+		const emailRaw = formData.get("email");
+		const email = emailRaw ? emailRaw.toString() : "";
 
-			// dispatch(addUser(user));
-			// await navigate("/access-user");
-		} catch (error) {
-			console.log(error);
-		}
+		const phoneNumberRaw = formData.get("phoneNumber");
+		const phoneNumber = phoneNumberRaw ? phoneNumberRaw.toString() : "";
+
+		await createUser({ username, email, phoneNumber, phoneNumberCode: "+351" });
+		await navigate("/access-user");
 	};
 
 	return (

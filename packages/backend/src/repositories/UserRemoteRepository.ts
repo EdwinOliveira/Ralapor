@@ -91,16 +91,15 @@ const UserRemoteRepository = (): UserRepository => {
 
 			const createdUser = await dbConnection<UserEntity>("Users")
 				.insert({ ...args, accessToken: "", refreshToken: "" })
-				.returning("id")
-				.first();
+				.returning("id");
 
 			await dbConnection.destroy();
 
-			if (createdUser === undefined) {
+			if (createdUser.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [createdUser.id], affectedRows: [] };
+			return { affectedIds: [createdUser[0].id], affectedRows: [] };
 		},
 		updateUserById: async ({ query, args }) => {
 			if (query === undefined || args === undefined) {
@@ -128,18 +127,17 @@ const UserRemoteRepository = (): UserRepository => {
 					accessToken: args.accessToken || foundUser.accessToken,
 					refreshToken: args.refreshToken || foundUser.refreshToken,
 				})
-				.returning("*")
-				.first();
+				.returning("*");
 
 			await dbConnection.destroy();
 
-			if (updatedUser === undefined) {
+			if (updatedUser.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
 			return {
-				affectedIds: [updatedUser.id],
-				affectedRows: [{ updatedAt: updatedUser.updatedAt }],
+				affectedIds: [updatedUser[0].id],
+				affectedRows: [{ updatedAt: updatedUser[0].updatedAt }],
 			};
 		},
 	};

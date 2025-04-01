@@ -24,8 +24,8 @@ const CreateUserUseCase = () => {
 					query: { username, email, phoneNumber },
 				});
 
-			if (foundUsersId.length === 0) {
-				return { statusCode: 404 };
+			if (foundUsersId.length !== 0) {
+				return { statusCode: 409 };
 			}
 
 			const accessCode = randomProvider.createAccessCode(12);
@@ -45,11 +45,13 @@ const CreateUserUseCase = () => {
 				return { statusCode: 500 };
 			}
 
-			await mailProvider.sendMail({
-				toAddress: email,
-				subject: "Welcome to Ralapor!",
-				text: `Ralapor access code: ${accessCode}`,
-			});
+			console.log(accessCode);
+
+			// await mailProvider.sendMail({
+			// 	toAddress: email,
+			// 	subject: "Welcome to Ralapor!",
+			// 	text: `Ralapor access code: ${accessCode}`,
+			// });
 
 			return {
 				statusCode: 201,

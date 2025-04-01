@@ -8,22 +8,20 @@ const FetchProvider = () => {
 	) => {
 		let buildedURL = `http://localhost:8000/${httpRoute}`;
 
-		for (const httpParam of Object.entries(httpParams)) {
-			buildedURL = buildedURL.replace(`:${httpParam[0]}`, String(httpParam[1]));
-		}
-
 		for (const httpQuery of Object.entries(httpQueries)) {
 			buildedURL = buildedURL.includes("?")
 				? `${buildedURL}&${httpQuery[0]}=${httpQuery[1]}`
 				: `${buildedURL}?${httpQuery[0]}=${httpQuery[1]}`;
 		}
 
+		for (const httpParam of Object.entries(httpParams)) {
+			buildedURL = buildedURL.replace(`:${httpParam[0]}`, String(httpParam[1]));
+		}
+
 		return fetch(buildedURL, {
 			method: httpMethod,
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(httpBody),
+			headers: { "Content-Type": "application/json" },
+			body: httpMethod !== "GET" ? JSON.stringify(httpBody) : undefined,
 		});
 	};
 

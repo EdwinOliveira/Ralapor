@@ -4,9 +4,12 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./RecoverUser.css";
+import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
 
 export default function RecoverUser() {
 	const navigate = useNavigate();
+	const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
+		UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -56,9 +59,6 @@ export default function RecoverUser() {
 					segment: "button",
 					color: "default-inverse",
 				},
-				onAction: async () => {
-					await navigate("/access-user");
-				},
 			},
 		],
 		formLinks: [
@@ -83,6 +83,25 @@ export default function RecoverUser() {
 		],
 	};
 
+	const onAction = async (formData: FormData) => {
+		const usernameRaw = formData.get("username");
+		const username = usernameRaw ? usernameRaw.toString() : "";
+
+		const emailRaw = formData.get("email");
+		const email = emailRaw ? emailRaw.toString() : "";
+
+		const phoneNumberRaw = formData.get("phoneNumber");
+		const phoneNumber = phoneNumberRaw ? phoneNumberRaw.toString() : "";
+
+		await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
+			username,
+			email,
+			phoneNumber,
+		});
+
+		await navigate("/access-user");
+	};
+
 	return (
 		<div id="wrapper">
 			<div id="wrapper__form">
@@ -90,6 +109,7 @@ export default function RecoverUser() {
 					formHeader={formHeader}
 					formGroups={formGroups}
 					formAction={formAction}
+					onAction={onAction}
 				/>
 			</div>
 			<div id="wrapper__background">hello</div>

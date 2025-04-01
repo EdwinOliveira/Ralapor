@@ -4,9 +4,15 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./AccessUser.css";
+import { FindUserByAccessCodeUseCase } from "../useCases/users/FindUserByAccessCodeUseCase";
+import { useDispatch } from "react-redux";
+import { UserState } from "../state/UserState";
 
 export default function AccessUser() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { addUser } = UserState();
+	const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -27,7 +33,7 @@ export default function AccessUser() {
 			formControls: [
 				{
 					id: 1,
-					name: "access-code",
+					name: "accessCode",
 					type: "password",
 					placeholder: "Access Code...",
 				},
@@ -43,9 +49,6 @@ export default function AccessUser() {
 					content: "Continue",
 					segment: "button",
 					color: "default-inverse",
-				},
-				onAction: async () => {
-					await navigate("/create-profile");
 				},
 			},
 		],
@@ -71,6 +74,15 @@ export default function AccessUser() {
 		],
 	};
 
+	const onAction = async (formData: FormData) => {
+		const accessCodeRaw = formData.get("accessCode");
+		const accessCode = accessCodeRaw ? accessCodeRaw.toString() : "";
+
+		const user = await findUserByAccessCode({ accessCode });
+		dispatch(addUser(user));
+		await navigate("/create-profile");
+	};
+
 	return (
 		<div id="wrapper">
 			<div id="wrapper__form">
@@ -78,6 +90,7 @@ export default function AccessUser() {
 					formHeader={formHeader}
 					formGroups={formGroups}
 					formAction={formAction}
+					onAction={onAction}
 				/>
 			</div>
 			<div id="wrapper__background">hello</div>

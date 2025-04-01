@@ -6,6 +6,7 @@ type UserEntity = {
 	email: string;
 	phoneNumber: string;
 	phoneNumberCode: string;
+	accessCode: string;
 	accessToken: string;
 	refreshToken: string;
 	createdAt: string;
@@ -13,14 +14,13 @@ type UserEntity = {
 };
 
 const UserState = () => {
-	const initialState: Array<UserEntity> = [];
-
 	const userSlice = createSlice({
 		name: "users",
-		initialState,
+		initialState: new Array<UserEntity>(),
 		reducers: {
-			addUser: (users, action: PayloadAction<UserEntity>) => {
-				users.push(action.payload);
+			addUser: (state, action: PayloadAction<UserEntity>) => {
+				state.push(action.payload);
+				return state;
 			},
 		},
 	});

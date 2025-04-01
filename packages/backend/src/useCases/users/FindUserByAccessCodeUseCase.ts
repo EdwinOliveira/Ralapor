@@ -47,6 +47,7 @@ const FindUserByAccessCodeUseCase = () => {
 
 					const { affectedRows: updatedUsersRow } =
 						await repository.updateUserById({
+							query: { id: foundUserRow.id },
 							args: {
 								accessToken: hashedAccessToken,
 								refreshToken: hashedRefreshToken,

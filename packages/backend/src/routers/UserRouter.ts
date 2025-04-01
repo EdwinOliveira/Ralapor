@@ -72,10 +72,7 @@ const UserRouter = () => {
 			const { createUser } = CreateUserUseCase();
 			const { statusCode, args } = await createUser({ schemaArgs });
 
-			return void response
-				.status(statusCode)
-				.location(`/users/${args?.id}`)
-				.json();
+			return void response.status(statusCode).json({ id: args?.id });
 		});
 
 		router.put(
@@ -99,10 +96,10 @@ const UserRouter = () => {
 					schemaArgs,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/users/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
 			},
 		);
 
@@ -124,10 +121,10 @@ const UserRouter = () => {
 					schemaArgs,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/users/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
 			},
 		);
 
@@ -154,10 +151,10 @@ const UserRouter = () => {
 						schemaArgs,
 					});
 
-				return void response
-					.status(statusCode)
-					.location(`/users/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
 			},
 		);
 
@@ -181,14 +178,12 @@ const UserRouter = () => {
 						schemaArgs,
 					});
 
-				return void response
-					.status(statusCode)
-					.location(`/users/${args?.id}`)
-					.json({
-						accessToken: args?.accessToken,
-						refreshToken: args?.refreshToken,
-						updatedAt: args?.updatedAt,
-					});
+				return void response.status(statusCode).json({
+					id: args?.id,
+					accessToken: args?.accessToken,
+					refreshToken: args?.refreshToken,
+					updatedAt: args?.updatedAt,
+				});
 			},
 		);
 
@@ -213,7 +208,10 @@ const UserRouter = () => {
 					schemaArgs,
 				});
 
-				return void response.status(statusCode).json(args);
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
 			},
 		);
 
