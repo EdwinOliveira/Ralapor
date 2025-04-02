@@ -4,24 +4,21 @@ export type FormSelectorOption = {
 	id?: number;
 	value: string;
 	designation: string;
-	isPlaceholder: boolean;
 };
 
 export type FormSelectorProps = {
+	name: string;
 	selectorOptions: Array<FormSelectorOption>;
 };
 
-export default function FormSelector({ selectorOptions }: FormSelectorProps) {
+export default function FormSelector({
+	name,
+	selectorOptions,
+}: FormSelectorProps) {
 	return (
-		<select>
+		<select name={name}>
 			{selectorOptions.map((selectorOption) => (
-				<option
-					key={selectorOption.id}
-					value={selectorOption.value}
-					selected={selectorOption.isPlaceholder}
-					hidden={selectorOption.isPlaceholder}
-					disabled={selectorOption.isPlaceholder}
-				>
+				<option key={selectorOption.id} value={selectorOption.value}>
 					{selectorOption.designation}
 				</option>
 			))}

@@ -24,7 +24,8 @@ a {
 }
 
 button,
-input {
+input,
+select {
 	border: none;
 	background-color: transparent;
 	outline: none;

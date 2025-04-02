@@ -50,17 +50,22 @@ export default function CreateUser() {
 					type: "phoneNumberCode",
 					formPhoneNumberCodeProps: {
 						formInputControl: {
-							name: "email",
-							type: "email",
-							placeholder: "Email...",
+							name: "phoneNumber",
+							type: "tel",
+							placeholder: "Phone Number...",
 						},
 						formSelectorControl: {
+							name: "phoneNumberCode",
 							selectorOptions: [
 								{
 									id: 1,
-									value: "",
-									designation: "Code",
-									isPlaceholder: true,
+									value: "+351",
+									designation: "+351",
+								},
+								{
+									id: 2,
+									value: "+44",
+									designation: "+44",
 								},
 							],
 						},
@@ -113,7 +118,12 @@ export default function CreateUser() {
 		const phoneNumberRaw = formData.get("phoneNumber");
 		const phoneNumber = phoneNumberRaw ? phoneNumberRaw.toString() : "";
 
-		await createUser({ username, email, phoneNumber, phoneNumberCode: "+351" });
+		const phoneNumberCodeRaw = formData.get("phoneNumberCode");
+		const phoneNumberCode = phoneNumberCodeRaw
+			? phoneNumberCodeRaw.toString()
+			: "";
+
+		await createUser({ username, email, phoneNumber, phoneNumberCode });
 		await navigate("/access-user");
 	};
 

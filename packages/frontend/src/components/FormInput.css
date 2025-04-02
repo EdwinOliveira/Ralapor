@@ -6,4 +6,6 @@ input {
 	font-size: .65rem;
 	font-weight: 300;
 	letter-spacing: 0.05rem;
+
+	width: 100%;
 }
