@@ -5,6 +5,9 @@ import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./CreateUser.css";
 import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
+import PortugueseFlagIcon from "../components/icons/PortugueseFlagIcon";
+import EnglandFlagIcon from "../components/icons/EnglandFlagIcon";
+import Typography from "../components/Typography";
 
 export default function CreateUser() {
 	const navigate = useNavigate();
@@ -58,14 +61,30 @@ export default function CreateUser() {
 							name: "phoneNumberCode",
 							selectorOptions: [
 								{
-									id: 1,
 									value: "+351",
-									designation: "+351",
+									label: (
+										<>
+											<PortugueseFlagIcon />
+											<Typography
+												content="+351"
+												segment="link"
+												color="default"
+											/>
+										</>
+									),
 								},
 								{
-									id: 2,
 									value: "+44",
-									designation: "+44",
+									label: (
+										<>
+											<EnglandFlagIcon />
+											<Typography
+												content="+44"
+												segment="link"
+												color="default"
+											/>
+										</>
+									),
 								},
 							],
 						},
@@ -122,6 +141,8 @@ export default function CreateUser() {
 		const phoneNumberCode = phoneNumberCodeRaw
 			? phoneNumberCodeRaw.toString()
 			: "";
+
+		console.log(phoneNumberCode);
 
 		await createUser({ username, email, phoneNumber, phoneNumberCode });
 		await navigate("/access-user");

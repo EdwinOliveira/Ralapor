@@ -18,5 +18,5 @@ export default function Typography({
 	segment,
 	color,
 }: TypographyProps) {
-	return <p className={`${segment} ${color}`}>{content}</p>;
+	return <span className={`${segment} ${color}`}>{content}</span>;
 }
