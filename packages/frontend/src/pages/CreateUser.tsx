@@ -47,11 +47,23 @@ export default function CreateUser() {
 				},
 				{
 					id: 3,
-					type: "input",
-					formInputProps: {
-						name: "phoneNumber",
-						type: "tel",
-						placeholder: "Phone Number...",
+					type: "phoneNumberCode",
+					formPhoneNumberCodeProps: {
+						formInputControl: {
+							name: "email",
+							type: "email",
+							placeholder: "Email...",
+						},
+						formSelectorControl: {
+							selectorOptions: [
+								{
+									id: 1,
+									value: "",
+									designation: "Code",
+									isPlaceholder: true,
+								},
+							],
+						},
 					},
 				},
 			],

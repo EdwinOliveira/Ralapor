@@ -17,7 +17,7 @@ export default function FormSelector({ selectorOptions }: FormSelectorProps) {
 			{selectorOptions.map((selectorOption) => (
 				<option
 					key={selectorOption.id}
-					value={!selectorOption.isPlaceholder ? selectorOption.value : ""}
+					value={selectorOption.value}
 					selected={selectorOption.isPlaceholder}
 					hidden={selectorOption.isPlaceholder}
 					disabled={selectorOption.isPlaceholder}
