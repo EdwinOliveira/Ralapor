@@ -44,11 +44,12 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				return { statusCode: 500 };
 			}
 
-			await mailProvider.sendMail({
-				toAddress: foundUsersRow[0].email,
-				subject: "Regain access to Ralapor!",
-				text: `Ralapor access code: ${accessCode}`,
-			});
+			console.log(accessCode);
+			// await mailProvider.sendMail({
+			// toAddress: foundUsersRow[0].email,
+			// subject: "Regain access to Ralapor!",
+			// text: `Ralapor access code: ${accessCode}`,
+			// });
 
 			return {
 				statusCode: 201,

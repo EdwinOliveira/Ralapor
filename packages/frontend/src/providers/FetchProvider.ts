@@ -14,6 +14,7 @@ const FetchProvider = () => {
 				: `${buildedURL}?${httpQuery[0]}=${httpQuery[1]}`;
 		}
 
+		console.log(httpParams);
 		for (const httpParam of Object.entries(httpParams)) {
 			buildedURL = buildedURL.replace(`:${httpParam[0]}`, String(httpParam[1]));
 		}

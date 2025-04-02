@@ -36,13 +36,13 @@ export default function RecoverUser() {
 				},
 				{
 					id: 2,
-					name: "Email",
+					name: "email",
 					type: "email",
 					placeholder: "Email...",
 				},
 				{
 					id: 3,
-					name: "Phone Number",
+					name: "phoneNumber",
 					type: "tel",
 					placeholder: "Phone Number...",
 				},

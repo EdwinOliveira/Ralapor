@@ -130,7 +130,6 @@ const UserRouter = () => {
 
 		router.put(
 			"/access-code/:username/:email/:phoneNumber",
-			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({

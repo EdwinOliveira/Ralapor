@@ -20,7 +20,7 @@ const CreateUserUseCase = () => {
 			UseCaseResponse<Pick<UserDTO, "id">>
 		> => {
 			const { affectedIds: foundUsersId } =
-				await repository.findUserByUsernameAndEmailAndPhoneNumber({
+				await repository.findUserByUsernameOrEmailOrPhoneNumber({
 					query: { username, email, phoneNumber },
 				});
 
