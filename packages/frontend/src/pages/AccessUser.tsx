@@ -33,9 +33,12 @@ export default function AccessUser() {
 			formControls: [
 				{
 					id: 1,
-					name: "accessCode",
-					type: "password",
-					placeholder: "Access Code...",
+					type: "input",
+					formInputProps: {
+						name: "accessCode",
+						type: "password",
+						placeholder: "Access Code...",
+					},
 				},
 			],
 		},

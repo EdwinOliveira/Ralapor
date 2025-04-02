@@ -30,21 +30,30 @@ export default function RecoverUser() {
 			formControls: [
 				{
 					id: 1,
-					name: "username",
-					type: "text",
-					placeholder: "Username...",
+					type: "input",
+					formInputProps: {
+						name: "username",
+						type: "text",
+						placeholder: "Username...",
+					},
 				},
 				{
 					id: 2,
-					name: "email",
-					type: "email",
-					placeholder: "Email...",
+					type: "input",
+					formInputProps: {
+						name: "email",
+						type: "email",
+						placeholder: "Email...",
+					},
 				},
 				{
 					id: 3,
-					name: "phoneNumber",
-					type: "tel",
-					placeholder: "Phone Number...",
+					type: "input",
+					formInputProps: {
+						name: "phoneNumber",
+						type: "tel",
+						placeholder: "Phone Number...",
+					},
 				},
 			],
 		},
