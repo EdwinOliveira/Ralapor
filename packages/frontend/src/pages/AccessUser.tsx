@@ -7,12 +7,14 @@ import "./AccessUser.css";
 import { FindUserByAccessCodeUseCase } from "../useCases/users/FindUserByAccessCodeUseCase";
 import { useDispatch } from "react-redux";
 import { UserState } from "../state/UserState";
+import { useState } from "react";
 
 export default function AccessUser() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { addUser } = UserState();
 	const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
+	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -53,6 +55,7 @@ export default function AccessUser() {
 					segment: "button",
 					color: "default-inverse",
 				},
+				isLoading: isLoading,
 			},
 		],
 		formLinks: [
@@ -78,11 +81,15 @@ export default function AccessUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
+		setLoading(true);
+
 		const accessCodeRaw = formData.get("accessCode");
 		const accessCode = accessCodeRaw ? accessCodeRaw.toString() : "";
 
 		const user = await findUserByAccessCode({ accessCode });
 		dispatch(addUser(user));
+
+		setLoading(false);
 		await navigate("/create-profile");
 	};
 
