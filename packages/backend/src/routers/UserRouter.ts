@@ -17,12 +17,12 @@ import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
 
 const UserRouter = () => {
-	const { isAuthenticated } = SessionGuard();
+	const { checkAuthentication, isAuthenticated } = SessionGuard();
 
 	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
-			isAuthenticated,
+			checkAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByIdSchema.safeParse({ params: request.params });
@@ -42,6 +42,7 @@ const UserRouter = () => {
 
 		router.get(
 			"/access-code/:accessCode",
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByAccessCodeSchema.safeParse({ params: request.params });
@@ -65,6 +66,9 @@ const UserRouter = () => {
 					phoneNumberCode: args?.phoneNumberCode,
 				});
 
+				console.log(request.session);
+				console.log(request.sessionID);
+
 				return void response.status(statusCode).json(args);
 			},
 		);
@@ -85,7 +89,7 @@ const UserRouter = () => {
 
 		router.put(
 			"/:id",
-			isAuthenticated,
+			checkAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserByIdSchema.safeParse({
@@ -113,7 +117,7 @@ const UserRouter = () => {
 
 		router.put(
 			"/access-code/:id",
-			isAuthenticated,
+			checkAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });

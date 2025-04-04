@@ -1,7 +1,12 @@
-import type { NextFunction, Request, Response } from "express";
+import {
+	response,
+	type NextFunction,
+	type Request,
+	type Response,
+} from "express";
 
 const SessionGuard = () => {
-	const isAuthenticated = (
+	const checkAuthentication = (
 		request: Request,
 		response: Response,
 		next: NextFunction,
@@ -14,7 +19,21 @@ const SessionGuard = () => {
 		next();
 	};
 
+	const isAuthenticated = (
+		request: Request,
+		response: Response,
+		next: NextFunction,
+	) => {
+		if (request.session.user !== undefined) {
+			response.status(200).json();
+			return;
+		}
+
+		next();
+	};
+
 	return {
+		checkAuthentication,
 		isAuthenticated,
 	};
 };
