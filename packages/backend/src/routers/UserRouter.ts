@@ -14,22 +14,31 @@ import {
 	updateUserByIdSchema,
 } from "../domains/User";
 import { SessionProvider } from "../providers/SessionProvider";
+import { SessionGuard } from "../guards/SessionGuard";
 
 const UserRouter = () => {
+	const { isAuthenticated } = SessionGuard();
+
 	const subscribe = (router: Router): Router => {
-		router.get("/:id", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findUserByIdSchema.safeParse({ params: request.params });
+		router.get(
+			"/:id",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findUserByIdSchema.safeParse({ params: request.params });
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-			const { findUserById } = FindUserByIdUseCase();
-			const { statusCode, args } = await findUserById({ schemaArgs });
+				const { findUserById } = FindUserByIdUseCase();
+				const { statusCode, args } = await findUserById({ schemaArgs });
 
-			return void response.status(statusCode).json(args);
-		});
+				return void response.status(statusCode).json(args);
+			},
+		);
 
 		router.get(
 			"/access-code/:accessCode",
@@ -48,7 +57,7 @@ const UserRouter = () => {
 
 				const { addToSession } = SessionProvider(request, response);
 
-				addToSession("users", {
+				addToSession("user", {
 					id: args?.id,
 					username: args?.username,
 					email: args?.email,
@@ -56,7 +65,7 @@ const UserRouter = () => {
 					phoneNumberCode: args?.phoneNumberCode,
 				});
 
-				return void response.status(statusCode).json("");
+				return void response.status(statusCode).json(args);
 			},
 		);
 
@@ -74,30 +83,37 @@ const UserRouter = () => {
 			return void response.status(statusCode).json({ id: args?.id });
 		});
 
-		router.put("/:id", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateUserByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
+		router.put(
+			"/:id",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateUserByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { updateUserById } = UpdateUserByIdUseCase();
+				const { statusCode, args } = await updateUserById({
+					schemaArgs,
 				});
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
-
-			const { updateUserById } = UpdateUserByIdUseCase();
-			const { statusCode, args } = await updateUserById({
-				schemaArgs,
-			});
-
-			return void response.status(statusCode).json({
-				id: args?.id,
-				updatedAt: args?.updatedAt,
-			});
-		});
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
+			},
+		);
 
 		router.put(
 			"/access-code/:id",
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
@@ -162,15 +178,20 @@ const UserRouter = () => {
 			const { findUserById } = FindUserByIdUseCase();
 			const { statusCode, args } = await findUserById({ schemaArgs });
 
-			const { updateSession } = SessionProvider(request, response);
+			const { updateSession, regenerateSession } = SessionProvider(
+				request,
+				response,
+			);
 
-			updateSession("users", {
+			updateSession("user", {
 				id: args?.id,
 				username: args?.username,
 				email: args?.email,
 				phoneNumber: args?.phoneNumber,
 				phoneNumberCode: args?.phoneNumberCode,
 			});
+
+			regenerateSession();
 
 			return void response.status(statusCode).json({
 				id: args?.id,
@@ -195,8 +216,13 @@ const UserRouter = () => {
 				const { findUserById } = FindUserByIdUseCase();
 				const { statusCode, args } = await findUserById({ schemaArgs });
 
-				const { destroySession } = SessionProvider(request, response);
-				destroySession("users", { id: args?.id });
+				const { destroySession, regenerateSession } = SessionProvider(
+					request,
+					response,
+				);
+
+				destroySession();
+				regenerateSession();
 
 				return void response.status(statusCode).json({
 					id: args?.id,

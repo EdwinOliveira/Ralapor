@@ -7,12 +7,10 @@ import type { UserEntity } from "./domains/User";
 
 declare module "express-session" {
 	interface SessionData {
-		users: Array<
-			Partial<
-				Pick<
-					UserEntity,
-					"id" | "username" | "email" | "phoneNumber" | "phoneNumberCode"
-				>
+		user: Partial<
+			Pick<
+				UserEntity,
+				"id" | "username" | "email" | "phoneNumber" | "phoneNumberCode"
 			>
 		>;
 	}
@@ -33,7 +31,7 @@ const BackendApplication = () => {
 				secret: "BACKEND_SESSION_SECRET",
 				resave: false,
 				saveUninitialized: false,
-				cookie: { httpOnly: true, maxAge: 60000 * 150 },
+				cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 },
 			}),
 		);
 	};
