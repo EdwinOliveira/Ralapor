@@ -5,42 +5,30 @@ import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 import { UpdateUserByIdUseCase } from "../useCases/users/UpdateUserByIdUseCase";
 import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAccessCodeByIdUseCase";
 import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
-import { UpdateUserTokensByIdUseCase } from "../useCases/users/UpdateUserTokensByIdUseCase";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
-import { DestroyUserTokensByIdUseCase } from "../useCases/users/DestroyUserTokensByIdUseCase";
-import { RefreshTokenGuard } from "../guards/RefreshTokenGuard";
 import {
 	createUserSchema,
-	destroyUserTokensByIdSchema,
 	findUserByAccessCodeSchema,
 	findUserByIdSchema,
 	updateUserAccessCodeByIdSchema,
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
-	updateUserTokensByIdSchema,
 } from "../domains/User";
 
 const UserRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findUserByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findUserByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findUserById } = FindUserByIdUseCase();
-				const { statusCode, args } = await findUserById({ schemaArgs });
+			const { findUserById } = FindUserByIdUseCase();
+			const { statusCode, args } = await findUserById({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/access-code/:accessCode",
@@ -75,37 +63,30 @@ const UserRouter = () => {
 			return void response.status(statusCode).json({ id: args?.id });
 		});
 
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateUserByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { updateUserById } = UpdateUserByIdUseCase();
-				const { statusCode, args } = await updateUserById({
-					schemaArgs,
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateUserByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response.status(statusCode).json({
-					id: args?.id,
-					updatedAt: args?.updatedAt,
-				});
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { updateUserById } = UpdateUserByIdUseCase();
+			const { statusCode, args } = await updateUserById({
+				schemaArgs,
+			});
+
+			return void response.status(statusCode).json({
+				id: args?.id,
+				updatedAt: args?.updatedAt,
+			});
+		});
 
 		router.put(
 			"/access-code/:id",
-			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
@@ -149,63 +130,6 @@ const UserRouter = () => {
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
 					});
-
-				return void response.status(statusCode).json({
-					id: args?.id,
-					updatedAt: args?.updatedAt,
-				});
-			},
-		);
-
-		router.put(
-			"/:id/tokens",
-			RefreshTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateUserTokensByIdSchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { statusCode, args } =
-					await UpdateUserTokensByIdUseCase().updateUserTokensById({
-						schemaArgs,
-					});
-
-				return void response.status(statusCode).json({
-					id: args?.id,
-					accessToken: args?.accessToken,
-					refreshToken: args?.refreshToken,
-					updatedAt: args?.updatedAt,
-				});
-			},
-		);
-
-		router.delete(
-			"/:id/tokens",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					destroyUserTokensByIdSchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { destroyUserTokensById } = DestroyUserTokensByIdUseCase();
-
-				const { statusCode, args } = await destroyUserTokensById({
-					schemaArgs,
-				});
 
 				return void response.status(statusCode).json({
 					id: args?.id,

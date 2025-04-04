@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindChapterByIdUseCase } from "../useCases/chapters/FindChapterByIdUseCase";
 import { CreateChapterUseCase } from "../useCases/chapters/CreateChapterUseCase";
 import { UpdateChapterByIdUseCase } from "../useCases/chapters/UpdateChapterByIdUseCase";
@@ -17,71 +16,52 @@ import { FindChaptersUseCase } from "../useCases/chapters/FindChaptersUseCase";
 
 const ChapterRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findChaptersSchema.safeParse({ params: request.params });
+		router.get("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findChaptersSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findChapters } = FindChaptersUseCase();
-				const { statusCode, args } = await findChapters({
-					schemaArgs,
-				});
+			const { findChapters } = FindChaptersUseCase();
+			const { statusCode, args } = await findChapters({
+				schemaArgs,
+			});
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.get(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findChapterByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findChapterByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { statusCode, args } =
-					await FindChapterByIdUseCase().findChapterById({ schemaArgs });
+			const { statusCode, args } =
+				await FindChapterByIdUseCase().findChapterById({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.get(
-			"/book/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findChaptersByBookIdSchema.safeParse({ params: request.params });
+		router.get("/book/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findChaptersByBookIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findChaptersByBookId } = FindChaptersByBookIdUseCase();
-				const { statusCode, args } = await findChaptersByBookId({ schemaArgs });
+			const { findChaptersByBookId } = FindChaptersByBookIdUseCase();
+			const { statusCode, args } = await findChaptersByBookId({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/category/:id",
-			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findChaptersByCategoryIdSchema.safeParse({ params: request.params });
@@ -101,60 +81,48 @@ const ChapterRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createChapterSchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { createChapter } = CreateChapterUseCase();
-				const { statusCode, args } = await createChapter({
-					schemaArgs,
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createChapterSchema.safeParse({
+					params: request.params,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/chapters/${args?.id}`)
-					.json();
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateChapterByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { createChapter } = CreateChapterUseCase();
+			const { statusCode, args } = await createChapter({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			return void response
+				.status(statusCode)
+				.location(`/chapters/${args?.id}`)
+				.json();
+		});
 
-				const { updateChapterById } = UpdateChapterByIdUseCase();
-				const { statusCode, args } = await updateChapterById({
-					schemaArgs,
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateChapterByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/chapters/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { updateChapterById } = UpdateChapterByIdUseCase();
+			const { statusCode, args } = await updateChapterById({
+				schemaArgs,
+			});
+
+			return void response
+				.status(statusCode)
+				.location(`/chapters/${args?.id}`)
+				.json({ updatedAt: args?.updatedAt });
+		});
 
 		return router;
 	};

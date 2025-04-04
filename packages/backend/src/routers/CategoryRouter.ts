@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import {
 	createCategorySchema,
 	findCategoriesSchema,
@@ -13,104 +12,80 @@ import { FindCategoriesUseCase } from "../useCases/categories/FindCategoriesUseC
 
 const CategoryRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findCategoriesSchema.safeParse({ params: request.params });
+		router.get("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findCategoriesSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findCategories } = FindCategoriesUseCase();
-				const { statusCode, args } = await findCategories({
+			const { findCategories } = FindCategoriesUseCase();
+			const { statusCode, args } = await findCategories({
+				schemaArgs,
+			});
+
+			return void response.status(statusCode).json(args);
+		});
+
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findCategoryByIdSchema.safeParse({ params: request.params });
+
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { statusCode, args } =
+				await FindCategoryByIdUseCase().findCategoryById({
 					schemaArgs,
 				});
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.get(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findCategoryByIdSchema.safeParse({ params: request.params });
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { statusCode, args } =
-					await FindCategoryByIdUseCase().findCategoryById({
-						schemaArgs,
-					});
-
-				return void response.status(statusCode).json(args);
-			},
-		);
-
-		router.post(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createCategorySchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { createCategory } = CreateCategoryUseCase();
-				const { statusCode, args } = await createCategory({
-					schemaArgs,
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createCategorySchema.safeParse({
+					params: request.params,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/categories/${args?.id}`)
-					.json();
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateCategoryByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { createCategory } = CreateCategoryUseCase();
+			const { statusCode, args } = await createCategory({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			return void response
+				.status(statusCode)
+				.location(`/categories/${args?.id}`)
+				.json();
+		});
 
-				const { updateCategoryById } = UpdateCategoryByIdUseCase();
-				const { statusCode, args } = await updateCategoryById({
-					schemaArgs,
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateCategoryByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/categories/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { updateCategoryById } = UpdateCategoryByIdUseCase();
+			const { statusCode, args } = await updateCategoryById({
+				schemaArgs,
+			});
+
+			return void response
+				.status(statusCode)
+				.location(`/categories/${args?.id}`)
+				.json({ updatedAt: args?.updatedAt });
+		});
 
 		return router;
 	};

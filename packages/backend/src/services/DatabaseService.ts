@@ -25,8 +25,6 @@ const DatabaseService = () => {
 				table.string("phoneNumber");
 				table.string("phoneNumberCode");
 				table.string("accessCode");
-				table.string("accessToken");
-				table.string("refreshToken");
 				table.timestamps(true, true, true);
 			});
 		}

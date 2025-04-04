@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindDossierByIdUseCase } from "../useCases/dossiers/FindDossierByIdUseCase";
 import { CreateDossierUseCase } from "../useCases/dossiers/CreateDossierUseCase";
 import { UpdateDossierByIdUseCase } from "../useCases/dossiers/UpdateDossierByIdUseCase";
@@ -17,71 +16,52 @@ import { FindDossiersUseCase } from "../useCases/dossiers/FindDossiersUseCase";
 
 const DossierRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findDossiersSchema.safeParse({ params: request.params });
+		router.get("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findDossiersSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findDossiers } = FindDossiersUseCase();
-				const { statusCode, args } = await findDossiers({
-					schemaArgs,
-				});
+			const { findDossiers } = FindDossiersUseCase();
+			const { statusCode, args } = await findDossiers({
+				schemaArgs,
+			});
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.get(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findDossierByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findDossierByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { statusCode, args } =
-					await FindDossierByIdUseCase().findDossierById({ schemaArgs });
+			const { statusCode, args } =
+				await FindDossierByIdUseCase().findDossierById({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.get(
-			"/user/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findDossiersByUserIdSchema.safeParse({ params: request.params });
+		router.get("/user/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findDossiersByUserIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findDossiersByUserId } = FindDossiersByUserIdUseCase();
-				const { statusCode, args } = await findDossiersByUserId({ schemaArgs });
+			const { findDossiersByUserId } = FindDossiersByUserIdUseCase();
+			const { statusCode, args } = await findDossiersByUserId({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/category/:id",
-			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findDossiersByCategoryIdSchema.safeParse({ params: request.params });
@@ -101,60 +81,48 @@ const DossierRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createDossierSchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { createDossier } = CreateDossierUseCase();
-				const { statusCode, args } = await createDossier({
-					schemaArgs,
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createDossierSchema.safeParse({
+					params: request.params,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/dossiers/${args?.id}`)
-					.json();
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateDossierByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { createDossier } = CreateDossierUseCase();
+			const { statusCode, args } = await createDossier({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			return void response
+				.status(statusCode)
+				.location(`/dossiers/${args?.id}`)
+				.json();
+		});
 
-				const { updateDossierById } = UpdateDossierByIdUseCase();
-				const { statusCode, args } = await updateDossierById({
-					schemaArgs,
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateDossierByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/dossiers/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { updateDossierById } = UpdateDossierByIdUseCase();
+			const { statusCode, args } = await updateDossierById({
+				schemaArgs,
+			});
+
+			return void response
+				.status(statusCode)
+				.location(`/dossiers/${args?.id}`)
+				.json({ updatedAt: args?.updatedAt });
+		});
 
 		return router;
 	};

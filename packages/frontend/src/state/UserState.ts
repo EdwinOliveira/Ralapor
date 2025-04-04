@@ -7,8 +7,6 @@ type UserEntity = {
 	phoneNumber: string;
 	phoneNumberCode: string;
 	accessCode: string;
-	accessToken: string;
-	refreshToken: string;
 	createdAt: string;
 	updatedAt: string;
 };

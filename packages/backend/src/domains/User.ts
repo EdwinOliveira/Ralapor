@@ -11,8 +11,6 @@ type UserEntity = {
 	phoneNumber: string;
 	phoneNumberCode: string;
 	accessCode: string;
-	accessToken: string;
-	refreshToken: string;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -26,8 +24,6 @@ const userDTOMapper = (entity: UserEntity): UserDTO => {
 		email: entity.email,
 		phoneNumber: entity.phoneNumber,
 		phoneNumberCode: entity.phoneNumberCode,
-		accessToken: entity.accessToken,
-		refreshToken: entity.refreshToken,
 		createdAt: entity.createdAt,
 		updatedAt: entity.updatedAt,
 	};
@@ -105,28 +101,6 @@ type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest = z.infer<
 	typeof updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema
 >;
 
-const updateUserTokensByIdSchema = z.object({
-	params: z.object({
-		id: z
-			.string()
-			.transform((id) => Number.parseInt(id))
-			.refine((id) => !Number.isNaN(id)),
-	}),
-});
-
-type UpdateUserTokensByIdRequest = z.infer<typeof updateUserTokensByIdSchema>;
-
-const destroyUserTokensByIdSchema = z.object({
-	params: z.object({
-		id: z
-			.string()
-			.transform((id) => Number.parseInt(id))
-			.refine((id) => !Number.isNaN(id)),
-	}),
-});
-
-type DestroyUserTokensByIdRequest = z.infer<typeof destroyUserTokensByIdSchema>;
-
 interface UserRepository {
 	findUsers(): Promise<RepositoryResponse<UserEntity>>;
 	findUserById({
@@ -148,10 +122,7 @@ interface UserRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<
-			UserEntity,
-			"id" | "accessToken" | "refreshToken" | "createdAt" | "updatedAt"
-		>
+		Omit<UserEntity, "id" | "createdAt" | "updatedAt">
 	>): Promise<RepositoryResponse<unknown>>;
 	updateUserById({
 		query,
@@ -179,8 +150,4 @@ export {
 	type UpdateUserAccessCodeByIdRequest,
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
-	updateUserTokensByIdSchema,
-	type UpdateUserTokensByIdRequest,
-	destroyUserTokensByIdSchema,
-	type DestroyUserTokensByIdRequest,
 };

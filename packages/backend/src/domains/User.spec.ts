@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
 	createUserSchema,
-	destroyUserTokensByIdSchema,
 	findUserByAccessCodeSchema,
 	findUserByIdSchema,
 	updateUserAccessCodeByIdSchema,
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
-	updateUserTokensByIdSchema,
 	type UserDTO,
 	userDTOMapper,
 	type UserEntity,
@@ -24,8 +22,6 @@ describe("User", () => {
 			phoneNumber: "dummyPhoneNumber",
 			phoneNumberCode: "dummyPhoneNumberCode",
 			accessCode: "dummyAccessCode",
-			accessToken: "dummyAccessToken",
-			refreshToken: "dummyRefreshToken",
 			createdAt: date,
 			updatedAt: date,
 		};
@@ -36,8 +32,6 @@ describe("User", () => {
 			email: "dummyEmail",
 			phoneNumber: "dummyPhoneNumber",
 			phoneNumberCode: "dummyPhoneNumberCode",
-			accessToken: "dummyAccessToken",
-			refreshToken: "dummyRefreshToken",
 			createdAt: date,
 			updatedAt: date,
 		};
@@ -390,76 +384,6 @@ describe("User", () => {
 					params: { email: "invalid-email" },
 				}),
 			).containSubset({
-				success: false,
-			});
-		});
-	});
-
-	describe("updateUserTokensByIdSchema", () => {
-		const parseSchema = (data: Record<string, unknown>) => {
-			return updateUserTokensByIdSchema.safeParse(data);
-		};
-
-		it("returns schema parse for valid input", () => {
-			expect(
-				parseSchema({
-					params: { id: "123" },
-				}),
-			).toEqual({
-				data: {
-					params: { id: 123 },
-				},
-				success: true,
-			});
-		});
-
-		it("returns schema invalid id error", () => {
-			expect(
-				parseSchema({
-					params: { id: "A" },
-				}),
-			).containSubset({
-				success: false,
-			});
-		});
-
-		it("returns schema missing params.id error", () => {
-			expect(parseSchema({})).containSubset({
-				success: false,
-			});
-		});
-	});
-
-	describe("destroyUserTokensByIdSchema", () => {
-		const parseSchema = (data: Record<string, unknown>) => {
-			return destroyUserTokensByIdSchema.safeParse(data);
-		};
-
-		it("returns schema parse for valid input", () => {
-			expect(
-				parseSchema({
-					params: { id: "123" },
-				}),
-			).toEqual({
-				data: {
-					params: { id: 123 },
-				},
-				success: true,
-			});
-		});
-
-		it("returns schema invalid id error", () => {
-			expect(
-				parseSchema({
-					params: { id: "A" },
-				}),
-			).containSubset({
-				success: false,
-			});
-		});
-
-		it("returns schema missing params.id error", () => {
-			expect(parseSchema({})).containSubset({
 				success: false,
 			});
 		});

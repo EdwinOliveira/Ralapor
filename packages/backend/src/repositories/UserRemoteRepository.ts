@@ -90,7 +90,7 @@ const UserRemoteRepository = (): UserRepository => {
 			await createUsersTable(dbConnection);
 
 			const createdUser = await dbConnection<UserEntity>("Users")
-				.insert({ ...args, accessToken: "", refreshToken: "" })
+				.insert(args)
 				.returning("id");
 
 			await dbConnection.destroy();
@@ -124,8 +124,6 @@ const UserRemoteRepository = (): UserRepository => {
 					email: args.email || foundUser.email,
 					phoneNumber: args.phoneNumber || foundUser.phoneNumber,
 					accessCode: args.accessCode || foundUser.accessCode,
-					accessToken: args.accessToken || foundUser.accessToken,
-					refreshToken: args.refreshToken || foundUser.refreshToken,
 				})
 				.returning("*");
 

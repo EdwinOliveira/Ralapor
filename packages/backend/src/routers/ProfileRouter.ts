@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindProfileByIdUseCase } from "../useCases/profiles/FindProfileByIdUseCase";
 import { CreateProfileUseCase } from "../useCases/profiles/CreateProfileUseCase";
 import { UpdateProfileByIdUseCase } from "../useCases/profiles/UpdateProfileByIdUseCase";
@@ -13,29 +12,22 @@ import {
 
 const ProfileRouter = () => {
 	const subscribe = (router: Router): Router => {
-		router.get(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findProfileByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findProfileByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { statusCode, args } =
-					await FindProfileByIdUseCase().findProfileById({ schemaArgs });
+			const { statusCode, args } =
+				await FindProfileByIdUseCase().findProfileById({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/user/:userId",
-			AccessTokenGuard,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findProfileByUserIdSchema.safeParse({ params: request.params });
@@ -53,60 +45,48 @@ const ProfileRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createProfileSchema.safeParse({
-						params: request.params,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { createProfile } = CreateProfileUseCase();
-				const { statusCode, args } = await createProfile({
-					schemaArgs,
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createProfileSchema.safeParse({
+					params: request.params,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/profiles/${args?.id}`)
-					.json();
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateProfileByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { createProfile } = CreateProfileUseCase();
+			const { statusCode, args } = await createProfile({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			return void response
+				.status(statusCode)
+				.location(`/profiles/${args?.id}`)
+				.json();
+		});
 
-				const { updateProfileById } = UpdateProfileByIdUseCase();
-				const { statusCode, args } = await updateProfileById({
-					schemaArgs,
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateProfileByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/profiles/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { updateProfileById } = UpdateProfileByIdUseCase();
+			const { statusCode, args } = await updateProfileById({
+				schemaArgs,
+			});
+
+			return void response
+				.status(statusCode)
+				.location(`/profiles/${args?.id}`)
+				.json({ updatedAt: args?.updatedAt });
+		});
 
 		return router;
 	};

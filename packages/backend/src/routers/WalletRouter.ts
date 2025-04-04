@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { AccessTokenGuard } from "../guards/AccessTokenGuard";
 import { FindWalletByIdUseCase } from "../useCases/wallets/FindWalletByIdUseCase";
 import { CreateWalletUseCase } from "../useCases/wallets/CreateWalletUseCase";
 import { UpdateWalletByIdUseCase } from "../useCases/wallets/UpdateWalletByIdUseCase";
@@ -15,7 +14,7 @@ const WalletRouter = () => {
 	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
-			AccessTokenGuard,
+
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findWalletByIdSchema.safeParse({ params: request.params });
@@ -33,78 +32,60 @@ const WalletRouter = () => {
 			},
 		);
 
-		router.get(
-			"/user/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findWalletByUserIdSchema.safeParse({ params: request.params });
+		router.get("/user/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findWalletByUserIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findWalletByUserId } = FindWalletByUserIdUseCase();
-				const { statusCode, args } = await findWalletByUserId({ schemaArgs });
+			const { findWalletByUserId } = FindWalletByUserIdUseCase();
+			const { statusCode, args } = await findWalletByUserId({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
-		router.post(
-			"/",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createWalletSchema.safeParse({ params: request.params });
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createWalletSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { createWallet } = CreateWalletUseCase();
-				const { statusCode, args } = await createWallet({
+			const { createWallet } = CreateWalletUseCase();
+			const { statusCode, args } = await createWallet({
+				schemaArgs,
+			});
+
+			return void response
+				.status(statusCode)
+				.location(`/wallets/${args?.id}`)
+				.json();
+		});
+
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateWalletByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
+				});
+
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { statusCode, args } =
+				await UpdateWalletByIdUseCase().updateWalletById({
 					schemaArgs,
 				});
 
-				return void response
-					.status(statusCode)
-					.location(`/wallets/${args?.id}`)
-					.json();
-			},
-		);
-
-		router.put(
-			"/:id",
-			AccessTokenGuard,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateWalletByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { statusCode, args } =
-					await UpdateWalletByIdUseCase().updateWalletById({
-						schemaArgs,
-					});
-
-				return void response
-					.status(statusCode)
-					.location(`/wallets/${args?.id}`)
-					.json({ updatedAt: args?.updatedAt });
-			},
-		);
+			return void response
+				.status(statusCode)
+				.location(`/wallets/${args?.id}`)
+				.json({ updatedAt: args?.updatedAt });
+		});
 
 		return router;
 	};
