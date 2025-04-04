@@ -13,6 +13,7 @@ import {
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
 } from "../domains/User";
+import { SessionProvider } from "../providers/SessionProvider";
 
 const UserRouter = () => {
 	const subscribe = (router: Router): Router => {
@@ -45,7 +46,17 @@ const UserRouter = () => {
 				const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
 				const { statusCode, args } = await findUserByAccessCode({ schemaArgs });
 
-				return void response.status(statusCode).json(args);
+				const { addToSession } = SessionProvider(request, response);
+
+				addToSession("users", {
+					id: args?.id,
+					username: args?.username,
+					email: args?.email,
+					phoneNumber: args?.phoneNumber,
+					phoneNumberCode: args?.phoneNumberCode,
+				});
+
+				return void response.status(statusCode).json("");
 			},
 		);
 
@@ -130,6 +141,62 @@ const UserRouter = () => {
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
 					});
+
+				return void response.status(statusCode).json({
+					id: args?.id,
+					updatedAt: args?.updatedAt,
+				});
+			},
+		);
+
+		router.put("/:id/session", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findUserByIdSchema.safeParse({
+					params: request.params,
+				});
+
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
+
+			const { findUserById } = FindUserByIdUseCase();
+			const { statusCode, args } = await findUserById({ schemaArgs });
+
+			const { updateSession } = SessionProvider(request, response);
+
+			updateSession("users", {
+				id: args?.id,
+				username: args?.username,
+				email: args?.email,
+				phoneNumber: args?.phoneNumber,
+				phoneNumberCode: args?.phoneNumberCode,
+			});
+
+			return void response.status(statusCode).json({
+				id: args?.id,
+				updatedAt: args?.updatedAt,
+			});
+		});
+
+		router.delete(
+			"/:id/session",
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findUserByIdSchema.safeParse({
+						params: request.params,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { findUserById } = FindUserByIdUseCase();
+				const { statusCode, args } = await findUserById({ schemaArgs });
+
+				const { destroySession } = SessionProvider(request, response);
+				destroySession("users", { id: args?.id });
 
 				return void response.status(statusCode).json({
 					id: args?.id,
