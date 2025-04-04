@@ -66,9 +66,6 @@ const UserRouter = () => {
 					phoneNumberCode: args?.phoneNumberCode,
 				});
 
-				console.log(request.session);
-				console.log(request.sessionID);
-
 				return void response.status(statusCode).json(args);
 			},
 		);
@@ -218,20 +215,12 @@ const UserRouter = () => {
 				}
 
 				const { findUserById } = FindUserByIdUseCase();
-				const { statusCode, args } = await findUserById({ schemaArgs });
+				const { statusCode } = await findUserById({ schemaArgs });
 
-				const { destroySession, regenerateSession } = SessionProvider(
-					request,
-					response,
-				);
-
+				const { destroySession } = SessionProvider(request, response);
 				destroySession();
-				regenerateSession();
 
-				return void response.status(statusCode).json({
-					id: args?.id,
-					updatedAt: args?.updatedAt,
-				});
+				return void response.status(statusCode).json();
 			},
 		);
 
