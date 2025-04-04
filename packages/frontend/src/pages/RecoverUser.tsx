@@ -98,19 +98,10 @@ export default function RecoverUser() {
 	const onAction = async (formData: FormData) => {
 		setLoading(true);
 
-		const usernameRaw = formData.get("username");
-		const username = usernameRaw ? usernameRaw.toString() : "";
-
-		const emailRaw = formData.get("email");
-		const email = emailRaw ? emailRaw.toString() : "";
-
-		const phoneNumberRaw = formData.get("phoneNumber");
-		const phoneNumber = phoneNumberRaw ? phoneNumberRaw.toString() : "";
-
 		await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
-			username,
-			email,
-			phoneNumber,
+			username: formData.get("username")?.toString() || "",
+			email: formData.get("email")?.toString() || "",
+			phoneNumber: formData.get("phoneNumber")?.toString() || "",
 		});
 
 		setLoading(false);

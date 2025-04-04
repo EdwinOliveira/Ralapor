@@ -133,21 +133,12 @@ export default function CreateUser() {
 	const onAction = async (formData: FormData) => {
 		setLoading(true);
 
-		const usernameRaw = formData.get("username");
-		const username = usernameRaw ? usernameRaw.toString() : "";
-
-		const emailRaw = formData.get("email");
-		const email = emailRaw ? emailRaw.toString() : "";
-
-		const phoneNumberRaw = formData.get("phoneNumber");
-		const phoneNumber = phoneNumberRaw ? phoneNumberRaw.toString() : "";
-
-		const phoneNumberCodeRaw = formData.get("phoneNumberCode");
-		const phoneNumberCode = phoneNumberCodeRaw
-			? phoneNumberCodeRaw.toString()
-			: "";
-
-		await createUser({ username, email, phoneNumber, phoneNumberCode });
+		await createUser({
+			username: formData.get("username")?.toString() || "",
+			email: formData.get("email")?.toString() || "",
+			phoneNumber: formData.get("phoneNumber")?.toString() || "",
+			phoneNumberCode: formData.get("phoneNumberCode")?.toString() || "",
+		});
 
 		setLoading(false);
 		await navigate("/access-user");

@@ -83,10 +83,10 @@ export default function AccessUser() {
 	const onAction = async (formData: FormData) => {
 		setLoading(true);
 
-		const accessCodeRaw = formData.get("accessCode");
-		const accessCode = accessCodeRaw ? accessCodeRaw.toString() : "";
+		const user = await findUserByAccessCode({
+			accessCode: formData.get("accessCode")?.toString() || "",
+		});
 
-		const user = await findUserByAccessCode({ accessCode });
 		dispatch(addUser(user));
 
 		setLoading(false);
