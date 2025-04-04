@@ -1,6 +1,7 @@
 import Express, { json, Router } from "express";
 import cors from "cors";
 import { BackendRouter } from "./BackendRouter";
+import session from "express-session";
 import "dotenv/config";
 
 const BackendApplication = () => {
@@ -10,6 +11,15 @@ const BackendApplication = () => {
 	const createMiddleware = () => {
 		httpApplication.use(json());
 		httpApplication.use(cors());
+
+		httpApplication.use(
+			session({
+				secret: String(process.env.SESSION_SECRET) ?? "dummySessionSecret",
+				resave: false,
+				saveUninitialized: false,
+				cookie: { httpOnly: true, secure: true, maxAge: 60000 },
+			}),
+		);
 	};
 
 	const createRoutes = () => {
@@ -22,7 +32,11 @@ const BackendApplication = () => {
 		);
 	};
 
-	return { createMiddleware, createRoutes, createListner };
+	return {
+		createMiddleware,
+		createRoutes,
+		createListner,
+	};
 };
 
 const { createMiddleware, createRoutes, createListner } = BackendApplication();
