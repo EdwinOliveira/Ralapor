@@ -6,7 +6,7 @@ import {
 } from "express";
 
 const SessionGuard = () => {
-	const checkAuthentication = (
+	const isAuthenticated = (
 		request: Request,
 		response: Response,
 		next: NextFunction,
@@ -19,7 +19,7 @@ const SessionGuard = () => {
 		next();
 	};
 
-	const isAuthenticated = (
+	const bypassAuthentication = (
 		request: Request,
 		response: Response,
 		next: NextFunction,
@@ -33,8 +33,8 @@ const SessionGuard = () => {
 	};
 
 	return {
-		checkAuthentication,
 		isAuthenticated,
+		bypassAuthentication,
 	};
 };
 

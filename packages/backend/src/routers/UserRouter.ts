@@ -17,12 +17,12 @@ import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
 
 const UserRouter = () => {
-	const { checkAuthentication, isAuthenticated } = SessionGuard();
+	const { isAuthenticated, bypassAuthentication } = SessionGuard();
 
 	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
-			checkAuthentication,
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByIdSchema.safeParse({ params: request.params });
@@ -42,7 +42,7 @@ const UserRouter = () => {
 
 		router.get(
 			"/access-code/:accessCode",
-			isAuthenticated,
+			bypassAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByAccessCodeSchema.safeParse({ params: request.params });
@@ -70,23 +70,29 @@ const UserRouter = () => {
 			},
 		);
 
-		router.post("/", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createUserSchema.safeParse({ body: request.body });
+		router.post(
+			"/",
+			bypassAuthentication,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createUserSchema.safeParse({ body: request.body });
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-			const { createUser } = CreateUserUseCase();
-			const { statusCode, args } = await createUser({ schemaArgs });
+				const { createUser } = CreateUserUseCase();
+				const { statusCode, args } = await createUser({ schemaArgs });
 
-			return void response.status(statusCode).json({ id: args?.id });
-		});
+				return void response.status(statusCode).json({ id: args?.id });
+			},
+		);
 
 		router.put(
 			"/:id",
-			checkAuthentication,
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserByIdSchema.safeParse({
@@ -114,7 +120,7 @@ const UserRouter = () => {
 
 		router.put(
 			"/access-code/:id",
-			checkAuthentication,
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
