@@ -85,6 +85,7 @@ export default function CreateProfile() {
 					onAction={onAction}
 				/>
 			</div>
+			<div id="wrapper__background">hello</div>
 		</div>
 	);
 }
