@@ -7,9 +7,7 @@ const FindUserByAccessCodeUseCase = () => {
 	const { createRequest } = FetchProvider();
 
 	return {
-		findUserByAccessCode: async (
-			params: FindUserByAccessCodeRequest,
-		): Promise<UserEntity> => {
+		findUserByAccessCode: async (params: FindUserByAccessCodeRequest) => {
 			const response = await createRequest(
 				"users/access-code/:accessCode",
 				"GET",
@@ -18,7 +16,7 @@ const FindUserByAccessCodeUseCase = () => {
 				params,
 			);
 
-			return await response.json();
+			return (await response.json()) satisfies UserEntity;
 		},
 	};
 };

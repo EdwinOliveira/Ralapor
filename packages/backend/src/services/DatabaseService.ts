@@ -39,7 +39,7 @@ const DatabaseService = () => {
 				table.integer("userId");
 				table.string("firstName");
 				table.string("lastName");
-				table.date("dateBirth");
+				table.string("dateBirth");
 				table.timestamps(true, true, true);
 			});
 		}

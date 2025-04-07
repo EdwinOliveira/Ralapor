@@ -8,12 +8,10 @@ import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 import PortugueseFlagIcon from "../components/icons/PortugueseFlagIcon";
 import EnglandFlagIcon from "../components/icons/EnglandFlagIcon";
 import Typography from "../components/Typography";
-import { useState } from "react";
 
 export default function CreateUser() {
 	const navigate = useNavigate();
 	const { createUser } = CreateUserUseCase();
-	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -105,7 +103,7 @@ export default function CreateUser() {
 					segment: "button",
 					color: "default-inverse",
 				},
-				isLoading: isLoading,
+				isLoading: false,
 			},
 		],
 		formLinks: [
@@ -131,8 +129,6 @@ export default function CreateUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
-		setLoading(true);
-
 		await createUser({
 			username: formData.get("username")?.toString() || "",
 			email: formData.get("email")?.toString() || "",
@@ -140,7 +136,6 @@ export default function CreateUser() {
 			phoneNumberCode: formData.get("phoneNumberCode")?.toString() || "",
 		});
 
-		setLoading(false);
 		await navigate("/access-user");
 	};
 

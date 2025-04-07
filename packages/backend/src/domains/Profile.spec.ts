@@ -10,7 +10,7 @@ import {
 } from "./Profile";
 
 describe("Profile", () => {
-	const dateBirth = new Date("1990-01-01");
+	const dateBirth = new Date("1990-01-01").toISOString();
 
 	describe("profileDTOMapper", () => {
 		const date = new Date().toISOString();
@@ -175,7 +175,7 @@ describe("Profile", () => {
 					body: {
 						firstName: "dummyFirstName",
 						lastName: "dummyLastName",
-						dateBirth: new Date("1990-01-01"),
+						dateBirth: dateBirth,
 					},
 				}),
 			).toEqual({
@@ -184,7 +184,7 @@ describe("Profile", () => {
 					body: {
 						firstName: "dummyFirstName",
 						lastName: "dummyLastName",
-						dateBirth: new Date("1990-01-01"),
+						dateBirth: dateBirth,
 					},
 				},
 				success: true,

@@ -1,12 +1,18 @@
 import "./CreateProfile.css";
-import { useState } from "react";
 import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import Form from "../components/Form";
+import { CreateProfileUseCase } from "../useCases/profiles/CreateProfileUseCase";
+import { useDispatch } from "react-redux";
+import { ProfileState } from "../state/ProfileState";
+import { useNavigate } from "react-router";
 
 export default function CreateProfile() {
-	const [isLoading, setLoading] = useState<boolean>(false);
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { addProfile } = ProfileState();
+	const { createProfile } = CreateProfileUseCase();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -65,14 +71,21 @@ export default function CreateProfile() {
 					segment: "button",
 					color: "default-inverse",
 				},
-				isLoading: isLoading,
+				isLoading: false,
 			},
 		],
 		formLinks: [],
 	};
 
 	const onAction = async (formData: FormData) => {
-		setLoading(true);
+		const createdProfile = await createProfile({
+			userId: 1,
+			firstName: formData.get("firstName")?.toString() || "",
+			lastName: formData.get("lastName")?.toString() || "",
+			dateBirth: formData.get("dateBirth")?.toString() || "",
+		});
+
+		dispatch(addProfile(createdProfile));
 	};
 
 	return (

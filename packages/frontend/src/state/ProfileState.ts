@@ -5,7 +5,7 @@ type ProfileEntity = {
 	userId: number;
 	firstName: string;
 	lastName: string;
-	dateBirth: Date;
+	dateBirth: string;
 	createdAt: string;
 	updatedAt: string;
 };

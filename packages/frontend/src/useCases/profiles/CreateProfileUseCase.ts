@@ -12,7 +12,7 @@ const CreateProfileUseCase = () => {
 	return {
 		createProfile: async (args: CreateProfileRequest) => {
 			const response = await createRequest("profiles", "POST", args);
-			await response.json();
+			return (await response.json()) satisfies ProfileEntity;
 		},
 	};
 };

@@ -9,7 +9,7 @@ type ProfileEntity = {
 	userId: number;
 	firstName: string;
 	lastName: string;
-	dateBirth: Date;
+	dateBirth: string;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -58,7 +58,7 @@ const createProfileSchema = z.object({
 			.refine((id) => !Number.isNaN(id)),
 		firstName: z.string(),
 		lastName: z.string(),
-		dateBirth: z.date(),
+		dateBirth: z.string(),
 	}),
 });
 
@@ -74,7 +74,7 @@ const updateProfileByIdSchema = z.object({
 	body: z.object({
 		firstName: z.string().optional(),
 		lastName: z.string().optional(),
-		dateBirth: z.date().optional(),
+		dateBirth: z.string().optional(),
 	}),
 });
 

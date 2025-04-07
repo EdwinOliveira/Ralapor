@@ -7,9 +7,7 @@ const FindProfileByIdUseCase = () => {
 	const { createRequest } = FetchProvider();
 
 	return {
-		findProfileById: async (
-			params: FindProfileByIdRequest,
-		): Promise<ProfileEntity> => {
+		findProfileById: async (params: FindProfileByIdRequest) => {
 			const response = await createRequest(
 				"profiles/:id",
 				"GET",
@@ -18,7 +16,7 @@ const FindProfileByIdUseCase = () => {
 				params,
 			);
 
-			return await response.json();
+			return (await response.json()) satisfies ProfileEntity;
 		},
 	};
 };

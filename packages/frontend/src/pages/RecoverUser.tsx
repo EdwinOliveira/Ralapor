@@ -5,13 +5,11 @@ import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./RecoverUser.css";
 import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
-import { useState } from "react";
 
 export default function RecoverUser() {
 	const navigate = useNavigate();
 	const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
 		UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
-	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -70,7 +68,7 @@ export default function RecoverUser() {
 					segment: "button",
 					color: "default-inverse",
 				},
-				isLoading: isLoading,
+				isLoading: false,
 			},
 		],
 		formLinks: [
@@ -96,15 +94,12 @@ export default function RecoverUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
-		setLoading(true);
-
 		await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 			username: formData.get("username")?.toString() || "",
 			email: formData.get("email")?.toString() || "",
 			phoneNumber: formData.get("phoneNumber")?.toString() || "",
 		});
 
-		setLoading(false);
 		await navigate("/access-user");
 	};
 
