@@ -4,7 +4,7 @@ import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import Form from "../components/Form";
 import { useDispatch } from "react-redux";
-import { ProfileState } from "../state/ProfileState";
+import { ProfileState } from "../state/profileState";
 import { useNavigate } from "react-router";
 
 export default function CreateProfile() {

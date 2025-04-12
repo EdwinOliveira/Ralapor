@@ -7,7 +7,7 @@ import CreateUser from "./routes/createUser";
 import AccessUser from "./routes/accessUser";
 import RecoverUser from "./routes/recoverUser";
 import { Provider } from "react-redux";
-import { store } from "./state/Store";
+import { store } from "./state/store";
 import CreateProfile from "./routes/createProfile";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FetchProvider } from "../providers/fetchProvider";
-import type { UserEntity } from "../state/UserState";
+import type { UserEntity } from "../state/userState";
 
 type CreateUserRequest = Pick<
 	UserEntity,

@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { UserState } from "./UserState";
-import { ProfileState } from "./ProfileState";
+import { UserState } from "./userState";
+import { ProfileState } from "./profileState";
 
 const store = configureStore({
 	reducer: {
