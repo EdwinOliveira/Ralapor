@@ -4,9 +4,12 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./RecoverUser.css";
+import { useUpdateUserByUsernameOrEmailOrPhoneNumber } from "../hooks/useUpdateUserByUsernameOrEmailOrPhoneNumber";
 
 export default function RecoverUser() {
 	const navigate = useNavigate();
+	const { updateUserByUsernameOrEmailOrPhoneNumber } =
+		useUpdateUserByUsernameOrEmailOrPhoneNumber();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -91,6 +94,12 @@ export default function RecoverUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
+		await updateUserByUsernameOrEmailOrPhoneNumber({
+			username: formData.get("username")?.toString() || "",
+			email: formData.get("email")?.toString() || "",
+			phoneNumber: formData.get("phoneNumber")?.toString() || "",
+		});
+
 		await navigate("/access-user");
 	};
 

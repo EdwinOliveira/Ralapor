@@ -7,9 +7,11 @@ import "./CreateUser.css";
 import PortugueseFlagIcon from "../components/icons/PortugueseFlagIcon";
 import EnglandFlagIcon from "../components/icons/EnglandFlagIcon";
 import Typography from "../components/Typography";
+import { useCreateUser } from "../hooks/useCreateUser";
 
 export default function CreateUser() {
 	const navigate = useNavigate();
+	const { createUser } = useCreateUser();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -127,6 +129,13 @@ export default function CreateUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
+		await createUser({
+			username: formData.get("username")?.toString() || "",
+			email: formData.get("email")?.toString() || "",
+			phoneNumber: formData.get("phoneNumber")?.toString() || "",
+			phoneNumberCode: formData.get("phoneNumberCode")?.toString() || "",
+		});
+
 		await navigate("/access-user");
 	};
 

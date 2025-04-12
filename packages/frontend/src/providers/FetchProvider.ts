@@ -1,11 +1,19 @@
+type FetchProvidersArgs = {
+	httpRoute: string;
+	httpMethod: "GET" | "POST" | "PUT" | "DELETE";
+	httpQueries: Record<string, string>;
+	httpParams: Record<string, string>;
+	httpBody: Record<string, unknown>;
+};
+
 const FetchProvider = () => {
-	const createRequest = (
-		httpRoute: string,
-		httpMethod: "GET" | "POST" | "PUT" | "DELETE",
-		httpBody: Record<string, unknown>,
-		httpQueries: Record<string, unknown> = {},
-		httpParams: Record<string, unknown> = {},
-	) => {
+	const createRequest = ({
+		httpRoute,
+		httpMethod,
+		httpQueries,
+		httpParams,
+		httpBody,
+	}: FetchProvidersArgs) => {
 		let buildedURL = `http://localhost:8000/${httpRoute}`;
 
 		for (const httpQuery of Object.entries(httpQueries)) {
@@ -14,9 +22,8 @@ const FetchProvider = () => {
 				: `${buildedURL}?${httpQuery[0]}=${httpQuery[1]}`;
 		}
 
-		console.log(httpParams);
 		for (const httpParam of Object.entries(httpParams)) {
-			buildedURL = buildedURL.replace(`:${httpParam[0]}`, String(httpParam[1]));
+			buildedURL = buildedURL.replace(`:${httpParam[0]}`, httpParam[1]);
 		}
 
 		return fetch(buildedURL, {

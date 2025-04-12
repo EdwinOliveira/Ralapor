@@ -8,7 +8,7 @@ const RandomProvider = () => {
 		createAccessCode: (size: number) => {
 			const upperCaseCharacters = "ABCDEFGIJKLMNOPQRSTUVYXZ";
 			const lowerCaseCharacters = "abcdefghijklmnopqrstuvyxz";
-			const symbolsCharacters = "&$";
+			const symbolsCharacters = "$";
 			const numbersCharacters = "0123456789";
 
 			const randomCharacter = (characters: string) => {
