@@ -4,7 +4,6 @@ import type { FormActionProps } from "../components/FormAction";
 import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import "./AccessUser.css";
-import { FindUserByAccessCodeUseCase } from "../useCases/users/FindUserByAccessCodeUseCase";
 import { useDispatch } from "react-redux";
 import { UserState } from "../state/UserState";
 
@@ -12,7 +11,6 @@ export default function AccessUser() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { addUser } = UserState();
-	const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -79,11 +77,6 @@ export default function AccessUser() {
 	};
 
 	const onAction = async (formData: FormData) => {
-		const user = await findUserByAccessCode({
-			accessCode: formData.get("accessCode")?.toString() || "",
-		});
-
-		dispatch(addUser(user));
 		await navigate("/create-profile");
 	};
 
