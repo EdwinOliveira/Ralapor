@@ -1,6 +1,6 @@
 import "./FormGroup.css";
-import FormControl, { type FormControlProps } from "./FormControl";
-import Typography, { type TypographyProps } from "./Typography";
+import FormControl, { type FormControlProps } from "./formControl";
+import Typography, { type TypographyProps } from "./typography";
 
 export type FormGroupProps = {
 	id?: number;

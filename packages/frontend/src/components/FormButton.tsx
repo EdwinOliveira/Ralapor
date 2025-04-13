@@ -1,6 +1,6 @@
-import Typography, { type TypographyProps } from "./Typography";
+import Typography, { type TypographyProps } from "./typography";
 import "./FormButton.css";
-import Loader from "./Loader";
+import Loader from "./loader";
 
 export type FormButtonProps = {
 	id?: number;

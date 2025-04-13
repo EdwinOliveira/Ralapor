@@ -1,6 +1,6 @@
 import "./FormPhoneNumberCode.css";
-import FormInput, { type FormInputProps } from "./FormInput";
-import FormSelector, { type FormSelectorProps } from "./FormSelector";
+import FormInput, { type FormInputProps } from "./formInput";
+import FormSelector, { type FormSelectorProps } from "./formSelector";
 
 export type FormPhoneNumberCodeProps = {
 	formInputControl: FormInputProps;

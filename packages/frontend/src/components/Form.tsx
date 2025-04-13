@@ -1,7 +1,7 @@
 import "./Form.css";
-import FormAction, { type FormActionProps } from "./FormAction";
-import FormGroup, { type FormGroupProps } from "./FormGroup";
-import FormHeader, { type FormHeaderProps } from "./FormHeader";
+import FormAction, { type FormActionProps } from "./formAction";
+import FormGroup, { type FormGroupProps } from "./formGroup";
+import FormHeader, { type FormHeaderProps } from "./formHeader";
 
 type FormProps = {
 	formHeader: FormHeaderProps;

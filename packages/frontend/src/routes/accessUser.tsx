@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
-import Form from "../components/Form";
-import type { FormActionProps } from "../components/FormAction";
-import type { FormGroupProps } from "../components/FormGroup";
-import type { FormHeaderProps } from "../components/FormHeader";
+import Form from "../components/form";
+import type { FormActionProps } from "../components/formAction";
+import type { FormGroupProps } from "../components/formGroup";
+import type { FormHeaderProps } from "../components/formHeader";
 import "./AccessUser.css";
 import { useFindUserByAccessCode } from "../hooks/useFindUserByAccessCode";
 

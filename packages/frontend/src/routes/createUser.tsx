@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
-import Form from "../components/Form";
-import type { FormActionProps } from "../components/FormAction";
-import type { FormGroupProps } from "../components/FormGroup";
-import type { FormHeaderProps } from "../components/FormHeader";
+import Form from "../components/form";
+import type { FormActionProps } from "../components/formAction";
+import type { FormGroupProps } from "../components/formGroup";
+import type { FormHeaderProps } from "../components/formHeader";
 import "./CreateUser.css";
-import PortugueseFlagIcon from "../components/icons/PortugueseFlagIcon";
-import EnglandFlagIcon from "../components/icons/EnglandFlagIcon";
-import Typography from "../components/Typography";
+import PortugueseFlagIcon from "../components/icons/portugueseFlagIcon";
+import EnglandFlagIcon from "../components/icons/englandFlagIcon";
+import Typography from "../components/typography";
 import { useCreateUser } from "../hooks/useCreateUser";
 
 export default function CreateUser() {

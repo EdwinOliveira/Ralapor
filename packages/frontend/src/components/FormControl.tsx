@@ -1,9 +1,9 @@
 import "./FormControl.css";
-import FormInput, { type FormInputProps } from "./FormInput";
+import FormInput, { type FormInputProps } from "./formInput";
 import FormPhoneNumberCode, {
 	type FormPhoneNumberCodeProps,
-} from "./FormPhoneNumberCode";
-import FormSelector, { type FormSelectorProps } from "./FormSelector";
+} from "./formPhoneNumberCode";
+import FormSelector, { type FormSelectorProps } from "./formSelector";
 
 export type FormControlProps = {
 	id?: number;

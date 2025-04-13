@@ -1,5 +1,5 @@
-import FormButton, { type FormButtonProps } from "./FormButton";
-import FormLink, { type FormLinkProps } from "./FormLink";
+import FormButton, { type FormButtonProps } from "./formButton";
+import FormLink, { type FormLinkProps } from "./formLink";
 import "./FormAction.css";
 
 export type FormActionProps = {
