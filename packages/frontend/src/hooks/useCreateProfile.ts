@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FetchProvider } from "../providers/fetchProvider";
 import { ProfileState, type ProfileEntity } from "../state/profileState";
 import { useDispatch } from "react-redux";
+import { useFetchProvider } from "../providers/useFetchProvider";
 
 type CreateProfileRequest = Pick<
 	ProfileEntity,
@@ -9,7 +9,7 @@ type CreateProfileRequest = Pick<
 >;
 
 const useCreateProfile = () => {
-	const { createRequest } = FetchProvider();
+	const { createRequest } = useFetchProvider();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { addProfile } = ProfileState();
@@ -22,7 +22,7 @@ const useCreateProfile = () => {
 	}: CreateProfileRequest) => {
 		setIsLoading(true);
 
-		const data = await createRequest({
+		const response = await createRequest({
 			httpRoute: "profiles",
 			httpMethod: "POST",
 			httpQueries: {},
@@ -30,7 +30,7 @@ const useCreateProfile = () => {
 			httpBody: { userId, firstName, lastName, dateBirth },
 		});
 
-		const createdProfile = (await data.json()) as ProfileEntity;
+		const createdProfile = (await response.json()) as ProfileEntity;
 		dispatch(addProfile(createdProfile));
 
 		setIsLoading(false);

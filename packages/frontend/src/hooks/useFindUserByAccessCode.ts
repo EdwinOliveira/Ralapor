@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { FetchProvider } from "../providers/fetchProvider";
+import { useFetchProvider } from "../providers/useFetchProvider";
 import { UserState, type UserEntity } from "../state/userState";
 import { useDispatch } from "react-redux";
 
 type FindUserByAccessCodeRequest = Pick<UserEntity, "accessCode">;
 
 const useFindUserByAccessCode = () => {
-	const { createRequest } = FetchProvider();
+	const { createRequest } = useFetchProvider();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { addUser } = UserState();
@@ -16,7 +16,7 @@ const useFindUserByAccessCode = () => {
 	}: FindUserByAccessCodeRequest) => {
 		setIsLoading(true);
 
-		const data = await createRequest({
+		const response = await createRequest({
 			httpRoute: "users/access-code/:accessCode",
 			httpMethod: "GET",
 			httpQueries: {},
@@ -24,7 +24,7 @@ const useFindUserByAccessCode = () => {
 			httpBody: {},
 		});
 
-		const foundUser = (await data.json()) as UserEntity;
+		const foundUser = (await response.json()) as UserEntity;
 		dispatch(addUser(foundUser));
 
 		setIsLoading(false);

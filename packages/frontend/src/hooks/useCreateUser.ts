@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FetchProvider } from "../providers/fetchProvider";
+import { useFetchProvider } from "../providers/useFetchProvider";
 import type { UserEntity } from "../state/userState";
 
 type CreateUserRequest = Pick<
@@ -8,7 +8,7 @@ type CreateUserRequest = Pick<
 >;
 
 const useCreateUser = () => {
-	const { createRequest } = FetchProvider();
+	const { createRequest } = useFetchProvider();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const createUser = async ({

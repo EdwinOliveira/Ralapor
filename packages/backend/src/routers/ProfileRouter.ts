@@ -48,7 +48,7 @@ const ProfileRouter = () => {
 		router.post("/", async (request: Request, response: Response) => {
 			const { data: schemaArgs, error: schemaErrors } =
 				createProfileSchema.safeParse({
-					params: request.params,
+					body: request.body,
 				});
 
 			if (schemaErrors !== undefined) {

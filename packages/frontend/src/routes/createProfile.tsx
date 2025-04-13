@@ -3,14 +3,12 @@ import type { FormActionProps } from "../components/formAction";
 import type { FormGroupProps } from "../components/formGroup";
 import type { FormHeaderProps } from "../components/formHeader";
 import Form from "../components/form";
-import { useDispatch } from "react-redux";
-import { ProfileState } from "../state/profileState";
 import { useNavigate } from "react-router";
+import { useCreateProfile } from "../hooks/useCreateProfile";
 
 export default function CreateProfile() {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const { addProfile } = ProfileState();
+	const { createProfile } = useCreateProfile();
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -75,7 +73,14 @@ export default function CreateProfile() {
 		formLinks: [],
 	};
 
-	const onAction = async (formData: FormData) => {};
+	const onAction = async (formData: FormData) => {
+		createProfile({
+			userId: 1,
+			firstName: formData.get("firstName")?.toString() || "",
+			lastName: formData.get("lastName")?.toString() || "",
+			dateBirth: formData.get("dateBirth")?.toString() || "",
+		});
+	};
 
 	return (
 		<div id="wrapper">

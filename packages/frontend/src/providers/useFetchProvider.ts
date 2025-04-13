@@ -1,19 +1,19 @@
-type FetchProvidersArgs = {
+type CreateRequestProps = {
 	httpRoute: string;
 	httpMethod: "GET" | "POST" | "PUT" | "DELETE";
-	httpQueries: Record<string, string>;
-	httpParams: Record<string, string>;
+	httpQueries: Record<string, unknown>;
+	httpParams: Record<string, unknown>;
 	httpBody: Record<string, unknown>;
 };
 
-const FetchProvider = () => {
+const useFetchProvider = () => {
 	const createRequest = ({
 		httpRoute,
 		httpMethod,
 		httpQueries,
 		httpParams,
 		httpBody,
-	}: FetchProvidersArgs) => {
+	}: CreateRequestProps) => {
 		let buildedURL = `http://localhost:8000/${httpRoute}`;
 
 		for (const httpQuery of Object.entries(httpQueries)) {
@@ -23,7 +23,7 @@ const FetchProvider = () => {
 		}
 
 		for (const httpParam of Object.entries(httpParams)) {
-			buildedURL = buildedURL.replace(`:${httpParam[0]}`, httpParam[1]);
+			buildedURL = buildedURL.replace(`:${httpParam[0]}`, String(httpParam[1]));
 		}
 
 		return fetch(buildedURL, {
@@ -36,4 +36,4 @@ const FetchProvider = () => {
 	return { createRequest };
 };
 
-export { FetchProvider };
+export { useFetchProvider };
