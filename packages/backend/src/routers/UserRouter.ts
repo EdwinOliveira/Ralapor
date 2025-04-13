@@ -41,7 +41,7 @@ const UserRouter = () => {
 		);
 
 		router.get(
-			"/:id/session",
+			"/session",
 			isAuthenticated,
 			async (_request: Request, response: Response) => {
 				return void response.status(200).json();
