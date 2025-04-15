@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router";
-import Form from "../components/form";
-import type { FormActionProps } from "../components/formAction";
-import type { FormGroupProps } from "../components/formGroup";
-import type { FormHeaderProps } from "../components/formHeader";
 import "./AccessUser.css";
+import { useNavigate } from "react-router";
+import type { FormActionProps } from "../components/FormAction";
+import type { FormGroupProps } from "../components/FormGroup";
+import type { FormHeaderProps } from "../components/FormHeader";
+import Form from "../components/Form";
 import { useFindUserByAccessCode } from "../hooks/useFindUserByAccessCode";
 
-export default function AccessUser() {
+const AccessUser = () => {
 	const navigate = useNavigate();
 	const { findUserByAccessCode } = useFindUserByAccessCode();
 
@@ -95,4 +95,6 @@ export default function AccessUser() {
 			<div id="wrapper__background">hello</div>
 		</div>
 	);
-}
+};
+
+export default AccessUser;

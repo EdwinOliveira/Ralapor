@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProfileState, type ProfileEntity } from "../state/profileState";
+import { ProfileState, type ProfileEntity } from "../state/ProfileState";
 import { useDispatch } from "react-redux";
 import { useFetchProvider } from "../providers/useFetchProvider";
 

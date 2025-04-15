@@ -1,6 +1,7 @@
-import Typography, { type TypographyProps } from "./typography";
 import "./FormButton.css";
-import Loader from "./loader";
+
+import Typography, { type TypographyProps } from "./Typography";
+import Loader from "./Loader";
 
 export type FormButtonProps = {
 	id?: number;
@@ -8,7 +9,7 @@ export type FormButtonProps = {
 	isLoading: boolean;
 };
 
-export default function FormButton({ typography, isLoading }: FormButtonProps) {
+const FormButton: React.FC<FormButtonProps> = ({ typography, isLoading }) => {
 	return (
 		<button id="form-button" type="submit">
 			{isLoading === false ? (
@@ -22,4 +23,6 @@ export default function FormButton({ typography, isLoading }: FormButtonProps) {
 			)}
 		</button>
 	);
-}
+};
+
+export default FormButton;

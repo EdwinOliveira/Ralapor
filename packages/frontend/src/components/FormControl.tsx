@@ -1,13 +1,10 @@
-import "./FormControl.css";
-import FormInput, { type FormInputProps } from "./formInput";
-import FormPhoneNumberCode, {
-	type FormPhoneNumberCodeProps,
-} from "./formPhoneNumberCode";
-import FormSelector, { type FormSelectorProps } from "./formSelector";
+import FormInput, { type FormInputProps } from "./FormInput";
+import Formdropdown, { type FormDropdownProps } from "./FormDropdown";
+import FormSelector, { type FormSelectorProps } from "./FormSelector";
 
 export type FormControlProps = {
 	id?: number;
-} & (FormControlInput | FormControlSelector | FormControlPhoneNumberCode);
+} & (FormControlInput | FormControlSelector | FormControlDropdown);
 
 type FormControlInput = {
 	type: "input";
@@ -19,12 +16,12 @@ type FormControlSelector = {
 	formSelectorProps: FormSelectorProps;
 };
 
-type FormControlPhoneNumberCode = {
-	type: "phoneNumberCode";
-	formPhoneNumberCodeProps: FormPhoneNumberCodeProps;
+type FormControlDropdown = {
+	type: "dropdown";
+	formDropdownProps: FormDropdownProps;
 };
 
-export default function FormControl(props: FormControlProps) {
+const FormControl: React.FC<FormControlProps> = (props) => {
 	const isFormInputGuard = (
 		props: FormControlProps,
 	): props is FormControlInput => props.type === "input";
@@ -33,9 +30,9 @@ export default function FormControl(props: FormControlProps) {
 		props: FormControlProps,
 	): props is FormControlSelector => props.type === "selector";
 
-	const isFormPhoneNumberCodeGuard = (
+	const isFormdropdownGuard = (
 		props: FormControlProps,
-	): props is FormControlPhoneNumberCode => props.type === "phoneNumberCode";
+	): props is FormControlDropdown => props.type === "dropdown";
 
 	const dynamicComponent = () => {
 		if (isFormInputGuard(props)) {
@@ -46,10 +43,12 @@ export default function FormControl(props: FormControlProps) {
 			return <FormSelector {...props.formSelectorProps} />;
 		}
 
-		if (isFormPhoneNumberCodeGuard(props)) {
-			return <FormPhoneNumberCode {...props.formPhoneNumberCodeProps} />;
+		if (isFormdropdownGuard(props)) {
+			return <Formdropdown {...props.formDropdownProps} />;
 		}
 	};
 
 	return dynamicComponent();
-}
+};
+
+export default FormControl;

@@ -1,7 +1,8 @@
 import "./Form.css";
-import FormAction, { type FormActionProps } from "./formAction";
-import FormGroup, { type FormGroupProps } from "./formGroup";
-import FormHeader, { type FormHeaderProps } from "./formHeader";
+
+import FormAction, { type FormActionProps } from "./FormAction";
+import FormGroup, { type FormGroupProps } from "./FormGroup";
+import FormHeader, { type FormHeaderProps } from "./FormHeader";
 
 type FormProps = {
 	formHeader: FormHeaderProps;
@@ -10,22 +11,28 @@ type FormProps = {
 	onAction: (data: FormData) => void;
 };
 
-export default function Form({
+const Form: React.FC<FormProps> = ({
 	formHeader,
 	formGroups,
 	formAction,
 	onAction,
-}: FormProps) {
+}) => {
 	return (
 		<form id="form" action={onAction}>
 			<FormHeader {...formHeader} />
-			{formGroups.map((formGroup) => (
-				<FormGroup key={formGroup.id} {...formGroup} />
-			))}
-			<FormAction
-				formButtons={formAction.formButtons}
-				formLinks={formAction.formLinks}
-			/>
+			<div id="form-groups">
+				{formGroups.map((formGroup) => (
+					<FormGroup key={formGroup.id} {...formGroup} />
+				))}
+			</div>
+			<div id="form-actions">
+				<FormAction
+					formButtons={formAction.formButtons}
+					formLinks={formAction.formLinks}
+				/>
+			</div>
 		</form>
 	);
-}
+};
+
+export default Form;

@@ -5,6 +5,7 @@ export type TypographySegment =
 	| "group-header"
 	| "button"
 	| "link";
+
 export type TypographyColor = "default" | "default-inverse";
 
 export type TypographyProps = {
@@ -13,10 +14,8 @@ export type TypographyProps = {
 	color: TypographyColor;
 };
 
-export default function Typography({
-	content,
-	segment,
-	color,
-}: TypographyProps) {
+const Typography: React.FC<TypographyProps> = ({ content, segment, color }) => {
 	return <span className={`${segment} ${color}`}>{content}</span>;
-}
+};
+
+export default Typography;

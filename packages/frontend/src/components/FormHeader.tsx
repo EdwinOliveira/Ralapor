@@ -1,10 +1,10 @@
-import Typography, { type TypographyProps } from "./typography";
+import Typography, { type TypographyProps } from "./Typography";
 
 export type FormHeaderProps = {
 	typography: TypographyProps;
 };
 
-export default function FormHeader({ typography }: FormHeaderProps) {
+const FormHeader: React.FC<FormHeaderProps> = ({ typography }) => {
 	return (
 		<div id="form-header">
 			<Typography
@@ -14,4 +14,6 @@ export default function FormHeader({ typography }: FormHeaderProps) {
 			/>
 		</div>
 	);
-}
+};
+
+export default FormHeader;

@@ -1,5 +1,7 @@
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
-export default function EnglandFlagIcon() {
+const EnglandFlagIcon = () => {
 	return <span className="fi fi-gb" />;
-}
+};
+
+export default EnglandFlagIcon;

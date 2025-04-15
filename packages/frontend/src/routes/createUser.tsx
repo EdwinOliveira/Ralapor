@@ -1,15 +1,15 @@
-import { useNavigate } from "react-router";
-import Form from "../components/form";
-import type { FormActionProps } from "../components/formAction";
-import type { FormGroupProps } from "../components/formGroup";
-import type { FormHeaderProps } from "../components/formHeader";
 import "./CreateUser.css";
-import PortugueseFlagIcon from "../components/icons/portugueseFlagIcon";
-import EnglandFlagIcon from "../components/icons/englandFlagIcon";
-import Typography from "../components/typography";
+import { useNavigate } from "react-router";
 import { useCreateUser } from "../hooks/useCreateUser";
+import type { FormActionProps } from "../components/FormAction";
+import type { FormGroupProps } from "../components/FormGroup";
+import type { FormHeaderProps } from "../components/FormHeader";
+import PortugueseFlagIcon from "../components/icons/PortugueseFlagIcon";
+import EnglandFlagIcon from "../components/icons/EnglandFlagIcon";
+import Typography from "../components/Typography";
+import Form from "../components/Form";
 
-export default function CreateUser() {
+const CreateUser = () => {
 	const navigate = useNavigate();
 	const { createUser } = useCreateUser();
 
@@ -50,8 +50,8 @@ export default function CreateUser() {
 				},
 				{
 					id: 3,
-					type: "phoneNumberCode",
-					formPhoneNumberCodeProps: {
+					type: "dropdown",
+					formDropdownProps: {
 						formInputControl: {
 							name: "phoneNumber",
 							type: "tel",
@@ -152,4 +152,6 @@ export default function CreateUser() {
 			<div id="wrapper__background">hello</div>
 		</div>
 	);
-}
+};
+
+export default CreateUser;

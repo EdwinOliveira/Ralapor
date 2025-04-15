@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router";
-import Form from "../components/form";
-import type { FormActionProps } from "../components/formAction";
-import type { FormGroupProps } from "../components/formGroup";
-import type { FormHeaderProps } from "../components/formHeader";
 import "./RecoverUser.css";
+import { useNavigate } from "react-router";
+import type { FormActionProps } from "../components/FormAction";
+import type { FormGroupProps } from "../components/FormGroup";
+import type { FormHeaderProps } from "../components/FormHeader";
+import Form from "../components/Form";
 import { useUpdateUserByUsernameOrEmailOrPhoneNumber } from "../hooks/useUpdateUserByUsernameOrEmailOrPhoneNumber";
 
-export default function RecoverUser() {
+const RecoverUser = () => {
 	const navigate = useNavigate();
 	const { updateUserByUsernameOrEmailOrPhoneNumber } =
 		useUpdateUserByUsernameOrEmailOrPhoneNumber();
@@ -116,4 +116,6 @@ export default function RecoverUser() {
 			<div id="wrapper__background">hello</div>
 		</div>
 	);
-}
+};
+
+export default RecoverUser;

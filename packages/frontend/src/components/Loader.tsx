@@ -4,10 +4,12 @@ type LoaderProps = {
 	isLoading: boolean;
 };
 
-export default function Loader({ isLoading }: LoaderProps) {
+const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
 	return (
 		<div id="loader">
 			<DotLoader loading={isLoading} size={35} color="#fff" />
 		</div>
 	);
-}
+};
+
+export default Loader;

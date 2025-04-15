@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFetchProvider } from "../providers/useFetchProvider";
-import type { UserEntity } from "../state/userState";
+import type { UserEntity } from "../state/UserState";
 
 type UpdateUserByUsernameOrEmailOrPhoneNumberRequest = Partial<
 	Pick<UserEntity, "username" | "email" | "phoneNumber">

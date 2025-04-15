@@ -1,12 +1,12 @@
 import "./CreateProfile.css";
-import type { FormActionProps } from "../components/formAction";
-import type { FormGroupProps } from "../components/formGroup";
-import type { FormHeaderProps } from "../components/formHeader";
-import Form from "../components/form";
 import { useNavigate } from "react-router";
+import type { FormActionProps } from "../components/FormAction";
+import type { FormGroupProps } from "../components/FormGroup";
+import type { FormHeaderProps } from "../components/FormHeader";
+import Form from "../components/Form";
 import { useCreateProfile } from "../hooks/useCreateProfile";
 
-export default function CreateProfile() {
+const CreateProfile = () => {
 	const navigate = useNavigate();
 	const { createProfile } = useCreateProfile();
 
@@ -95,4 +95,6 @@ export default function CreateProfile() {
 			<div id="wrapper__background">hello</div>
 		</div>
 	);
-}
+};
+
+export default CreateProfile;

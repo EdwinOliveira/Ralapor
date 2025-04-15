@@ -1,6 +1,5 @@
-import type { ReactElement } from "react";
-import "./FormSelector.css";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import type { ReactElement } from "react";
 import Select from "react-select";
 
 export type FormSelectorOption = {
@@ -13,10 +12,10 @@ export type FormSelectorProps = {
 	selectorOptions: Array<FormSelectorOption>;
 };
 
-export default function FormSelector({
+const FormSelector: React.FC<FormSelectorProps> = ({
 	name,
 	selectorOptions,
-}: FormSelectorProps) {
+}) => {
 	const customStyles = {
 		control: (provided) => ({
 			...provided,
@@ -50,4 +49,6 @@ export default function FormSelector({
 			isSearchable={false}
 		/>
 	);
-}
+};
+
+export default FormSelector;

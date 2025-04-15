@@ -7,5 +7,4 @@
 #form-links {
 	display: flex;
 	flex-direction: column;
-	gap: 0.10rem;
 }

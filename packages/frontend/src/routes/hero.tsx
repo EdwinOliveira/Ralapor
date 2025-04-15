@@ -1,3 +1,5 @@
-export default function Hero() {
+const Hero = () => {
 	return <div id="wrapper" />;
-}
+};
+
+export default Hero;

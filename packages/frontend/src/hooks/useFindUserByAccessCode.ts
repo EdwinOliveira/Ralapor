@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFetchProvider } from "../providers/useFetchProvider";
-import { UserState, type UserEntity } from "../state/userState";
+import { UserState, type UserEntity } from "../state/UserState";
 import { useDispatch } from "react-redux";
 
 type FindUserByAccessCodeRequest = Pick<UserEntity, "accessCode">;

@@ -1,16 +1,14 @@
-import FormButton, { type FormButtonProps } from "./formButton";
-import FormLink, { type FormLinkProps } from "./formLink";
 import "./FormAction.css";
+
+import FormButton, { type FormButtonProps } from "./FormButton";
+import FormLink, { type FormLinkProps } from "./FormLink";
 
 export type FormActionProps = {
 	formButtons: Array<FormButtonProps>;
 	formLinks: Array<FormLinkProps>;
 };
 
-export default function FormAction({
-	formLinks,
-	formButtons,
-}: FormActionProps) {
+const FormAction: React.FC<FormActionProps> = ({ formLinks, formButtons }) => {
 	return (
 		<div id="form-action">
 			<div id="form-buttons">
@@ -25,4 +23,6 @@ export default function FormAction({
 			</div>
 		</div>
 	);
-}
+};
+
+export default FormAction;
