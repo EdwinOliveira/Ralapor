@@ -9,25 +9,35 @@ import {
 	findProfileByUserIdSchema,
 	updateProfileByIdSchema,
 } from "../domains/Profile";
+import { SessionGuard } from "../guards/SessionGuard";
 
 const ProfileRouter = () => {
+	const { isAuthenticated } = SessionGuard();
+
 	const subscribe = (router: Router): Router => {
-		router.get("/:id", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findProfileByIdSchema.safeParse({ params: request.params });
+		router.get(
+			"/:id",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findProfileByIdSchema.safeParse({ params: request.params });
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-			const { statusCode, args } =
-				await FindProfileByIdUseCase().findProfileById({ schemaArgs });
+				const { statusCode, args } =
+					await FindProfileByIdUseCase().findProfileById({ schemaArgs });
 
-			return void response.status(statusCode).json(args);
-		});
+				return void response.status(statusCode).json(args);
+			},
+		);
 
 		router.get(
 			"/user/:userId",
+			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findProfileByUserIdSchema.safeParse({ params: request.params });
@@ -45,48 +55,60 @@ const ProfileRouter = () => {
 			},
 		);
 
-		router.post("/", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createProfileSchema.safeParse({
-					body: request.body,
+		router.post(
+			"/",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createProfileSchema.safeParse({
+						body: request.body,
+					});
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { createProfile } = CreateProfileUseCase();
+				const { statusCode, args } = await createProfile({
+					schemaArgs,
 				});
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				return void response
+					.status(statusCode)
+					.location(`/profiles/${args?.id}`)
+					.json();
+			},
+		);
 
-			const { createProfile } = CreateProfileUseCase();
-			const { statusCode, args } = await createProfile({
-				schemaArgs,
-			});
+		router.put(
+			"/:id",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					updateProfileByIdSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
 
-			return void response
-				.status(statusCode)
-				.location(`/profiles/${args?.id}`)
-				.json();
-		});
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-		router.put("/:id", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				updateProfileByIdSchema.safeParse({
-					params: request.params,
-					body: request.body,
+				const { updateProfileById } = UpdateProfileByIdUseCase();
+				const { statusCode, args } = await updateProfileById({
+					schemaArgs,
 				});
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
-
-			const { updateProfileById } = UpdateProfileByIdUseCase();
-			const { statusCode, args } = await updateProfileById({
-				schemaArgs,
-			});
-
-			return void response
-				.status(statusCode)
-				.location(`/profiles/${args?.id}`)
-				.json({ updatedAt: args?.updatedAt });
-		});
+				return void response
+					.status(statusCode)
+					.location(`/profiles/${args?.id}`)
+					.json({ updatedAt: args?.updatedAt });
+			},
+		);
 
 		return router;
 	};

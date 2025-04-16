@@ -28,8 +28,8 @@ const CreateProfileUseCase = () => {
 					query: { userId },
 				});
 
-			if (foundProfilesId.length === 0) {
-				return { statusCode: 404 };
+			if (foundProfilesId.length > 0) {
+				return { statusCode: 409 };
 			}
 
 			const { affectedIds: createdProfilesId } = await repository.createProfile(

@@ -75,11 +75,13 @@ const CreateProfile = () => {
 
 	const onAction = async (formData: FormData) => {
 		createProfile({
-			userId: 1,
+			userId: 2,
 			firstName: formData.get("firstName")?.toString() || "",
 			lastName: formData.get("lastName")?.toString() || "",
 			dateBirth: formData.get("dateBirth")?.toString() || "",
 		});
+
+		await navigate("/dashboard");
 	};
 
 	return (

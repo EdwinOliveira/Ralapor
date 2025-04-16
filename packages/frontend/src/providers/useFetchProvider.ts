@@ -28,6 +28,7 @@ const useFetchProvider = () => {
 
 		return fetch(buildedURL, {
 			method: httpMethod,
+			credentials: "include",
 			headers: { "Content-Type": "application/json" },
 			body: httpMethod !== "GET" ? JSON.stringify(httpBody) : undefined,
 		});

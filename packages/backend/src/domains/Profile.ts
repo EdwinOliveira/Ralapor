@@ -52,10 +52,7 @@ type FindProfileByUserIdRequest = z.infer<typeof findProfileByUserIdSchema>;
 
 const createProfileSchema = z.object({
 	body: z.object({
-		userId: z
-			.string()
-			.transform((id) => Number.parseInt(id))
-			.refine((id) => !Number.isNaN(id)),
+		userId: z.number(),
 		firstName: z.string(),
 		lastName: z.string(),
 		dateBirth: z.string(),

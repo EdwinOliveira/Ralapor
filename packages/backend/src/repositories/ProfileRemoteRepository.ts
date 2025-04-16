@@ -55,8 +55,7 @@ const ProfileRemoteRepository = (): ProfileRepository => {
 
 			const createdUser = await dbConnection<ProfileEntity>("Profiles")
 				.insert({ ...args })
-				.returning("*")
-				.first();
+				.returning("*");
 
 			await dbConnection.destroy();
 
@@ -64,7 +63,7 @@ const ProfileRemoteRepository = (): ProfileRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			return { affectedIds: [createdUser.id], affectedRows: [] };
+			return { affectedIds: [createdUser[0].id], affectedRows: [] };
 		},
 		updateProfileById: async ({ query, args }) => {
 			if (query === undefined || args === undefined) {
