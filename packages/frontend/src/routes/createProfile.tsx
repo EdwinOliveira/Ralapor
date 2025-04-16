@@ -5,10 +5,14 @@ import type { FormGroupProps } from "../components/FormGroup";
 import type { FormHeaderProps } from "../components/FormHeader";
 import Form from "../components/Form";
 import { useCreateProfile } from "../hooks/useCreateProfile";
+import { useSelector } from "react-redux";
+import type { RootState } from "../state/useStore";
+import type { UserEntity } from "../state/useUserState";
 
 const CreateProfile = () => {
 	const navigate = useNavigate();
 	const { createProfile } = useCreateProfile();
+	const user = useSelector<RootState, UserEntity | null>((state) => state.user);
 
 	const formHeader: FormHeaderProps = {
 		typography: {
@@ -74,14 +78,18 @@ const CreateProfile = () => {
 	};
 
 	const onAction = async (formData: FormData) => {
-		createProfile({
-			userId: 2,
+		if (user === null) {
+			return;
+		}
+
+		await createProfile({
+			userId: user?.id,
 			firstName: formData.get("firstName")?.toString() || "",
 			lastName: formData.get("lastName")?.toString() || "",
 			dateBirth: formData.get("dateBirth")?.toString() || "",
 		});
 
-		await navigate("/dashboard");
+		await navigate("");
 	};
 
 	return (

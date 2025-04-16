@@ -41,14 +41,6 @@ const UserRouter = () => {
 		);
 
 		router.get(
-			"/session",
-			isAuthenticated,
-			async (_request: Request, response: Response) => {
-				return void response.status(200).json();
-			},
-		);
-
-		router.get(
 			"/access-code/:accessCode",
 			bypassAuthentication,
 			async (request: Request, response: Response) => {

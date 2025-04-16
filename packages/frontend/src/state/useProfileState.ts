@@ -12,11 +12,11 @@ type ProfileEntity = {
 
 const useProfileState = () => {
 	const profileSlice = createSlice({
-		name: "profiles",
-		initialState: new Array<ProfileEntity>(),
+		name: "profile",
+		initialState: null as ProfileEntity | null,
 		reducers: {
 			addProfile: (state, action: PayloadAction<ProfileEntity>) => {
-				state.push(action.payload);
+				state = action.payload;
 				return state;
 			},
 		},

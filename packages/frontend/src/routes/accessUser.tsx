@@ -92,7 +92,7 @@ const AccessUser = () => {
 					onAction={onAction}
 				/>
 			</div>
-			<div id="wrapper__background">hello</div>
+			<div id="wrapper__background" />
 		</div>
 	);
 };

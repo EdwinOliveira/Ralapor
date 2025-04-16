@@ -4,8 +4,8 @@ import { useProfileState } from "./useProfileState";
 
 const useStore = configureStore({
 	reducer: {
-		users: useUserState().reducer,
-		profiles: useProfileState().reducer,
+		user: useUserState().reducer,
+		profile: useProfileState().reducer,
 	},
 });
 

@@ -13,11 +13,11 @@ type UserEntity = {
 
 const useUserState = () => {
 	const userSlice = createSlice({
-		name: "users",
-		initialState: new Array<UserEntity>(),
+		name: "user",
+		initialState: null as UserEntity | null,
 		reducers: {
 			addUser: (state, action: PayloadAction<UserEntity>) => {
-				state.push(action.payload);
+				state = action.payload;
 				return state;
 			},
 		},
