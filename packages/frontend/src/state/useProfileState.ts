@@ -10,7 +10,7 @@ type ProfileEntity = {
 	updatedAt: string;
 };
 
-const ProfileState = () => {
+const useProfileState = () => {
 	const profileSlice = createSlice({
 		name: "profiles",
 		initialState: new Array<ProfileEntity>(),
@@ -27,4 +27,4 @@ const ProfileState = () => {
 	return { reducer: profileSlice.reducer, addProfile };
 };
 
-export { ProfileState, type ProfileEntity };
+export { useProfileState, type ProfileEntity };

@@ -11,7 +11,7 @@ type UserEntity = {
 	updatedAt: string;
 };
 
-const UserState = () => {
+const useUserState = () => {
 	const userSlice = createSlice({
 		name: "users",
 		initialState: new Array<UserEntity>(),
@@ -28,4 +28,4 @@ const UserState = () => {
 	return { reducer: userSlice.reducer, addUser };
 };
 
-export { UserState, type UserEntity };
+export { useUserState, type UserEntity };

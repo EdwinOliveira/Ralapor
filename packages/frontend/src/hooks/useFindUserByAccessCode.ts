@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useFetchProvider } from "../providers/useFetchProvider";
-import { UserState, type UserEntity } from "../state/UserState";
+import { useUserState, type UserEntity } from "../state/useUserState";
 import { useDispatch } from "react-redux";
 
 type FindUserByAccessCodeRequest = Pick<UserEntity, "accessCode">;
 
 const useFindUserByAccessCode = () => {
 	const { createRequest } = useFetchProvider();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
-	const { addUser } = UserState();
+	const { addUser } = useUserState();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const findUserByAccessCode = async ({
 		accessCode,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProfileState, type ProfileEntity } from "../state/ProfileState";
+import { useProfileState, type ProfileEntity } from "../state/useProfileState";
 import { useDispatch } from "react-redux";
 import { useFetchProvider } from "../providers/useFetchProvider";
 
@@ -10,9 +10,9 @@ type CreateProfileRequest = Pick<
 
 const useCreateProfile = () => {
 	const { createRequest } = useFetchProvider();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { addProfile } = useProfileState();
 	const dispatch = useDispatch();
-	const { addProfile } = ProfileState();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const createProfile = async ({
 		userId,

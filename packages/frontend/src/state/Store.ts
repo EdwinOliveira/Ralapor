@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { UserState } from "./UserState";
-import { ProfileState } from "./ProfileState";
+import { useUserState } from "./useUserState";
+import { useProfileState } from "./useProfileState";
 
 const store = configureStore({
 	reducer: {
-		users: UserState().reducer,
-		profiles: ProfileState().reducer,
+		users: useUserState().reducer,
+		profiles: useProfileState().reducer,
 	},
 });
 
