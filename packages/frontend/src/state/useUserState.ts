@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-type UserEntity = {
+export type UserEntity = {
 	id: number;
 	username: string;
 	email: string;
@@ -11,21 +11,19 @@ type UserEntity = {
 	updatedAt: string;
 };
 
-const useUserState = () => {
-	const userSlice = createSlice({
-		name: "user",
-		initialState: null as UserEntity | null,
-		reducers: {
-			addUser: (state, action: PayloadAction<UserEntity>) => {
-				state = action.payload;
-				return state;
-			},
+const initialState = {} as UserEntity;
+
+const userSlice = createSlice({
+	name: "user",
+	initialState,
+	reducers: {
+		addUser: (_state, action: PayloadAction<UserEntity>) => {
+			console.log(action.payload);
+			console.log(_state.id);
+			return action.payload;
 		},
-	});
+	},
+});
 
-	const { addUser } = userSlice.actions;
-
-	return { reducer: userSlice.reducer, addUser };
-};
-
-export { useUserState, type UserEntity };
+export const { addUser } = userSlice.actions;
+export const userReducer = userSlice.reducer;

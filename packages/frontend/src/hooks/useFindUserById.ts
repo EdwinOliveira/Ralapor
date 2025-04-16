@@ -1,9 +1,11 @@
+import { useDispatch } from "react-redux";
 import { useFetchProvider } from "../providers/useFetchProvider";
-import type { UserEntity } from "../state/useUserState";
+import { addUser, type UserEntity } from "../state/useUserState";
 
 type FindUserByIdRequest = Pick<UserEntity, "id">;
 
 const useFindUserById = () => {
+	const dispatch = useDispatch();
 	const { createRequest } = useFetchProvider();
 
 	const findUserById = async ({ id }: FindUserByIdRequest) => {
@@ -15,7 +17,9 @@ const useFindUserById = () => {
 			httpBody: {},
 		});
 
-		return (await response.json()) as UserEntity | undefined;
+		const foundUser = (await response.json()) as UserEntity;
+		const action = addUser(foundUser);
+		dispatch(action);
 	};
 
 	return { findUserById };

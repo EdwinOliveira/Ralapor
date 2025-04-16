@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useFetchProvider } from "../providers/useFetchProvider";
 import type { UserEntity } from "../state/useUserState";
 
@@ -8,15 +7,12 @@ type UpdateUserByUsernameOrEmailOrPhoneNumberRequest = Partial<
 
 const useUpdateUserByUsernameOrEmailOrPhoneNumber = () => {
 	const { createRequest } = useFetchProvider();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const updateUserByUsernameOrEmailOrPhoneNumber = async ({
 		username,
 		email,
 		phoneNumber,
 	}: UpdateUserByUsernameOrEmailOrPhoneNumberRequest) => {
-		setIsLoading(true);
-
 		await createRequest({
 			httpRoute: "users/access-code/:username/:email/:phoneNumber",
 			httpMethod: "PUT",
@@ -24,14 +20,9 @@ const useUpdateUserByUsernameOrEmailOrPhoneNumber = () => {
 			httpParams: { username, email, phoneNumber },
 			httpBody: {},
 		});
-
-		setIsLoading(false);
 	};
 
-	return {
-		updateUserByUsernameOrEmailOrPhoneNumber,
-		isLoading,
-	};
+	return { updateUserByUsernameOrEmailOrPhoneNumber };
 };
 
 export { useUpdateUserByUsernameOrEmailOrPhoneNumber };

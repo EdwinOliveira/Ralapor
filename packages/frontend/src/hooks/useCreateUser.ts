@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useFetchProvider } from "../providers/useFetchProvider";
 import type { UserEntity } from "../state/useUserState";
 
@@ -9,7 +8,6 @@ type CreateUserRequest = Pick<
 
 const useCreateUser = () => {
 	const { createRequest } = useFetchProvider();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const createUser = async ({
 		username,
@@ -17,8 +15,6 @@ const useCreateUser = () => {
 		phoneNumber,
 		phoneNumberCode,
 	}: CreateUserRequest) => {
-		setIsLoading(true);
-
 		await createRequest({
 			httpRoute: "users",
 			httpMethod: "POST",
@@ -26,14 +22,9 @@ const useCreateUser = () => {
 			httpParams: {},
 			httpBody: { username, email, phoneNumber, phoneNumberCode },
 		});
-
-		setIsLoading(false);
 	};
 
-	return {
-		createUser,
-		isLoading,
-	};
+	return { createUser };
 };
 
 export { useCreateUser };

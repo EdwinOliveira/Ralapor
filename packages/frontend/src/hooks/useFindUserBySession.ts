@@ -1,30 +1,27 @@
+import { useDispatch } from "react-redux";
 import { useFetchProvider } from "../providers/useFetchProvider";
 import { addUser, type UserEntity } from "../state/useUserState";
-import { useDispatch } from "react-redux";
 
-type FindUserByAccessCodeRequest = Pick<UserEntity, "accessCode">;
-
-const useFindUserByAccessCode = () => {
+const useFindUserBySession = () => {
 	const dispatch = useDispatch();
 	const { createRequest } = useFetchProvider();
 
-	const findUserByAccessCode = async ({
-		accessCode,
-	}: FindUserByAccessCodeRequest) => {
+	const findUserBySession = async () => {
 		const response = await createRequest({
-			httpRoute: "users/access-code/:accessCode",
+			httpRoute: "users/session",
 			httpMethod: "GET",
 			httpQueries: {},
-			httpParams: { accessCode },
+			httpParams: {},
 			httpBody: {},
 		});
 
 		const foundUser = (await response.json()) as UserEntity;
 		const action = addUser(foundUser);
+		console.log(foundUser);
 		dispatch(action);
 	};
 
-	return { findUserByAccessCode };
+	return { findUserBySession };
 };
 
-export { useFindUserByAccessCode };
+export { useFindUserBySession };

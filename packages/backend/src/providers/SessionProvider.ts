@@ -11,6 +11,10 @@ type SessionData = Partial<
 >;
 
 const SessionProvider = (request: Request, _response: Response) => {
+	const findSession = (): SessionData | undefined => {
+		return request.session.user;
+	};
+
 	const addToSession = (property: SessionProperty, data: SessionData) => {
 		request.session[property] = data;
 	};
@@ -36,6 +40,7 @@ const SessionProvider = (request: Request, _response: Response) => {
 	};
 
 	return {
+		findSession,
 		addToSession,
 		updateSession,
 		destroySession,

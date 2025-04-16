@@ -10,21 +10,18 @@ type ProfileEntity = {
 	updatedAt: string;
 };
 
-const useProfileState = () => {
-	const profileSlice = createSlice({
-		name: "profile",
-		initialState: null as ProfileEntity | null,
-		reducers: {
-			addProfile: (state, action: PayloadAction<ProfileEntity>) => {
-				state = action.payload;
-				return state;
-			},
+const initialState = {} as ProfileEntity;
+
+const profileSlice = createSlice({
+	name: "profile",
+	initialState,
+	reducers: {
+		addProfile: (_state, action: PayloadAction<ProfileEntity>) => {
+			return action.payload;
 		},
-	});
+	},
+});
 
-	const { addProfile } = profileSlice.actions;
-
-	return { reducer: profileSlice.reducer, addProfile };
-};
-
-export { useProfileState, type ProfileEntity };
+export const { addProfile } = profileSlice.actions;
+export const profileReducer = profileSlice.reducer;
+export type { ProfileEntity };
