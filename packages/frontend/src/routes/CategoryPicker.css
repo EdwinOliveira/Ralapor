@@ -1,0 +1,15 @@
+.category-picker {
+	min-height: inherit;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.25rem;
+}
+
+.category-picker__chips {
+	display: grid;
+	grid-template-columns: repeat(3, 0fr);
+	gap: 0.5rem;
+}

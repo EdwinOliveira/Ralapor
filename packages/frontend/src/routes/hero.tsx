@@ -1,5 +1,5 @@
 const Hero = () => {
-	return <div id="wrapper" />;
+	return <div className="wrapper" />;
 };
 
 export default Hero;

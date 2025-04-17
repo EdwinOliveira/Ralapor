@@ -3,6 +3,11 @@
 	font-weight: 600;
 }
 
+.header {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
 .group-header {
 	font-size: .65rem;
 	font-weight: 800;
@@ -10,6 +15,10 @@
 }
 
 .button {
+	font-size: .65rem;
+}
+
+.text {
 	font-size: .65rem;
 }
 

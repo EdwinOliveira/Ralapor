@@ -5,8 +5,9 @@
 	margin: 0;
 	box-sizing: border-box;
 
-	--brand-primary: #00416a;
+	--brand-primary: #ff5864;
 	--brand-secondary: #ffbf00;
+	--brand-borders: #ccc;
 	--default: #2a3439;
 	--default-inverse: #fff;
 

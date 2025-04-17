@@ -17,7 +17,6 @@ const useFindUserBySession = () => {
 
 		const foundUser = (await response.json()) as UserEntity;
 		const action = addUser(foundUser);
-		console.log(foundUser);
 		dispatch(action);
 	};
 

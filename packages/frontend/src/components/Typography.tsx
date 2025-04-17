@@ -3,8 +3,10 @@ import "./Typography.css";
 export type TypographySegment =
 	| "form-header"
 	| "group-header"
+	| "header"
 	| "button"
-	| "link";
+	| "link"
+	| "text";
 
 export type TypographyColor = "default" | "default-inverse";
 
@@ -15,7 +17,11 @@ export type TypographyProps = {
 };
 
 const Typography: React.FC<TypographyProps> = ({ content, segment, color }) => {
-	return <span className={`${segment} ${color}`}>{content}</span>;
+	return (
+		<label htmlFor={content} className={`${segment} ${color}`}>
+			{content}
+		</label>
+	);
 };
 
 export default Typography;

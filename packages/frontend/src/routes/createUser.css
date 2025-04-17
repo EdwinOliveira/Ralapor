@@ -1,11 +1,11 @@
-#wrapper {
+.wrapper {
 	min-height: inherit;
 
 	display: flex;
 	flex-direction: row;
 }
 
-#wrapper__form {
+.wrapper__form {
 	margin: 0 5rem;
 
 	display: flex;
@@ -14,7 +14,7 @@
 	justify-content: center;
 }
 
-#wrapper__background {
+.wrapper__background {
 	background-color: currentColor;
 	width: 100%;
 }

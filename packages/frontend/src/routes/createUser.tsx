@@ -140,8 +140,8 @@ const CreateUser = () => {
 	};
 
 	return (
-		<div id="wrapper">
-			<div id="wrapper__form">
+		<div className="wrapper">
+			<div className="wrapper__form">
 				<Form
 					formHeader={formHeader}
 					formGroups={formGroups}
@@ -149,7 +149,7 @@ const CreateUser = () => {
 					onAction={onAction}
 				/>
 			</div>
-			<div id="wrapper__background">hello</div>
+			<div className="wrapper__background" />
 		</div>
 	);
 };
