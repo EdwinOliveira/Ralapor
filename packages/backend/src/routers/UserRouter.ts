@@ -21,29 +21,6 @@ const UserRouter = () => {
 
 	const subscribe = (router: Router): Router => {
 		router.get(
-			"/session",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { findSession } = SessionProvider(request, response);
-				const session = findSession();
-
-				const { data: schemaArgs, error: schemaErrors } =
-					findUserByIdSchema.safeParse({ params: { id: String(session?.id) } });
-
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { findUserById } = FindUserByIdUseCase();
-				const { statusCode, args } = await findUserById({ schemaArgs });
-				console.log(args);
-				return void response.status(statusCode).json(args);
-			},
-		);
-
-		router.get(
 			"/:id",
 			isAuthenticated,
 			async (request: Request, response: Response) => {
@@ -142,7 +119,7 @@ const UserRouter = () => {
 		);
 
 		router.put(
-			"/access-code/:id",
+			"/:id/access-code",
 			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
@@ -167,7 +144,7 @@ const UserRouter = () => {
 		);
 
 		router.put(
-			"/access-code/:username/:email/:phoneNumber",
+			"/:username/:email/:phoneNumber/access-code",
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({

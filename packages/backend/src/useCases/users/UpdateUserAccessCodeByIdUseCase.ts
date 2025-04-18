@@ -22,8 +22,9 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 		}: UseCaseRequest<UpdateUserAccessCodeByIdRequest>): Promise<
 			UseCaseResponse<Pick<UserEntity, "id" | "updatedAt">>
 		> => {
-			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
-				await repository.findUserById({ query: { id } });
+			const { affectedIds: foundUsersId } = await repository.findUserById({
+				query: { id },
+			});
 
 			if (foundUsersId.length === 0) {
 				return { statusCode: 404 };
@@ -42,11 +43,13 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 				return { statusCode: 500 };
 			}
 
+			/*
 			await mailProvider.sendMail({
 				toAddress: foundUsersRow[0].email,
 				subject: "Regain access to Ralapor!",
 				text: `Ralapor access code: ${accessCode}`,
 			});
+      */
 
 			return {
 				statusCode: 201,

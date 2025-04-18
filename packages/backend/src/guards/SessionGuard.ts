@@ -15,15 +15,10 @@ const SessionGuard = () => {
 	};
 
 	const bypassAuthentication = (
-		request: Request,
-		response: Response,
+		_request: Request,
+		_response: Response,
 		next: NextFunction,
 	) => {
-		if (request.session.user !== undefined) {
-			response.status(200).json();
-			return;
-		}
-
 		next();
 	};
 

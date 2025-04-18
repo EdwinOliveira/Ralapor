@@ -123,6 +123,7 @@ const UserRemoteRepository = (): UserRepository => {
 					username: args.username || foundUser.username,
 					email: args.email || foundUser.email,
 					phoneNumber: args.phoneNumber || foundUser.phoneNumber,
+					phoneNumberCode: args.phoneNumberCode || foundUser.phoneNumberCode,
 					accessCode: args.accessCode || foundUser.accessCode,
 				})
 				.returning("*");
