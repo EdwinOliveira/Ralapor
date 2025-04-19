@@ -2,10 +2,11 @@ import z from "zod";
 import type {
 	RepositoryRequest,
 	RepositoryResponse,
-} from "../types/Repository";
+} from "../signatures/Repository";
 
 type UserEntity = {
 	id: number;
+	roleId: number;
 	username: string;
 	email: string;
 	phoneNumber: string;
@@ -20,6 +21,7 @@ type UserDTO = Readonly<Omit<UserEntity, "accessCode">>;
 const userDTOMapper = (entity: UserEntity): UserDTO => {
 	return {
 		id: entity.id,
+		roleId: entity.roleId,
 		username: entity.username,
 		email: entity.email,
 		phoneNumber: entity.phoneNumber,

@@ -6,7 +6,7 @@ import type {
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import { MailProvider } from "../../providers/MailProvider";
-import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	const repository = UserRemoteRepository();

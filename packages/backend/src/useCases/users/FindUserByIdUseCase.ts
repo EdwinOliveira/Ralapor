@@ -4,7 +4,7 @@ import {
 	userDTOMapper,
 } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindUserByIdUseCase = () => {
 	const repository = UserRemoteRepository();

@@ -2,14 +2,12 @@ import type { CreateUserRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
-import { MailProvider } from "../../providers/MailProvider";
-import type { UseCaseRequest, UseCaseResponse } from "../../types/UseCase";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const CreateUserUseCase = () => {
 	const repository = UserRemoteRepository();
 	const hashProvider = HashProvider();
 	const randomProvider = RandomProvider();
-	const mailProvider = MailProvider();
 
 	return {
 		createUser: async ({
