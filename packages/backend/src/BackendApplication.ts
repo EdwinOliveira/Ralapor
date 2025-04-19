@@ -4,6 +4,7 @@ import session from "express-session";
 import "dotenv/config";
 import type { UserEntity } from "./domains/User";
 import { UserRouter } from "./routers/UserRouter";
+import { RoleRouter } from "./routers/RoleRouter";
 
 declare module "express-session" {
 	interface SessionData {
@@ -43,6 +44,7 @@ const BackendApplication = () => {
 
 	const createRoutes = () => {
 		httpApplication.use("/users", UserRouter().subscribe(Router()));
+		httpApplication.use("/roles", RoleRouter().subscribe(Router()));
 	};
 
 	const createListner = () => {

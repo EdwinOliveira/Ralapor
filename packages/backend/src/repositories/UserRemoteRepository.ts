@@ -117,7 +117,7 @@ const UserRemoteRepository = (): UserRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const updatedUser = await dbConnection<UserEntity>("Users")
+			const updatedUsers = await dbConnection<UserEntity>("Users")
 				.where("id", query.id)
 				.update({
 					username: args.username || foundUser.username,
@@ -130,13 +130,13 @@ const UserRemoteRepository = (): UserRepository => {
 
 			await dbConnection.destroy();
 
-			if (updatedUser.length === 0) {
+			if (updatedUsers.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
 			return {
-				affectedIds: [updatedUser[0].id],
-				affectedRows: [{ updatedAt: updatedUser[0].updatedAt }],
+				affectedIds: [updatedUsers[0].id],
+				affectedRows: [{ updatedAt: updatedUsers[0].updatedAt }],
 			};
 		},
 	};

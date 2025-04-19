@@ -93,7 +93,7 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const updatedRole = await dbConnection<RoleEntity>("Roles")
+			const updatedRoles = await dbConnection<RoleEntity>("Roles")
 				.where("id", query.id)
 				.update({
 					designation: args.designation || foundRole.designation,
@@ -102,13 +102,13 @@ const RoleRemoteRepository = (): RoleRepository => {
 
 			await dbConnection.destroy();
 
-			if (updatedRole.length === 0) {
+			if (updatedRoles.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
 			return {
-				affectedIds: [updatedRole[0].id],
-				affectedRows: [{ updatedAt: updatedRole[0].updatedAt }],
+				affectedIds: [updatedRoles[0].id],
+				affectedRows: [{ updatedAt: updatedRoles[0].updatedAt }],
 			};
 		},
 	};
