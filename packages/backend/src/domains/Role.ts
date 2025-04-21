@@ -6,7 +6,7 @@ import type {
 
 type RoleEntity = {
 	id: number;
-	designation: string;
+	designation: "publisher" | "consumer" | "publisher-consumer";
 	createdAt: string;
 	updatedAt: string;
 };
@@ -32,6 +32,14 @@ const findRoleByIdSchema = z.object({
 });
 
 type FindRoleByIdRequest = z.infer<typeof findRoleByIdSchema>;
+
+const findRoleByDesignationSchema = z.object({
+	params: z.object({
+		designation: z.enum(["publisher", "consumer", "publisher-consumer"]),
+	}),
+});
+
+type FindRoleByDesignationRequest = z.infer<typeof findRoleByDesignationSchema>;
 
 const createRoleSchema = z.object({
 	body: z.object({
@@ -87,6 +95,8 @@ export {
 	roleDTOMapper,
 	findRoleByIdSchema,
 	type FindRoleByIdRequest,
+	findRoleByDesignationSchema,
+	type FindRoleByDesignationRequest,
 	createRoleSchema,
 	type CreateRoleRequest,
 	updateRoleByIdSchema,

@@ -1,19 +1,19 @@
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type {
-	UpdateSessionByIdRequest,
 	SessionDTO,
+	DestroySessionByIdRequest,
 } from "../../domains/Session";
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
 
-const UpdateSessionByIdUseCase = () => {
+const DestroySessionByIdUseCase = () => {
 	const repository = SessionRemoteRepository();
 
 	return {
-		updateSessionById: async ({
+		destroySessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-		}: UseCaseRequest<UpdateSessionByIdRequest>): Promise<
+		}: UseCaseRequest<DestroySessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
 			const { affectedIds: foundSessionsId } = await repository.findSessionById(
@@ -29,6 +29,7 @@ const UpdateSessionByIdUseCase = () => {
 				affectedRows: updatedSessionsRow,
 			} = await repository.updateSessionById({
 				query: { id },
+				args: { isTerminated: true },
 			});
 
 			if (updatedSessionsId.length === 0) {
@@ -46,4 +47,4 @@ const UpdateSessionByIdUseCase = () => {
 	};
 };
 
-export { UpdateSessionByIdUseCase };
+export { DestroySessionByIdUseCase };

@@ -8,8 +8,7 @@ type SessionEntity = {
 	id: number;
 	userId: number;
 	roleId: number;
-	expiresIn: string;
-	isExpired: boolean;
+	isTerminated: boolean;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -21,8 +20,7 @@ const sessionDTOMapper = (entity: SessionEntity): SessionDTO => {
 		id: entity.id,
 		userId: entity.userId,
 		roleId: entity.roleId,
-		expiresIn: entity.expiresIn,
-		isExpired: entity.isExpired,
+		isTerminated: entity.isTerminated,
 		createdAt: entity.createdAt,
 		updatedAt: entity.updatedAt,
 	};
@@ -66,7 +64,6 @@ const createSessionSchema = z.object({
 			.string()
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
-		expiresIn: z.string(),
 	}),
 });
 
@@ -79,13 +76,20 @@ const updateSessionByIdSchema = z.object({
 			.transform((id) => Number.parseInt(id))
 			.refine((id) => !Number.isNaN(id)),
 	}),
-	body: z.object({
-		expiresIn: z.string(),
-		isExpired: z.boolean(),
-	}),
 });
 
 type UpdateSessionByIdRequest = z.infer<typeof updateSessionByIdSchema>;
+
+const destroySessionByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type DestroySessionByIdRequest = z.infer<typeof destroySessionByIdSchema>;
 
 interface SessionRepository {
 	findSessionById({
@@ -102,7 +106,7 @@ interface SessionRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Pick<SessionEntity, "userId" | "roleId" | "expiresIn" | "isExpired">
+		Pick<SessionEntity, "userId" | "roleId" | "isTerminated">
 	>): Promise<RepositoryResponse<unknown>>;
 	updateSessionById({
 		query,
@@ -130,5 +134,7 @@ export {
 	type CreateSessionRequest,
 	updateSessionByIdSchema,
 	type UpdateSessionByIdRequest,
+	destroySessionByIdSchema,
+	type DestroySessionByIdRequest,
 	type SessionRepository,
 };

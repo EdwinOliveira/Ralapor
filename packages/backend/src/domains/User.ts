@@ -69,6 +69,11 @@ const updateUserByIdSchema = z.object({
 			.refine((id) => !Number.isNaN(id)),
 	}),
 	body: z.object({
+		roleId: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id))
+			.optional(),
 		username: z.string().optional(),
 		email: z.string().email().optional(),
 		phoneNumber: z.string().optional(),

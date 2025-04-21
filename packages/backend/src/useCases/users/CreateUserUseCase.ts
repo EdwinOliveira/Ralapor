@@ -3,8 +3,10 @@ import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseCase";
 
 const CreateUserUseCase = () => {
+	const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 	const repository = UserRemoteRepository();
 	const hashProvider = HashProvider();
 	const randomProvider = RandomProvider();
@@ -26,6 +28,20 @@ const CreateUserUseCase = () => {
 				return { statusCode: 409 };
 			}
 
+			const {
+				statusCode: findRoleByDesignationStatusCode,
+				args: findRoleByDesignationArgs,
+			} = await findRoleByDesignation({
+				schemaArgs: { params: { designation: "consumer" } },
+			});
+
+			if (
+				findRoleByDesignationStatusCode !== 200 ||
+				findRoleByDesignationArgs === undefined
+			) {
+				return { statusCode: 500 };
+			}
+
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);
 
@@ -35,6 +51,7 @@ const CreateUserUseCase = () => {
 					email,
 					phoneNumber,
 					phoneNumberCode,
+					roleId: findRoleByDesignationArgs.id,
 					accessCode: hashedAccessCode,
 				},
 			});
