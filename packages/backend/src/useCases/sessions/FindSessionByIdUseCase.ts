@@ -12,11 +12,11 @@ const FindSessionByIdUseCase = () => {
 			schemaArgs: {
 				params: { id },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<FindSessionByIdRequest>): Promise<
 			UseCaseResponse<SessionDTO>
 		> => {
-			const { findSessionById } = SessionRemoteRepository(httpContext);
+			const { findSessionById } = SessionRemoteRepository(context);
 
 			const { affectedRows: foundSessionsRow } = await findSessionById({
 				query: { id },

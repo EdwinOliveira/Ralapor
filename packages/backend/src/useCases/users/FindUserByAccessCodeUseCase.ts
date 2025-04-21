@@ -13,19 +13,18 @@ const FindUserByAccessCodeUseCase = () => {
 			schemaArgs: {
 				params: { accessCode },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { findUsers } = UserRemoteRepository(httpContext);
+			const { findUsers } = UserRemoteRepository(context);
 			const { affectedRows: foundUsersRow } = await findUsers();
 
 			for (const foundUserRow of foundUsersRow) {
-				const isSameAccessCode =
-					await httpContext.providers.hashProvider.compare(
-						accessCode,
-						foundUserRow.accessCode,
-					);
+				const isSameAccessCode = await context.providers.hashProvider.compare(
+					accessCode,
+					foundUserRow.accessCode,
+				);
 
 				if (isSameAccessCode === true) {
 					return {

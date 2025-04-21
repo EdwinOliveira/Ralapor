@@ -12,11 +12,11 @@ const FindUserByIdUseCase = () => {
 			schemaArgs: {
 				params: { id },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<FindUserByIdRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { findUserById } = UserRemoteRepository(httpContext);
+			const { findUserById } = UserRemoteRepository(context);
 
 			const { affectedRows: foundUsersRow } = await findUserById({
 				query: { id },

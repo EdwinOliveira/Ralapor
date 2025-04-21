@@ -8,12 +8,12 @@ const CreateRoleUseCase = () => {
 			schemaArgs: {
 				body: { designation },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<CreateRoleRequest>): Promise<
 			UseCaseResponse<Pick<RoleDTO, "id">>
 		> => {
 			const { findRoleByDesignation, createRole } =
-				RoleRemoteRepository(httpContext);
+				RoleRemoteRepository(context);
 
 			const { affectedIds: foundRolesId } = await findRoleByDesignation({
 				query: { designation },

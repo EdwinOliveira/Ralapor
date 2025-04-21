@@ -12,11 +12,11 @@ const FindRoleByDesignationUseCase = () => {
 			schemaArgs: {
 				params: { designation },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<FindRoleByDesignationRequest>): Promise<
 			UseCaseResponse<RoleDTO>
 		> => {
-			const { findRoleByDesignation } = RoleRemoteRepository(httpContext);
+			const { findRoleByDesignation } = RoleRemoteRepository(context);
 
 			const { affectedRows: foundRolesRow } = await findRoleByDesignation({
 				query: { designation },

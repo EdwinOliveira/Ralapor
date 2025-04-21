@@ -4,7 +4,7 @@ import type { RandomProvider } from "../providers/RandomProvider";
 import type { SessionProvider } from "../providers/SessionProvider";
 import type { DatabaseService } from "../services/DatabaseService";
 
-type HttpContext = {
+type Context = {
 	providers: {
 		hashProvider: ReturnType<typeof HashProvider>;
 		mailProvider: ReturnType<typeof MailProvider>;
@@ -16,4 +16,4 @@ type HttpContext = {
 	};
 };
 
-export type { HttpContext };
+export type { Context };

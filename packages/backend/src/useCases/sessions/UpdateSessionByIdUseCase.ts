@@ -11,20 +11,25 @@ const UpdateSessionByIdUseCase = () => {
 			schemaArgs: {
 				params: { id },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<UpdateSessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
 			const { findSessionById, updateSessionById } =
-				SessionRemoteRepository(httpContext);
+				SessionRemoteRepository(context);
 
-			const { affectedIds: foundSessionsId } = await findSessionById({
-				query: { id },
-			});
+			const { affectedIds: foundSessionsId, affectedRows: foundSessionsRow } =
+				await findSessionById({
+					query: { id },
+				});
 
 			if (foundSessionsId.length === 0) {
 				return { statusCode: 404 };
 			}
+
+			context.providers.sessionProvider.updateSession("user", {
+				id: foundSessionsRow[0].userId,
+			});
 
 			const {
 				affectedIds: updatedSessionsId,

@@ -9,13 +9,13 @@ const CreateUserUseCase = () => {
 			schemaArgs: {
 				body: { username, email, phoneNumber, phoneNumberCode },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<CreateUserRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id">>
 		> => {
 			const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 			const { findUserByUsernameOrEmailOrPhoneNumber, createUser } =
-				UserRemoteRepository(httpContext);
+				UserRemoteRepository(context);
 
 			const { affectedIds: foundUsersId } =
 				await findUserByUsernameOrEmailOrPhoneNumber({
@@ -31,7 +31,7 @@ const CreateUserUseCase = () => {
 				args: findRoleByDesignationArgs,
 			} = await findRoleByDesignation({
 				schemaArgs: { params: { designation: "consumer" } },
-				httpContext,
+				context,
 			});
 
 			if (
@@ -41,10 +41,9 @@ const CreateUserUseCase = () => {
 				return { statusCode: 500 };
 			}
 
-			const accessCode =
-				httpContext.providers.randomProvider.createAccessCode(12);
+			const accessCode = context.providers.randomProvider.createAccessCode(12);
 			const hashedAccessCode =
-				await httpContext.providers.hashProvider.hash(accessCode);
+				await context.providers.hashProvider.hash(accessCode);
 
 			const { affectedIds: createdUsersId } = await createUser({
 				args: {

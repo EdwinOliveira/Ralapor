@@ -10,14 +10,14 @@ const CreateSessionUseCase = () => {
 			schemaArgs: {
 				body: { userId, roleId },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<CreateSessionRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id">>
 		> => {
 			const { findUserById } = FindUserByIdUseCase();
 			const { findRoleById } = FindRoleByIdUseCase();
 			const { findSessionByUserIdAndRoleId, createSession } =
-				SessionRemoteRepository(httpContext);
+				SessionRemoteRepository(context);
 
 			const { affectedIds: foundSessionsId } =
 				await findSessionByUserIdAndRoleId({
@@ -30,7 +30,7 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findUserByIdStatusCode } = await findUserById({
 				schemaArgs: { params: { id: userId } },
-				httpContext,
+				context,
 			});
 
 			if (findUserByIdStatusCode !== 200) {
@@ -39,12 +39,14 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findRoleByIdStatusCode } = await findRoleById({
 				schemaArgs: { params: { id: userId } },
-				httpContext,
+				context,
 			});
 
 			if (findRoleByIdStatusCode !== 200) {
 				return { statusCode: 400 };
 			}
+
+			context.providers.sessionProvider.addToSession("user", { id: userId });
 
 			const { affectedIds: createdSessionsId } = await createSession({
 				args: { userId, roleId, isTerminated: false },

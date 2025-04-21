@@ -11,12 +11,12 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 			schemaArgs: {
 				params: { username, email, phoneNumber },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
 			const { findUserByUsernameOrEmailOrPhoneNumber, updateUserById } =
-				UserRemoteRepository(httpContext);
+				UserRemoteRepository(context);
 
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
 				await findUserByUsernameOrEmailOrPhoneNumber({
@@ -27,10 +27,9 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const accessCode =
-				httpContext.providers.randomProvider.createAccessCode(12);
+			const accessCode = context.providers.randomProvider.createAccessCode(12);
 			const hashedAccessCode =
-				await httpContext.providers.hashProvider.hash(accessCode);
+				await context.providers.hashProvider.hash(accessCode);
 
 			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
 				await updateUserById({

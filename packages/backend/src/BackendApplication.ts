@@ -11,7 +11,7 @@ import { MailProvider } from "./providers/MailProvider";
 import { RandomProvider } from "./providers/RandomProvider";
 import { SessionProvider } from "./providers/SessionProvider";
 import { DatabaseService } from "./services/DatabaseService";
-import type { HttpContext } from "./signatures/HttpContext";
+import type { Context } from "./signatures/Context";
 
 declare module "express-session" {
 	interface SessionData {
@@ -27,7 +27,7 @@ declare module "express-session" {
 const BackendApplication = () => {
 	const httpApplication = Express();
 	const httpAddress = Number.parseInt(process.env.SERVER_PORT ?? "8000");
-	const httpContext: HttpContext = {
+	const context: Context = {
 		providers: {
 			hashProvider: HashProvider(),
 			mailProvider: MailProvider(),
@@ -61,13 +61,13 @@ const BackendApplication = () => {
 	};
 
 	const createRoutes = async () => {
-		const userRouter = UserRouter().subscribe(Router(), httpContext);
+		const userRouter = UserRouter().subscribe(Router(), context);
 		httpApplication.use("/users", userRouter);
 
-		const roleRouter = RoleRouter().subscribe(Router(), httpContext);
+		const roleRouter = RoleRouter().subscribe(Router(), context);
 		httpApplication.use("/roles", roleRouter);
 
-		const sessionRouter = SessionRouter().subscribe(Router(), httpContext);
+		const sessionRouter = SessionRouter().subscribe(Router(), context);
 		httpApplication.use("/sessions", sessionRouter);
 	};
 
@@ -79,7 +79,7 @@ const BackendApplication = () => {
 				createSessionsTable,
 				createUsersTable,
 				destroyConnection,
-			} = httpContext.services.databaseService;
+			} = context.services.databaseService;
 			const connection = createConnection();
 
 			try {

@@ -10,12 +10,12 @@ import {
 import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
 import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
 import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
-import type { HttpContext } from "../signatures/HttpContext";
+import type { Context } from "../signatures/Context";
 
 const RoleRouter = () => {
 	const { bypassAuthentication, isAuthenticated } = SessionGuard();
 
-	const subscribe = (router: Router, httpContext: HttpContext): Router => {
+	const subscribe = (router: Router, context: Context): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -32,7 +32,7 @@ const RoleRouter = () => {
 				const { findRoleById } = FindRoleByIdUseCase();
 				const { statusCode, args } = await findRoleById({
 					schemaArgs,
-					httpContext,
+					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -55,7 +55,7 @@ const RoleRouter = () => {
 				const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 				const { statusCode, args } = await findRoleByDesignation({
 					schemaArgs,
-					httpContext,
+					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -78,7 +78,7 @@ const RoleRouter = () => {
 				const { createRole } = CreateRoleUseCase();
 				const { statusCode, args } = await createRole({
 					schemaArgs,
-					httpContext,
+					context,
 				});
 
 				return void response.status(statusCode).json({ id: args?.id });
@@ -104,7 +104,7 @@ const RoleRouter = () => {
 				const { updateRoleById } = UpdateRoleByIdUseCase();
 				const { statusCode, args } = await updateRoleById({
 					schemaArgs,
-					httpContext,
+					context,
 				});
 
 				return void response.status(statusCode).json({

@@ -1,11 +1,11 @@
 import type { SessionEntity, SessionRepository } from "../domains/Session";
-import type { HttpContext } from "../signatures/HttpContext";
+import type { Context } from "../signatures/Context";
 
 const SessionRemoteRepository = ({
 	services: {
 		databaseService: { createConnection, destroyConnection },
 	},
-}: HttpContext): SessionRepository => {
+}: Context): SessionRepository => {
 	return {
 		findSessionById: async ({ query }) => {
 			if (query === undefined) {

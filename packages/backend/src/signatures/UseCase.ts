@@ -1,4 +1,4 @@
-import type { HttpContext } from "./HttpContext";
+import type { Context } from "./Context";
 
 type UseCaseResponse<T> = {
 	statusCode: number;
@@ -6,7 +6,7 @@ type UseCaseResponse<T> = {
 };
 
 type UseCaseRequest<T> = {
-	httpContext: HttpContext;
+	context: Context;
 	schemaArgs: T;
 };
 

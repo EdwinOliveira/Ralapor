@@ -1,11 +1,11 @@
 import type { RoleEntity, RoleRepository } from "../domains/Role";
-import type { HttpContext } from "../signatures/HttpContext";
+import type { Context } from "../signatures/Context";
 
 const RoleRemoteRepository = ({
 	services: {
 		databaseService: { createConnection, destroyConnection },
 	},
-}: HttpContext): RoleRepository => {
+}: Context): RoleRepository => {
 	return {
 		findRoles: async () => {
 			const connection = createConnection();

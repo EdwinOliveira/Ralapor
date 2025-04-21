@@ -1,11 +1,11 @@
 import type { UserEntity, UserRepository } from "../domains/User";
-import type { HttpContext } from "../signatures/HttpContext";
+import type { Context } from "../signatures/Context";
 
 const UserRemoteRepository = ({
 	services: {
 		databaseService: { createConnection, destroyConnection },
 	},
-}: HttpContext): UserRepository => {
+}: Context): UserRepository => {
 	return {
 		findUsers: async () => {
 			const connection = createConnection();

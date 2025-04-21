@@ -9,12 +9,11 @@ const UpdateUserByIdUseCase = () => {
 				params: { id },
 				body: schemaArgsBody,
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<UpdateUserByIdRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
-			const { findUserById, updateUserById } =
-				UserRemoteRepository(httpContext);
+			const { findUserById, updateUserById } = UserRemoteRepository(context);
 
 			const { affectedIds: foundUsersId } = await findUserById({
 				query: { id },

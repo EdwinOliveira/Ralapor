@@ -9,12 +9,11 @@ const UpdateRoleByIdUseCase = () => {
 				params: { id },
 				body: { designation },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<UpdateRoleByIdRequest>): Promise<
 			UseCaseResponse<Pick<RoleDTO, "id" | "updatedAt">>
 		> => {
-			const { findRoleById, updateRoleById } =
-				RoleRemoteRepository(httpContext);
+			const { findRoleById, updateRoleById } = RoleRemoteRepository(context);
 
 			const { affectedIds: foundRolesId } = await findRoleById({
 				query: { id },

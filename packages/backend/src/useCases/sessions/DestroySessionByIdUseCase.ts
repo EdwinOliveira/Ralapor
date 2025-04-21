@@ -11,12 +11,12 @@ const DestroySessionByIdUseCase = () => {
 			schemaArgs: {
 				params: { id },
 			},
-			httpContext,
+			context,
 		}: UseCaseRequest<DestroySessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
 			const { findSessionById, updateSessionById } =
-				SessionRemoteRepository(httpContext);
+				SessionRemoteRepository(context);
 
 			const { affectedIds: foundSessionsId } = await findSessionById({
 				query: { id },
@@ -25,6 +25,8 @@ const DestroySessionByIdUseCase = () => {
 			if (foundSessionsId.length === 0) {
 				return { statusCode: 404 };
 			}
+
+			context.providers.sessionProvider.destroySession();
 
 			const {
 				affectedIds: updatedSessionsId,
