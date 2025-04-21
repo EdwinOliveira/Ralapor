@@ -6,19 +6,21 @@ import type {
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
 
 const UpdateSessionByIdUseCase = () => {
-	const repository = SessionRemoteRepository();
-
 	return {
 		updateSessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
+			httpContext,
 		}: UseCaseRequest<UpdateSessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
-			const { affectedIds: foundSessionsId } = await repository.findSessionById(
-				{ query: { id } },
-			);
+			const { findSessionById, updateSessionById } =
+				SessionRemoteRepository(httpContext);
+
+			const { affectedIds: foundSessionsId } = await findSessionById({
+				query: { id },
+			});
 
 			if (foundSessionsId.length === 0) {
 				return { statusCode: 404 };
@@ -27,7 +29,7 @@ const UpdateSessionByIdUseCase = () => {
 			const {
 				affectedIds: updatedSessionsId,
 				affectedRows: updatedSessionsRow,
-			} = await repository.updateSessionById({
+			} = await updateSessionById({
 				query: { id },
 			});
 

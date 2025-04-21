@@ -8,24 +8,24 @@ import { HashProvider } from "../../providers/HashProvider";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindUserByAccessCodeUseCase = () => {
-	const repository = UserRemoteRepository();
-	const hashProvider = HashProvider();
-
 	return {
 		findUserByAccessCode: async ({
 			schemaArgs: {
 				params: { accessCode },
 			},
+			httpContext,
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { affectedRows: foundUsersRow } = await repository.findUsers();
+			const { findUsers } = UserRemoteRepository(httpContext);
+			const { affectedRows: foundUsersRow } = await findUsers();
 
 			for (const foundUserRow of foundUsersRow) {
-				const isSameAccessCode = await hashProvider.compare(
-					accessCode,
-					foundUserRow.accessCode,
-				);
+				const isSameAccessCode =
+					await httpContext.providers.hashProvider.compare(
+						accessCode,
+						foundUserRow.accessCode,
+					);
 
 				if (isSameAccessCode === true) {
 					return {

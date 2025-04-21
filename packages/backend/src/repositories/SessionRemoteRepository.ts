@@ -1,23 +1,23 @@
 import type { SessionEntity, SessionRepository } from "../domains/Session";
-import { DatabaseService } from "../services/DatabaseService";
+import type { HttpContext } from "../signatures/HttpContext";
 
-const SessionRemoteRepository = (): SessionRepository => {
-	const { createConnection, createSessionsTable } = DatabaseService();
-
+const SessionRemoteRepository = ({
+	services: {
+		databaseService: { createConnection, destroyConnection },
+	},
+}: HttpContext): SessionRepository => {
 	return {
 		findSessionById: async ({ query }) => {
 			if (query === undefined) {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createSessionsTable(dbConnection);
-
-			const session = await dbConnection<SessionEntity>("Sessions")
+			const connection = createConnection();
+			const session = await connection<SessionEntity>("Sessions")
 				.where("id", query?.id)
 				.first();
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (session === undefined) {
 				return { affectedIds: [], affectedRows: [] };
@@ -30,15 +30,13 @@ const SessionRemoteRepository = (): SessionRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createSessionsTable(dbConnection);
-
-			const session = await dbConnection<SessionEntity>("Sessions")
+			const connection = createConnection();
+			const session = await connection<SessionEntity>("Sessions")
 				.where("userId", query?.userId)
 				.and.where("roleId", query?.roleId)
 				.first();
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (session === undefined) {
 				return { affectedIds: [], affectedRows: [] };
@@ -51,14 +49,12 @@ const SessionRemoteRepository = (): SessionRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createSessionsTable(dbConnection);
-
-			const createdSession = await dbConnection<SessionEntity>("Sessions")
+			const connection = createConnection();
+			const createdSession = await connection<SessionEntity>("Sessions")
 				.insert(args)
 				.returning("id");
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (createdSession.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
@@ -71,10 +67,9 @@ const SessionRemoteRepository = (): SessionRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createSessionsTable(dbConnection);
+			const connection = createConnection();
 
-			const foundSession = await dbConnection<SessionEntity>("Sessions")
+			const foundSession = await connection<SessionEntity>("Sessions")
 				.where("id", query.id)
 				.first();
 
@@ -82,15 +77,14 @@ const SessionRemoteRepository = (): SessionRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const updatedSessions = await dbConnection<SessionEntity>("Sessions")
+			const updatedSessions = await connection<SessionEntity>("Sessions")
 				.where("id", query.id)
 				.update({
-					expiresIn: args.expiresIn || foundSession.expiresIn,
-					isExpired: args.isExpired || foundSession.isExpired,
+					isTerminated: args.isTerminated || foundSession.isTerminated,
 				})
 				.returning("*");
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (updatedSessions.length === 0) {
 				return { affectedIds: [], affectedRows: [] };

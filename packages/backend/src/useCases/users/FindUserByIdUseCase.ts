@@ -7,17 +7,18 @@ import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindUserByIdUseCase = () => {
-	const repository = UserRemoteRepository();
-
 	return {
 		findUserById: async ({
 			schemaArgs: {
 				params: { id },
 			},
+			httpContext,
 		}: UseCaseRequest<FindUserByIdRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { affectedRows: foundUsersRow } = await repository.findUserById({
+			const { findUserById } = UserRemoteRepository(httpContext);
+
+			const { affectedRows: foundUsersRow } = await findUserById({
 				query: { id },
 			});
 

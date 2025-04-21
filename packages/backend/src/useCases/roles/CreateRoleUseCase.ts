@@ -1,28 +1,29 @@
 import type { CreateRoleRequest, RoleDTO } from "../../domains/Role";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const CreateRoleUseCase = () => {
-	const repository = RoleRemoteRepository();
-
 	return {
 		createRole: async ({
 			schemaArgs: {
 				body: { designation },
 			},
+			httpContext,
 		}: UseCaseRequest<CreateRoleRequest>): Promise<
 			UseCaseResponse<Pick<RoleDTO, "id">>
 		> => {
-			const { affectedIds: foundRolesId } =
-				await repository.findRoleByDesignation({
-					query: { designation },
-				});
+			const { findRoleByDesignation, createRole } =
+				RoleRemoteRepository(httpContext);
+
+			const { affectedIds: foundRolesId } = await findRoleByDesignation({
+				query: { designation },
+			});
 
 			if (foundRolesId.length !== 0) {
 				return { statusCode: 409 };
 			}
 
-			const { affectedIds: createdRolesId } = await repository.createRole({
+			const { affectedIds: createdRolesId } = await createRole({
 				args: { designation },
 			});
 

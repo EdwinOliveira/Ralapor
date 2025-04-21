@@ -5,6 +5,13 @@ import "dotenv/config";
 import type { UserEntity } from "./domains/User";
 import { UserRouter } from "./routers/UserRouter";
 import { RoleRouter } from "./routers/RoleRouter";
+import { SessionRouter } from "./routers/SessionRouter";
+import { HashProvider } from "./providers/HashProvider";
+import { MailProvider } from "./providers/MailProvider";
+import { RandomProvider } from "./providers/RandomProvider";
+import { SessionProvider } from "./providers/SessionProvider";
+import { DatabaseService } from "./services/DatabaseService";
+import type { HttpContext } from "./signatures/HttpContext";
 
 declare module "express-session" {
 	interface SessionData {
@@ -20,6 +27,17 @@ declare module "express-session" {
 const BackendApplication = () => {
 	const httpApplication = Express();
 	const httpAddress = Number.parseInt(process.env.SERVER_PORT ?? "8000");
+	const httpContext: HttpContext = {
+		providers: {
+			hashProvider: HashProvider(),
+			mailProvider: MailProvider(),
+			randomProvider: RandomProvider(),
+			sessionProvider: SessionProvider(),
+		},
+		services: {
+			databaseService: DatabaseService(),
+		},
+	};
 
 	const createMiddleware = () => {
 		httpApplication.use(json());
@@ -42,15 +60,38 @@ const BackendApplication = () => {
 		);
 	};
 
-	const createRoutes = () => {
-		httpApplication.use("/users", UserRouter().subscribe(Router()));
-		httpApplication.use("/roles", RoleRouter().subscribe(Router()));
+	const createRoutes = async () => {
+		const userRouter = UserRouter().subscribe(Router(), httpContext);
+		httpApplication.use("/users", userRouter);
+
+		const roleRouter = RoleRouter().subscribe(Router(), httpContext);
+		httpApplication.use("/roles", roleRouter);
+
+		const sessionRouter = SessionRouter().subscribe(Router(), httpContext);
+		httpApplication.use("/sessions", sessionRouter);
 	};
 
 	const createListner = () => {
-		httpApplication.listen(httpAddress, () =>
-			console.log(`Server initialized on PORT:${httpAddress}!`),
-		);
+		httpApplication.listen(httpAddress, async () => {
+			const {
+				createConnection,
+				createRolesTable,
+				createSessionsTable,
+				createUsersTable,
+				destroyConnection,
+			} = httpContext.services.databaseService;
+			const connection = createConnection();
+
+			try {
+				await createUsersTable(connection);
+				await createRolesTable(connection);
+				await createSessionsTable(connection);
+			} finally {
+				await destroyConnection(connection);
+			}
+
+			console.log(`Server initialized on PORT:${httpAddress}!`);
+		});
 	};
 
 	return {

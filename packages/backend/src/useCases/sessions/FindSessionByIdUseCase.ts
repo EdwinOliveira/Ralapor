@@ -7,20 +7,20 @@ import { SessionRemoteRepository } from "../../repositories/SessionRemoteReposit
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindSessionByIdUseCase = () => {
-	const repository = SessionRemoteRepository();
-
 	return {
 		findSessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
+			httpContext,
 		}: UseCaseRequest<FindSessionByIdRequest>): Promise<
 			UseCaseResponse<SessionDTO>
 		> => {
-			const { affectedRows: foundSessionsRow } =
-				await repository.findSessionById({
-					query: { id },
-				});
+			const { findSessionById } = SessionRemoteRepository(httpContext);
+
+			const { affectedRows: foundSessionsRow } = await findSessionById({
+				query: { id },
+			});
 
 			if (foundSessionsRow.length === 0) {
 				return { statusCode: 404 };

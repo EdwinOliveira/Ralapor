@@ -7,17 +7,18 @@ import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindRoleByIdUseCase = () => {
-	const repository = RoleRemoteRepository();
-
 	return {
 		findRoleById: async ({
 			schemaArgs: {
 				params: { id },
 			},
+			httpContext,
 		}: UseCaseRequest<FindRoleByIdRequest>): Promise<
 			UseCaseResponse<RoleDTO>
 		> => {
-			const { affectedRows: foundRolesRow } = await repository.findRoleById({
+			const { findRoleById } = RoleRemoteRepository(httpContext);
+
+			const { affectedRows: foundRolesRow } = await findRoleById({
 				query: { id },
 			});
 

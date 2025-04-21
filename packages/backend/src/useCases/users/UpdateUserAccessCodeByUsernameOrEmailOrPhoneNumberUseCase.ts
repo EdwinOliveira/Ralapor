@@ -3,27 +3,23 @@ import type {
 	UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
 	UserDTO,
 } from "../../domains/User";
-import { HashProvider } from "../../providers/HashProvider";
-import { RandomProvider } from "../../providers/RandomProvider";
-import { MailProvider } from "../../providers/MailProvider";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
-	const repository = UserRemoteRepository();
-	const hashProvider = HashProvider();
-	const randomProvider = RandomProvider();
-	const mailProvider = MailProvider();
-
 	return {
 		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({
 			schemaArgs: {
 				params: { username, email, phoneNumber },
 			},
+			httpContext,
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
+			const { findUserByUsernameOrEmailOrPhoneNumber, updateUserById } =
+				UserRemoteRepository(httpContext);
+
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
-				await repository.findUserByUsernameOrEmailOrPhoneNumber({
+				await findUserByUsernameOrEmailOrPhoneNumber({
 					query: { username, email, phoneNumber },
 				});
 
@@ -31,11 +27,13 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const accessCode = randomProvider.createAccessCode(12);
-			const hashedAccessCode = await hashProvider.hash(accessCode);
+			const accessCode =
+				httpContext.providers.randomProvider.createAccessCode(12);
+			const hashedAccessCode =
+				await httpContext.providers.hashProvider.hash(accessCode);
 
 			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
-				await repository.updateUserById({
+				await updateUserById({
 					query: { id: foundUsersRow[0].id },
 					args: { accessCode: hashedAccessCode },
 				});
@@ -45,11 +43,6 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 			}
 
 			console.log(accessCode);
-			// await mailProvider.sendMail({
-			// toAddress: foundUsersRow[0].email,
-			// subject: "Regain access to Ralapor!",
-			// text: `Ralapor access code: ${accessCode}`,
-			// });
 
 			return {
 				statusCode: 201,

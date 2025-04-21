@@ -3,18 +3,20 @@ import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const UpdateUserByIdUseCase = () => {
-	const repository = UserRemoteRepository();
-
 	return {
 		updateUserById: async ({
 			schemaArgs: {
 				params: { id },
 				body: schemaArgsBody,
 			},
+			httpContext,
 		}: UseCaseRequest<UpdateUserByIdRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
-			const { affectedIds: foundUsersId } = await repository.findUserById({
+			const { findUserById, updateUserById } =
+				UserRemoteRepository(httpContext);
+
+			const { affectedIds: foundUsersId } = await findUserById({
 				query: { id },
 			});
 
@@ -23,7 +25,7 @@ const UpdateUserByIdUseCase = () => {
 			}
 
 			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
-				await repository.updateUserById({
+				await updateUserById({
 					query: { id },
 					args: schemaArgsBody,
 				});

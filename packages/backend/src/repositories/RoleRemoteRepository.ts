@@ -1,16 +1,16 @@
 import type { RoleEntity, RoleRepository } from "../domains/Role";
-import { DatabaseService } from "../services/DatabaseService";
+import type { HttpContext } from "../signatures/HttpContext";
 
-const RoleRemoteRepository = (): RoleRepository => {
-	const { createConnection, createRolesTable } = DatabaseService();
-
+const RoleRemoteRepository = ({
+	services: {
+		databaseService: { createConnection, destroyConnection },
+	},
+}: HttpContext): RoleRepository => {
 	return {
 		findRoles: async () => {
-			const dbConnection = createConnection();
-			await createRolesTable(dbConnection);
-
-			const roles = await dbConnection<RoleEntity>("Roles");
-			await dbConnection.destroy();
+			const connection = createConnection();
+			const roles = await connection<RoleEntity>("Roles");
+			await destroyConnection(connection);
 
 			return {
 				affectedIds: roles.map((role) => role.id),
@@ -22,14 +22,13 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createRolesTable(dbConnection);
+			const connection = createConnection();
 
-			const role = await dbConnection<RoleEntity>("Roles")
+			const role = await connection<RoleEntity>("Roles")
 				.where("designation", query?.designation)
 				.first();
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (role === undefined) {
 				return { affectedIds: [], affectedRows: [] };
@@ -42,14 +41,13 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createRolesTable(dbConnection);
+			const connection = createConnection();
 
-			const role = await dbConnection<RoleEntity>("Roles")
+			const role = await connection<RoleEntity>("Roles")
 				.where("id", query?.id)
 				.first();
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (role === undefined) {
 				return { affectedIds: [], affectedRows: [] };
@@ -62,14 +60,13 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createRolesTable(dbConnection);
+			const connection = createConnection();
 
-			const createdUser = await dbConnection<RoleEntity>("Roles")
+			const createdUser = await connection<RoleEntity>("Roles")
 				.insert(args)
 				.returning("id");
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (createdUser.length === 0) {
 				return { affectedIds: [], affectedRows: [] };
@@ -82,10 +79,9 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const dbConnection = createConnection();
-			await createRolesTable(dbConnection);
+			const connection = createConnection();
 
-			const foundRole = await dbConnection<RoleEntity>("Roles")
+			const foundRole = await connection<RoleEntity>("Roles")
 				.where("id", query.id)
 				.first();
 
@@ -93,14 +89,14 @@ const RoleRemoteRepository = (): RoleRepository => {
 				return { affectedIds: [], affectedRows: [] };
 			}
 
-			const updatedRoles = await dbConnection<RoleEntity>("Roles")
+			const updatedRoles = await connection<RoleEntity>("Roles")
 				.where("id", query.id)
 				.update({
 					designation: args.designation || foundRole.designation,
 				})
 				.returning("*");
 
-			await dbConnection.destroy();
+			await destroyConnection(connection);
 
 			if (updatedRoles.length === 0) {
 				return { affectedIds: [], affectedRows: [] };

@@ -14,11 +14,12 @@ import {
 	updateUserByIdSchema,
 } from "../domains/User";
 import { SessionGuard } from "../guards/SessionGuard";
+import type { HttpContext } from "../signatures/HttpContext";
 
 const UserRouter = () => {
 	const { isAuthenticated, bypassAuthentication } = SessionGuard();
 
-	const subscribe = (router: Router): Router => {
+	const subscribe = (router: Router, httpContext: HttpContext): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -33,7 +34,10 @@ const UserRouter = () => {
 				}
 
 				const { findUserById } = FindUserByIdUseCase();
-				const { statusCode, args } = await findUserById({ schemaArgs });
+				const { statusCode, args } = await findUserById({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json(args);
 			},
@@ -53,7 +57,10 @@ const UserRouter = () => {
 				}
 
 				const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
-				const { statusCode, args } = await findUserByAccessCode({ schemaArgs });
+				const { statusCode, args } = await findUserByAccessCode({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json(args);
 			},
@@ -73,7 +80,10 @@ const UserRouter = () => {
 				}
 
 				const { createUser } = CreateUserUseCase();
-				const { statusCode, args } = await createUser({ schemaArgs });
+				const { statusCode, args } = await createUser({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json({ id: args?.id });
 			},
@@ -98,6 +108,7 @@ const UserRouter = () => {
 				const { updateUserById } = UpdateUserByIdUseCase();
 				const { statusCode, args } = await updateUserById({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json({
@@ -123,6 +134,7 @@ const UserRouter = () => {
 				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
 				const { statusCode, args } = await updateUserAccessCodeById({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json({
@@ -152,6 +164,7 @@ const UserRouter = () => {
 				const { statusCode, args } =
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
+						httpContext,
 					});
 
 				return void response.status(statusCode).json({

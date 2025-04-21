@@ -1,4 +1,4 @@
-import type { ZodIssue } from "zod";
+import type { HttpContext } from "./HttpContext";
 
 type UseCaseResponse<T> = {
 	statusCode: number;
@@ -6,6 +6,7 @@ type UseCaseResponse<T> = {
 };
 
 type UseCaseRequest<T> = {
+	httpContext: HttpContext;
 	schemaArgs: T;
 };
 

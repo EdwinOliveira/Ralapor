@@ -10,11 +10,13 @@ import { FindSessionByIdUseCase } from "../useCases/sessions/FindSessionByIdUseC
 import { CreateSessionUseCase } from "../useCases/sessions/CreateSessionUseCase";
 import { UpdateSessionByIdUseCase } from "../useCases/sessions/UpdateSessionByIdUseCase";
 import { DestroySessionByIdUseCase } from "../useCases/sessions/DestroySessionByIdUseCase";
+import { SessionProvider } from "../providers/SessionProvider";
+import type { HttpContext } from "../signatures/HttpContext";
 
 const SessionRouter = () => {
 	const { isAuthenticated } = SessionGuard();
 
-	const subscribe = (router: Router): Router => {
+	const subscribe = (router: Router, httpContext: HttpContext): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -29,7 +31,10 @@ const SessionRouter = () => {
 				}
 
 				const { findSessionById } = FindSessionByIdUseCase();
-				const { statusCode, args } = await findSessionById({ schemaArgs });
+				const { statusCode, args } = await findSessionById({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json(args);
 			},
@@ -48,8 +53,16 @@ const SessionRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
+				httpContext.providers.sessionProvider = SessionProvider(
+					request,
+					response,
+				);
+
 				const { createSession } = CreateSessionUseCase();
-				const { statusCode, args } = await createSession({ schemaArgs });
+				const { statusCode, args } = await createSession({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json({ id: args?.id });
 			},
@@ -71,9 +84,15 @@ const SessionRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
+				httpContext.providers.sessionProvider = SessionProvider(
+					request,
+					response,
+				);
+
 				const { updateSessionById } = UpdateSessionByIdUseCase();
 				const { statusCode, args } = await updateSessionById({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json({
@@ -98,9 +117,15 @@ const SessionRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
+				httpContext.providers.sessionProvider = SessionProvider(
+					request,
+					response,
+				);
+
 				const { destroySessionById } = DestroySessionByIdUseCase();
 				const { statusCode, args } = await destroySessionById({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json({

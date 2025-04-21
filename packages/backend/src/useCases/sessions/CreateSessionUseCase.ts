@@ -5,20 +5,22 @@ import { FindUserByIdUseCase } from "../users/FindUserByIdUseCase";
 import { FindRoleByIdUseCase } from "../roles/FindRoleByIdUseCase";
 
 const CreateSessionUseCase = () => {
-	const repository = SessionRemoteRepository();
-	const { findUserById } = FindUserByIdUseCase();
-	const { findRoleById } = FindRoleByIdUseCase();
-
 	return {
 		createSession: async ({
 			schemaArgs: {
 				body: { userId, roleId },
 			},
+			httpContext,
 		}: UseCaseRequest<CreateSessionRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id">>
 		> => {
+			const { findUserById } = FindUserByIdUseCase();
+			const { findRoleById } = FindRoleByIdUseCase();
+			const { findSessionByUserIdAndRoleId, createSession } =
+				SessionRemoteRepository(httpContext);
+
 			const { affectedIds: foundSessionsId } =
-				await repository.findSessionByUserIdAndRoleId({
+				await findSessionByUserIdAndRoleId({
 					query: { userId, roleId },
 				});
 
@@ -28,6 +30,7 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findUserByIdStatusCode } = await findUserById({
 				schemaArgs: { params: { id: userId } },
+				httpContext,
 			});
 
 			if (findUserByIdStatusCode !== 200) {
@@ -36,15 +39,16 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findRoleByIdStatusCode } = await findRoleById({
 				schemaArgs: { params: { id: userId } },
+				httpContext,
 			});
 
 			if (findRoleByIdStatusCode !== 200) {
 				return { statusCode: 400 };
 			}
 
-			const { affectedIds: createdSessionsId } = await repository.createSession(
-				{ args: { userId, roleId, isTerminated: false } },
-			);
+			const { affectedIds: createdSessionsId } = await createSession({
+				args: { userId, roleId, isTerminated: false },
+			});
 
 			if (createdSessionsId.length === 0) {
 				return { statusCode: 500 };

@@ -10,16 +10,28 @@ type SessionData = Partial<
 	>
 >;
 
-const SessionProvider = (request: Request, _response: Response) => {
+const SessionProvider = (request?: Request, response?: Response) => {
 	const findSession = (): SessionData | undefined => {
+		if (request === undefined || response === undefined) {
+			return;
+		}
+
 		return request.session.user;
 	};
 
 	const addToSession = (property: SessionProperty, data: SessionData) => {
+		if (request === undefined || response === undefined) {
+			return;
+		}
+
 		request.session[property] = data;
 	};
 
 	const updateSession = (property: SessionProperty, data: SessionData) => {
+		if (request === undefined || response === undefined) {
+			return;
+		}
+
 		if (request.session[property] === undefined) {
 			return;
 		}
@@ -28,12 +40,20 @@ const SessionProvider = (request: Request, _response: Response) => {
 	};
 
 	const destroySession = () => {
+		if (request === undefined || response === undefined) {
+			return;
+		}
+
 		request.session.destroy((error) => {
 			if (error) return { statusCode: 500 };
 		});
 	};
 
 	const regenerateSession = () => {
+		if (request === undefined || response === undefined) {
+			return;
+		}
+
 		request.session.regenerate((error) => {
 			if (error) return { statusCode: 500 };
 		});

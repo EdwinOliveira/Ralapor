@@ -10,11 +10,12 @@ import {
 import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
 import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
 import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
+import type { HttpContext } from "../signatures/HttpContext";
 
 const RoleRouter = () => {
-	const { isAuthenticated } = SessionGuard();
+	const { bypassAuthentication, isAuthenticated } = SessionGuard();
 
-	const subscribe = (router: Router): Router => {
+	const subscribe = (router: Router, httpContext: HttpContext): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -29,7 +30,10 @@ const RoleRouter = () => {
 				}
 
 				const { findRoleById } = FindRoleByIdUseCase();
-				const { statusCode, args } = await findRoleById({ schemaArgs });
+				const { statusCode, args } = await findRoleById({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json(args);
 			},
@@ -51,6 +55,7 @@ const RoleRouter = () => {
 				const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 				const { statusCode, args } = await findRoleByDesignation({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -59,7 +64,7 @@ const RoleRouter = () => {
 
 		router.post(
 			"/",
-			isAuthenticated,
+			bypassAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					createRoleSchema.safeParse({ body: request.body });
@@ -71,7 +76,10 @@ const RoleRouter = () => {
 				}
 
 				const { createRole } = CreateRoleUseCase();
-				const { statusCode, args } = await createRole({ schemaArgs });
+				const { statusCode, args } = await createRole({
+					schemaArgs,
+					httpContext,
+				});
 
 				return void response.status(statusCode).json({ id: args?.id });
 			},
@@ -96,6 +104,7 @@ const RoleRouter = () => {
 				const { updateRoleById } = UpdateRoleByIdUseCase();
 				const { statusCode, args } = await updateRoleById({
 					schemaArgs,
+					httpContext,
 				});
 
 				return void response.status(statusCode).json({
