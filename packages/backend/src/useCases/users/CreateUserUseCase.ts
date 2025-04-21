@@ -1,24 +1,23 @@
 import type { CreateUserRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseCase";
 
-const CreateUserUseCase = () => {
+const CreateUserUseCase = (context: Context) => {
+	const { findRoleByDesignation } = FindRoleByDesignationUseCase(context);
+	const repository = UserRemoteRepository(context);
+
 	return {
 		createUser: async ({
 			schemaArgs: {
 				body: { username, email, phoneNumber, phoneNumberCode },
 			},
-			context,
 		}: UseCaseRequest<CreateUserRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id">>
 		> => {
-			const { findRoleByDesignation } = FindRoleByDesignationUseCase();
-			const { findUserByUsernameOrEmailOrPhoneNumber, createUser } =
-				UserRemoteRepository(context);
-
 			const { affectedIds: foundUsersId } =
-				await findUserByUsernameOrEmailOrPhoneNumber({
+				await repository.findUserByUsernameOrEmailOrPhoneNumber({
 					query: { username, email, phoneNumber },
 				});
 
@@ -31,7 +30,6 @@ const CreateUserUseCase = () => {
 				args: findRoleByDesignationArgs,
 			} = await findRoleByDesignation({
 				schemaArgs: { params: { designation: "consumer" } },
-				context,
 			});
 
 			if (
@@ -41,11 +39,12 @@ const CreateUserUseCase = () => {
 				return { statusCode: 500 };
 			}
 
-			const accessCode = context.providers.randomProvider.createAccessCode(12);
-			const hashedAccessCode =
-				await context.providers.hashProvider.hash(accessCode);
+			const { randomProvider, hashProvider } = context.providers;
 
-			const { affectedIds: createdUsersId } = await createUser({
+			const accessCode = randomProvider.createAccessCode(12);
+			const hashedAccessCode = await hashProvider.hash(accessCode);
+
+			const { affectedIds: createdUsersId } = await repository.createUser({
 				args: {
 					username,
 					email,

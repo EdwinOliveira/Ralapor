@@ -1,21 +1,21 @@
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { UpdateRoleByIdRequest, RoleDTO } from "../../domains/Role";
+import type { Context } from "../../signatures/Context";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
 
-const UpdateRoleByIdUseCase = () => {
+const UpdateRoleByIdUseCase = (context: Context) => {
+	const repository = RoleRemoteRepository(context);
+
 	return {
 		updateRoleById: async ({
 			schemaArgs: {
 				params: { id },
 				body: { designation },
 			},
-			context,
 		}: UseCaseRequest<UpdateRoleByIdRequest>): Promise<
 			UseCaseResponse<Pick<RoleDTO, "id" | "updatedAt">>
 		> => {
-			const { findRoleById, updateRoleById } = RoleRemoteRepository(context);
-
-			const { affectedIds: foundRolesId } = await findRoleById({
+			const { affectedIds: foundRolesId } = await repository.findRoleById({
 				query: { id },
 			});
 
@@ -24,7 +24,7 @@ const UpdateRoleByIdUseCase = () => {
 			}
 
 			const { affectedIds: updatedRolesId, affectedRows: updatedRolesRow } =
-				await updateRoleById({
+				await repository.updateRoleById({
 					query: { id },
 					args: { designation },
 				});

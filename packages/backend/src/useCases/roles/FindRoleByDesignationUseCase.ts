@@ -4,23 +4,24 @@ import {
 	roleDTOMapper,
 } from "../../domains/Role";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
+import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindRoleByDesignationUseCase = () => {
+const FindRoleByDesignationUseCase = (context: Context) => {
+	const repository = RoleRemoteRepository(context);
+
 	return {
 		findRoleByDesignation: async ({
 			schemaArgs: {
 				params: { designation },
 			},
-			context,
 		}: UseCaseRequest<FindRoleByDesignationRequest>): Promise<
 			UseCaseResponse<RoleDTO>
 		> => {
-			const { findRoleByDesignation } = RoleRemoteRepository(context);
-
-			const { affectedRows: foundRolesRow } = await findRoleByDesignation({
-				query: { designation },
-			});
+			const { affectedRows: foundRolesRow } =
+				await repository.findRoleByDesignation({
+					query: { designation },
+				});
 
 			if (foundRolesRow.length === 0) {
 				return { statusCode: 404 };

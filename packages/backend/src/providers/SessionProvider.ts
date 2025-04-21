@@ -11,12 +11,12 @@ type SessionData = Partial<
 >;
 
 const SessionProvider = (request?: Request, response?: Response) => {
-	const findSession = (): SessionData | undefined => {
+	const findSession = () => {
 		if (request === undefined || response === undefined) {
 			return;
 		}
 
-		return request.session.user;
+		return request.session;
 	};
 
 	const addToSession = (property: SessionProperty, data: SessionData) => {

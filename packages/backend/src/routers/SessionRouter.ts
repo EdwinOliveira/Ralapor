@@ -30,10 +30,9 @@ const SessionRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findSessionById } = FindSessionByIdUseCase();
+				const { findSessionById } = FindSessionByIdUseCase(context);
 				const { statusCode, args } = await findSessionById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -55,10 +54,9 @@ const SessionRouter = () => {
 
 				context.providers.sessionProvider = SessionProvider(request, response);
 
-				const { createSession } = CreateSessionUseCase();
+				const { createSession } = CreateSessionUseCase(context);
 				const { statusCode, args } = await createSession({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({ id: args?.id });
@@ -83,10 +81,9 @@ const SessionRouter = () => {
 
 				context.providers.sessionProvider = SessionProvider(request, response);
 
-				const { updateSessionById } = UpdateSessionByIdUseCase();
+				const { updateSessionById } = UpdateSessionByIdUseCase(context);
 				const { statusCode, args } = await updateSessionById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({
@@ -113,10 +110,9 @@ const SessionRouter = () => {
 
 				context.providers.sessionProvider = SessionProvider(request, response);
 
-				const { destroySessionById } = DestroySessionByIdUseCase();
+				const { destroySessionById } = DestroySessionByIdUseCase(context);
 				const { statusCode, args } = await destroySessionById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({

@@ -29,10 +29,9 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findRoleById } = FindRoleByIdUseCase();
+				const { findRoleById } = FindRoleByIdUseCase(context);
 				const { statusCode, args } = await findRoleById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -52,10 +51,9 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findRoleByDesignation } = FindRoleByDesignationUseCase();
+				const { findRoleByDesignation } = FindRoleByDesignationUseCase(context);
 				const { statusCode, args } = await findRoleByDesignation({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -75,10 +73,9 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { createRole } = CreateRoleUseCase();
+				const { createRole } = CreateRoleUseCase(context);
 				const { statusCode, args } = await createRole({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({ id: args?.id });
@@ -101,10 +98,9 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateRoleById } = UpdateRoleByIdUseCase();
+				const { updateRoleById } = UpdateRoleByIdUseCase(context);
 				const { statusCode, args } = await updateRoleById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({

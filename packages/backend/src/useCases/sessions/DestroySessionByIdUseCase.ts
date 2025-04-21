@@ -4,23 +4,22 @@ import type {
 	DestroySessionByIdRequest,
 } from "../../domains/Session";
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
+import type { Context } from "../../signatures/Context";
 
-const DestroySessionByIdUseCase = () => {
+const DestroySessionByIdUseCase = (context: Context) => {
+	const repository = SessionRemoteRepository(context);
+
 	return {
 		destroySessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-			context,
 		}: UseCaseRequest<DestroySessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
-			const { findSessionById, updateSessionById } =
-				SessionRemoteRepository(context);
-
-			const { affectedIds: foundSessionsId } = await findSessionById({
-				query: { id },
-			});
+			const { affectedIds: foundSessionsId } = await repository.findSessionById(
+				{ query: { id } },
+			);
 
 			if (foundSessionsId.length === 0) {
 				return { statusCode: 404 };
@@ -31,9 +30,9 @@ const DestroySessionByIdUseCase = () => {
 			const {
 				affectedIds: updatedSessionsId,
 				affectedRows: updatedSessionsRow,
-			} = await updateSessionById({
+			} = await repository.updateSessionById({
 				query: { id },
-				args: { isTerminated: true },
+				args: { expiresIn: "", isTerminated: true },
 			});
 
 			if (updatedSessionsId.length === 0) {

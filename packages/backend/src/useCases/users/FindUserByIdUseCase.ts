@@ -4,21 +4,21 @@ import {
 	userDTOMapper,
 } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindUserByIdUseCase = () => {
+const FindUserByIdUseCase = (context: Context) => {
+	const repository = UserRemoteRepository(context);
+
 	return {
 		findUserById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-			context,
 		}: UseCaseRequest<FindUserByIdRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { findUserById } = UserRemoteRepository(context);
-
-			const { affectedRows: foundUsersRow } = await findUserById({
+			const { affectedRows: foundUsersRow } = await repository.findUserById({
 				query: { id },
 			});
 

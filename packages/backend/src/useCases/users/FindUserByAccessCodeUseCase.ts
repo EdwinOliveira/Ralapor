@@ -4,21 +4,21 @@ import {
 	type UserDTO,
 	userDTOMapper,
 } from "../../domains/User";
-import { HashProvider } from "../../providers/HashProvider";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+import type { Context } from "../../signatures/Context";
 
-const FindUserByAccessCodeUseCase = () => {
+const FindUserByAccessCodeUseCase = (context: Context) => {
+	const repository = UserRemoteRepository(context);
+
 	return {
 		findUserByAccessCode: async ({
 			schemaArgs: {
 				params: { accessCode },
 			},
-			context,
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { findUsers } = UserRemoteRepository(context);
-			const { affectedRows: foundUsersRow } = await findUsers();
+			const { affectedRows: foundUsersRow } = await repository.findUsers();
 
 			for (const foundUserRow of foundUsersRow) {
 				const isSameAccessCode = await context.providers.hashProvider.compare(

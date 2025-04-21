@@ -33,10 +33,9 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findUserById } = FindUserByIdUseCase();
+				const { findUserById } = FindUserByIdUseCase(context);
 				const { statusCode, args } = await findUserById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -56,10 +55,9 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
+				const { findUserByAccessCode } = FindUserByAccessCodeUseCase(context);
 				const { statusCode, args } = await findUserByAccessCode({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -79,10 +77,9 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { createUser } = CreateUserUseCase();
+				const { createUser } = CreateUserUseCase(context);
 				const { statusCode, args } = await createUser({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({ id: args?.id });
@@ -105,10 +102,9 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateUserById } = UpdateUserByIdUseCase();
+				const { updateUserById } = UpdateUserByIdUseCase(context);
 				const { statusCode, args } = await updateUserById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({
@@ -131,10 +127,10 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
+				const { updateUserAccessCodeById } =
+					UpdateUserAccessCodeByIdUseCase(context);
 				const { statusCode, args } = await updateUserAccessCodeById({
 					schemaArgs,
-					context,
 				});
 
 				return void response.status(statusCode).json({
@@ -159,12 +155,11 @@ const UserRouter = () => {
 				}
 
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
-					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
+					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase(context);
 
 				const { statusCode, args } =
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
 						schemaArgs,
-						context,
 					});
 
 				return void response.status(statusCode).json({

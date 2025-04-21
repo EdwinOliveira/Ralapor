@@ -4,22 +4,21 @@ import type {
 	SessionDTO,
 } from "../../domains/Session";
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
+import type { Context } from "../../signatures/Context";
 
-const UpdateSessionByIdUseCase = () => {
+const UpdateSessionByIdUseCase = (context: Context) => {
+	const repository = SessionRemoteRepository(context);
+
 	return {
 		updateSessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-			context,
 		}: UseCaseRequest<UpdateSessionByIdRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id" | "updatedAt">>
 		> => {
-			const { findSessionById, updateSessionById } =
-				SessionRemoteRepository(context);
-
 			const { affectedIds: foundSessionsId, affectedRows: foundSessionsRow } =
-				await findSessionById({
+				await repository.findSessionById({
 					query: { id },
 				});
 
@@ -34,7 +33,7 @@ const UpdateSessionByIdUseCase = () => {
 			const {
 				affectedIds: updatedSessionsId,
 				affectedRows: updatedSessionsRow,
-			} = await updateSessionById({
+			} = await repository.updateSessionById({
 				query: { id },
 			});
 

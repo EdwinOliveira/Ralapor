@@ -3,24 +3,23 @@ import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
 import { FindUserByIdUseCase } from "../users/FindUserByIdUseCase";
 import { FindRoleByIdUseCase } from "../roles/FindRoleByIdUseCase";
+import type { Context } from "../../signatures/Context";
 
-const CreateSessionUseCase = () => {
+const CreateSessionUseCase = (context: Context) => {
+	const repository = SessionRemoteRepository(context);
+	const { findUserById } = FindUserByIdUseCase();
+	const { findRoleById } = FindRoleByIdUseCase(context);
+
 	return {
 		createSession: async ({
 			schemaArgs: {
 				body: { userId, roleId },
 			},
-			context,
 		}: UseCaseRequest<CreateSessionRequest>): Promise<
 			UseCaseResponse<Pick<SessionDTO, "id">>
 		> => {
-			const { findUserById } = FindUserByIdUseCase();
-			const { findRoleById } = FindRoleByIdUseCase();
-			const { findSessionByUserIdAndRoleId, createSession } =
-				SessionRemoteRepository(context);
-
 			const { affectedIds: foundSessionsId } =
-				await findSessionByUserIdAndRoleId({
+				await repository.findSessionByUserIdAndRoleId({
 					query: { userId, roleId },
 				});
 
@@ -30,7 +29,6 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findUserByIdStatusCode } = await findUserById({
 				schemaArgs: { params: { id: userId } },
-				context,
 			});
 
 			if (findUserByIdStatusCode !== 200) {
@@ -39,7 +37,6 @@ const CreateSessionUseCase = () => {
 
 			const { statusCode: findRoleByIdStatusCode } = await findRoleById({
 				schemaArgs: { params: { id: userId } },
-				context,
 			});
 
 			if (findRoleByIdStatusCode !== 200) {
@@ -48,9 +45,9 @@ const CreateSessionUseCase = () => {
 
 			context.providers.sessionProvider.addToSession("user", { id: userId });
 
-			const { affectedIds: createdSessionsId } = await createSession({
-				args: { userId, roleId, isTerminated: false },
-			});
+			const { affectedIds: createdSessionsId } = await repository.createSession(
+				{ args: { userId, roleId, expiresIn: "", isTerminated: false } },
+			);
 
 			if (createdSessionsId.length === 0) {
 				return { statusCode: 500 };

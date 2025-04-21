@@ -8,6 +8,7 @@ type SessionEntity = {
 	id: number;
 	userId: number;
 	roleId: number;
+	expiresIn: string;
 	isTerminated: boolean;
 	createdAt: string;
 	updatedAt: string;
@@ -20,6 +21,7 @@ const sessionDTOMapper = (entity: SessionEntity): SessionDTO => {
 		id: entity.id,
 		userId: entity.userId,
 		roleId: entity.roleId,
+		expiresIn: entity.expiresIn,
 		isTerminated: entity.isTerminated,
 		createdAt: entity.createdAt,
 		updatedAt: entity.updatedAt,
@@ -106,7 +108,7 @@ interface SessionRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Pick<SessionEntity, "userId" | "roleId" | "isTerminated">
+		Pick<SessionEntity, "userId" | "roleId" | "expiresIn" | "isTerminated">
 	>): Promise<RepositoryResponse<unknown>>;
 	updateSessionById({
 		query,

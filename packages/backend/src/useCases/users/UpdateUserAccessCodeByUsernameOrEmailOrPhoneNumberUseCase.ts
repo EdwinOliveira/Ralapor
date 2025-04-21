@@ -4,22 +4,23 @@ import type {
 	UserDTO,
 } from "../../domains/User";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+import type { Context } from "../../signatures/Context";
 
-const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
+const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = (
+	context: Context,
+) => {
+	const repository = UserRemoteRepository(context);
+
 	return {
 		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({
 			schemaArgs: {
 				params: { username, email, phoneNumber },
 			},
-			context,
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
 		> => {
-			const { findUserByUsernameOrEmailOrPhoneNumber, updateUserById } =
-				UserRemoteRepository(context);
-
 			const { affectedIds: foundUsersId, affectedRows: foundUsersRow } =
-				await findUserByUsernameOrEmailOrPhoneNumber({
+				await repository.findUserByUsernameOrEmailOrPhoneNumber({
 					query: { username, email, phoneNumber },
 				});
 
@@ -27,12 +28,13 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const accessCode = context.providers.randomProvider.createAccessCode(12);
-			const hashedAccessCode =
-				await context.providers.hashProvider.hash(accessCode);
+			const { randomProvider, hashProvider } = context.providers;
+
+			const accessCode = randomProvider.createAccessCode(12);
+			const hashedAccessCode = await hashProvider.hash(accessCode);
 
 			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
-				await updateUserById({
+				await repository.updateUserById({
 					query: { id: foundUsersRow[0].id },
 					args: { accessCode: hashedAccessCode },
 				});

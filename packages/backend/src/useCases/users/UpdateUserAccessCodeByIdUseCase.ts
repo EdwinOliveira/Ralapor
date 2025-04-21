@@ -4,20 +4,20 @@ import type {
 	UserEntity,
 } from "../../domains/User";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+import type { Context } from "../../signatures/Context";
 
-const UpdateUserAccessCodeByIdUseCase = () => {
+const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
+	const repository = UserRemoteRepository(context);
+
 	return {
 		updateUserAccessCodeById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-			context,
 		}: UseCaseRequest<UpdateUserAccessCodeByIdRequest>): Promise<
 			UseCaseResponse<Pick<UserEntity, "id" | "updatedAt">>
 		> => {
-			const { findUserById, updateUserById } = UserRemoteRepository(context);
-
-			const { affectedIds: foundUsersId } = await findUserById({
+			const { affectedIds: foundUsersId } = await repository.findUserById({
 				query: { id },
 			});
 
@@ -25,12 +25,13 @@ const UpdateUserAccessCodeByIdUseCase = () => {
 				return { statusCode: 404 };
 			}
 
-			const accessCode = context.providers.randomProvider.createAccessCode(12);
-			const hashedAccessCode =
-				await context.providers.hashProvider.hash(accessCode);
+			const { randomProvider, hashProvider } = context.providers;
+
+			const accessCode = randomProvider.createAccessCode(12);
+			const hashedAccessCode = await hashProvider.hash(accessCode);
 
 			const { affectedIds: updatedUsersId, affectedRows: updatedUsersRow } =
-				await updateUserById({
+				await repository.updateUserById({
 					query: { id },
 					args: { accessCode: hashedAccessCode },
 				});

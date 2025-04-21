@@ -4,23 +4,24 @@ import {
 	sessionDTOMapper,
 } from "../../domains/Session";
 import { SessionRemoteRepository } from "../../repositories/SessionRemoteRepository";
+import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindSessionByIdUseCase = () => {
+const FindSessionByIdUseCase = (context: Context) => {
+	const repository = SessionRemoteRepository(context);
+
 	return {
 		findSessionById: async ({
 			schemaArgs: {
 				params: { id },
 			},
-			context,
 		}: UseCaseRequest<FindSessionByIdRequest>): Promise<
 			UseCaseResponse<SessionDTO>
 		> => {
-			const { findSessionById } = SessionRemoteRepository(context);
-
-			const { affectedRows: foundSessionsRow } = await findSessionById({
-				query: { id },
-			});
+			const { affectedRows: foundSessionsRow } =
+				await repository.findSessionById({
+					query: { id },
+				});
 
 			if (foundSessionsRow.length === 0) {
 				return { statusCode: 404 };
