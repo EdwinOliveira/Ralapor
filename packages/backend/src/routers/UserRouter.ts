@@ -13,38 +13,28 @@ import {
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
 } from "../domains/User";
-import { SessionGuard } from "../guards/SessionGuard";
 import type { Context } from "../signatures/Context";
 
 const UserRouter = () => {
-	const { isAuthenticated, bypassAuthentication } = SessionGuard();
-
 	const subscribe = (router: Router, context: Context): Router => {
-		router.get(
-			"/:id",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findUserByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findUserByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findUserById } = FindUserByIdUseCase(context);
-				const { statusCode, args } = await findUserById({
-					schemaArgs,
-				});
+			const { findUserById } = FindUserByIdUseCase(context);
+			const { statusCode, args } = await findUserById({
+				schemaArgs,
+			});
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/access-code/:accessCode",
-			bypassAuthentication,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByAccessCodeSchema.safeParse({ params: request.params });
@@ -64,59 +54,46 @@ const UserRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			bypassAuthentication,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createUserSchema.safeParse({ body: request.body });
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createUserSchema.safeParse({ body: request.body });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { createUser } = CreateUserUseCase(context);
-				const { statusCode, args } = await createUser({
-					schemaArgs,
+			const { createUser } = CreateUserUseCase(context);
+			const { statusCode, args } = await createUser({
+				schemaArgs,
+			});
+
+			return void response.status(statusCode).json({ id: args?.id });
+		});
+
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateUserByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response.status(statusCode).json({ id: args?.id });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateUserByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { updateUserById } = UpdateUserByIdUseCase(context);
+			const { statusCode, args } = await updateUserById({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { updateUserById } = UpdateUserByIdUseCase(context);
-				const { statusCode, args } = await updateUserById({
-					schemaArgs,
-				});
-
-				return void response.status(statusCode).json({
-					id: args?.id,
-					updatedAt: args?.updatedAt,
-				});
-			},
-		);
+			return void response.status(statusCode).json({
+				id: args?.id,
+				updatedAt: args?.updatedAt,
+			});
+		});
 
 		router.put(
 			"/:id/access-code",
-			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByIdSchema.safeParse({ params: request.params });

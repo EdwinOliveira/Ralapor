@@ -1,5 +1,4 @@
 import type { Request, Response, Router } from "express";
-import { SessionGuard } from "../guards/SessionGuard";
 import { FindRoleByIdUseCase } from "../useCases/roles/FindRoleByIdUseCase";
 import {
 	createRoleSchema,
@@ -13,34 +12,25 @@ import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesign
 import type { Context } from "../signatures/Context";
 
 const RoleRouter = () => {
-	const { bypassAuthentication, isAuthenticated } = SessionGuard();
-
 	const subscribe = (router: Router, context: Context): Router => {
-		router.get(
-			"/:id",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					findRoleByIdSchema.safeParse({ params: request.params });
+		router.get("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				findRoleByIdSchema.safeParse({ params: request.params });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { findRoleById } = FindRoleByIdUseCase(context);
-				const { statusCode, args } = await findRoleById({
-					schemaArgs,
-				});
+			const { findRoleById } = FindRoleByIdUseCase(context);
+			const { statusCode, args } = await findRoleById({
+				schemaArgs,
+			});
 
-				return void response.status(statusCode).json(args);
-			},
-		);
+			return void response.status(statusCode).json(args);
+		});
 
 		router.get(
 			"/designation/:designation",
-			isAuthenticated,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findRoleByDesignationSchema.safeParse({ params: request.params });
@@ -60,55 +50,43 @@ const RoleRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			bypassAuthentication,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createRoleSchema.safeParse({ body: request.body });
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createRoleSchema.safeParse({ body: request.body });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { createRole } = CreateRoleUseCase(context);
-				const { statusCode, args } = await createRole({
-					schemaArgs,
+			const { createRole } = CreateRoleUseCase(context);
+			const { statusCode, args } = await createRole({
+				schemaArgs,
+			});
+
+			return void response.status(statusCode).json({ id: args?.id });
+		});
+
+		router.put("/:id", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				updateRoleByIdSchema.safeParse({
+					params: request.params,
+					body: request.body,
 				});
 
-				return void response.status(statusCode).json({ id: args?.id });
-			},
-		);
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-		router.put(
-			"/:id",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					updateRoleByIdSchema.safeParse({
-						params: request.params,
-						body: request.body,
-					});
+			const { updateRoleById } = UpdateRoleByIdUseCase(context);
+			const { statusCode, args } = await updateRoleById({
+				schemaArgs,
+			});
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
-
-				const { updateRoleById } = UpdateRoleByIdUseCase(context);
-				const { statusCode, args } = await updateRoleById({
-					schemaArgs,
-				});
-
-				return void response.status(statusCode).json({
-					id: args?.id,
-					updatedAt: args?.updatedAt,
-				});
-			},
-		);
+			return void response.status(statusCode).json({
+				id: args?.id,
+				updatedAt: args?.updatedAt,
+			});
+		});
 
 		return router;
 	};
