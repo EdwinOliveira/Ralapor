@@ -14,8 +14,8 @@ const DatabaseService = () => {
 		});
 	};
 
-	const destroyConnection = async (connection: knex.Knex) => {
-		connection.destroy();
+	const destroyConnection = (connection: knex.Knex) => {
+		return connection.destroy();
 	};
 
 	const createUsersTable = async (connection: knex.Knex) => {
@@ -52,37 +52,11 @@ const DatabaseService = () => {
 		}
 	};
 
-	const createSessionsTable = async (connection: knex.Knex) => {
-		const tableExists = await connection.schema.hasTable("Sessions");
-
-		if (tableExists === false) {
-			await connection.schema.createTable("Sessions", (table) => {
-				table.increments("id").primary();
-				table.integer("userId").unsigned();
-				table
-					.foreign("userId")
-					.references("id")
-					.inTable("Users")
-					.onDelete("CASCADE");
-				table.integer("roleId").unsigned();
-				table
-					.foreign("roleId")
-					.references("id")
-					.inTable("Roles")
-					.onDelete("CASCADE");
-				table.string("expiresIn");
-				table.boolean("isExpired");
-				table.timestamps(true, true, true);
-			});
-		}
-	};
-
 	return {
 		createConnection,
 		destroyConnection,
 		createUsersTable,
 		createRolesTable,
-		createSessionsTable,
 	};
 };
 
