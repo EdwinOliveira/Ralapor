@@ -25,11 +25,7 @@ const DatabaseService = () => {
 			await connection.schema.createTable("Users", (table) => {
 				table.increments("id").primary();
 				table.integer("roleId").unsigned();
-				table
-					.foreign("roleId")
-					.references("id")
-					.inTable("Roles")
-					.onDelete("CASCADE");
+				table.foreign("roleId").references("id").inTable("Roles");
 				table.string("username");
 				table.string("email");
 				table.string("phoneNumber");
