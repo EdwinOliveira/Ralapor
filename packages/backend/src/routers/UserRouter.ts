@@ -16,11 +16,13 @@ import {
 import type { Context } from "../signatures/Context";
 import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
+import { CacheService } from "../services/CacheService";
+import { RandomProvider } from "../providers/RandomProvider";
 
 const UserRouter = () => {
 	const { isAuthenticated, isAuthenticating } = SessionGuard();
 
-	const subscribe = (router: Router, context: Context): Router => {
+	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -34,7 +36,7 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findUserById } = FindUserByIdUseCase(context);
+				const { findUserById } = FindUserByIdUseCase();
 				const { statusCode, args } = await findUserById({
 					schemaArgs,
 				});
@@ -56,10 +58,29 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				context.providers.sessionProvider = SessionProvider(request, response);
-				const { findUserByAccessCode } = FindUserByAccessCodeUseCase(context);
+				const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
 				const { statusCode, args } = await findUserByAccessCode({
 					schemaArgs,
+				});
+
+				if (args === undefined) {
+					return void response.status(statusCode).json();
+				}
+
+				const randomProvider = RandomProvider();
+				const sessionProvider = SessionProvider();
+				const cacheService = CacheService();
+
+				const sessionId = randomProvider.createRandomUuid();
+				sessionProvider.addToSession(sessionId);
+
+				await cacheService.addToCache(`session:${sessionId}`, {
+					sessionId: sessionId,
+					userId: args.id,
+					roleId: args.roleId,
+					expiresIn: new Date().setSeconds(
+						randomProvider.createExpirationTime(),
+					),
 				});
 
 				return void response.status(statusCode).json(args);
@@ -74,7 +95,7 @@ const UserRouter = () => {
 				return void response.status(400).json({ errors: schemaErrors.issues });
 			}
 
-			const { createUser } = CreateUserUseCase(context);
+			const { createUser } = CreateUserUseCase();
 			const { statusCode, args } = await createUser({
 				schemaArgs,
 			});
@@ -98,7 +119,7 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateUserById } = UpdateUserByIdUseCase(context);
+				const { updateUserById } = UpdateUserByIdUseCase();
 				const { statusCode, args } = await updateUserById({
 					schemaArgs,
 				});
@@ -123,10 +144,28 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateUserAccessCodeById } =
-					UpdateUserAccessCodeByIdUseCase(context);
+				const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
 				const { statusCode, args } = await updateUserAccessCodeById({
 					schemaArgs,
+				});
+
+				const sessionProvider = SessionProvider();
+				const cookies = sessionProvider.getSession();
+
+				if (args === undefined || cookies.sid === undefined) {
+					return void response.status(500).json();
+				}
+
+				const cacheService = CacheService();
+				const randomProvider = RandomProvider();
+
+				await cacheService.updateOnCache(`session:${cookies.sid}`, {
+					sessionId: cookies.sid,
+					userId: args?.id,
+					roleId: args?.roleId,
+					expiresIn: new Date().setSeconds(
+						randomProvider.createExpirationTime(),
+					),
 				});
 
 				return void response.status(statusCode).json({
@@ -151,7 +190,7 @@ const UserRouter = () => {
 				}
 
 				const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
-					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase(context);
+					UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
 				const { statusCode, args } =
 					await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({

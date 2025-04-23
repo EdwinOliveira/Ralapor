@@ -1,14 +1,13 @@
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import {
 	type FindUserByIdRequest,
 	type UserDTO,
 	userDTOMapper,
 } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { Context } from "../../signatures/Context";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindUserByIdUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context.services.databaseService);
+const FindUserByIdUseCase = () => {
+	const repository = UserRemoteRepository();
 
 	return {
 		findUserById: async ({

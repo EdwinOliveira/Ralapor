@@ -149,7 +149,7 @@ interface UserRepository {
 		args,
 	}: RepositoryRequest<
 		Pick<UserEntity, "id">,
-		Partial<Omit<UserEntity, "id" | "createdAt" | "updatedAt">>
+		Partial<Omit<UserEntity, "id" | "createdAt">>
 	>): Promise<RepositoryResponse<UserEntity>>;
 }
 

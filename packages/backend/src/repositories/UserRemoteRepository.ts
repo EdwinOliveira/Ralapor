@@ -1,10 +1,9 @@
 import type { UserEntity, UserRepository } from "../domains/User";
-import type { DatabaseService } from "../services/DatabaseService";
+import { DatabaseService } from "../services/DatabaseService";
 
-const UserRemoteRepository = ({
-	createConnection,
-	destroyConnection,
-}: ReturnType<typeof DatabaseService>): UserRepository => {
+const UserRemoteRepository = (): UserRepository => {
+	const { createConnection, destroyConnection } = DatabaseService();
+
 	return {
 		findUsers: async () => {
 			const connection = createConnection();

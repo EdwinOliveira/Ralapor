@@ -5,10 +5,11 @@ import {
 	userDTOMapper,
 } from "../../domains/User";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import type { Context } from "../../signatures/Context";
+import { HashProvider } from "../../providers/HashProvider";
 
-const FindUserByAccessCodeUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context.services.databaseService);
+const FindUserByAccessCodeUseCase = () => {
+	const repository = UserRemoteRepository();
+	const hashProvider = HashProvider();
 
 	return {
 		findUserByAccessCode: async ({
@@ -18,11 +19,6 @@ const FindUserByAccessCodeUseCase = (context: Context) => {
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const {
-				providers: { sessionProvider, randomProvider, hashProvider },
-				services: { cacheService },
-			} = context;
-
 			const { affectedRows: foundUsersRow } = await repository.findUsers();
 
 			for (const foundUserRow of foundUsersRow) {
@@ -32,18 +28,6 @@ const FindUserByAccessCodeUseCase = (context: Context) => {
 				);
 
 				if (isSameAccessCode === true) {
-					const sessionId = randomProvider.createRandomUuid();
-					sessionProvider.addToSession(sessionId);
-
-					await cacheService.addToCache(`session:${sessionId}`, {
-						sessionId: sessionId,
-						userId: foundUserRow.id,
-						roleId: foundUserRow.roleId,
-						expiresIn: new Date().setSeconds(
-							randomProvider.createExpirationTime(),
-						),
-					});
-
 					return {
 						statusCode: 200,
 						args: userDTOMapper(foundUserRow),

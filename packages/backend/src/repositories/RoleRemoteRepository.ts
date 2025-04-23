@@ -1,10 +1,9 @@
 import type { RoleEntity, RoleRepository } from "../domains/Role";
-import type { DatabaseService } from "../services/DatabaseService";
+import { DatabaseService } from "../services/DatabaseService";
 
-const RoleRemoteRepository = ({
-	createConnection,
-	destroyConnection,
-}: ReturnType<typeof DatabaseService>): RoleRepository => {
+const RoleRemoteRepository = (): RoleRepository => {
+	const { createConnection, destroyConnection } = DatabaseService();
+
 	return {
 		findRoles: async () => {
 			const connection = createConnection();

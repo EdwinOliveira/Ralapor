@@ -4,10 +4,13 @@ import type {
 	UserEntity,
 } from "../../domains/User";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import type { Context } from "../../signatures/Context";
+import { RandomProvider } from "../../providers/RandomProvider";
+import { HashProvider } from "../../providers/HashProvider";
 
-const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context.services.databaseService);
+const UpdateUserAccessCodeByIdUseCase = () => {
+	const repository = UserRemoteRepository();
+	const randomProvider = RandomProvider();
+	const hashProvider = HashProvider();
 
 	return {
 		updateUserAccessCodeById: async ({
@@ -15,7 +18,7 @@ const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
 				params: { id },
 			},
 		}: UseCaseRequest<UpdateUserAccessCodeByIdRequest>): Promise<
-			UseCaseResponse<Pick<UserEntity, "id" | "updatedAt">>
+			UseCaseResponse<Pick<UserEntity, "id" | "roleId" | "updatedAt">>
 		> => {
 			const { affectedIds: foundUsersId } = await repository.findUserById({
 				query: { id },
@@ -24,11 +27,6 @@ const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
 			if (foundUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
-
-			const {
-				providers: { randomProvider, hashProvider, sessionProvider },
-				services: { cacheService },
-			} = context;
 
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);
@@ -45,22 +43,11 @@ const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
 
 			console.log(accessCode);
 
-			const cookie = sessionProvider.getSession();
-			if (cookie.sid === undefined) {
-				return { statusCode: 500 };
-			}
-
-			await cacheService.updateOnCache(`session:${cookie.sid}`, {
-				sessionId: cookie.sid,
-				userId: updatedUsersId[0],
-				roleId: updatedUsersRow[0].roleId,
-				expiresIn: new Date().setSeconds(randomProvider.createExpirationTime()),
-			});
-
 			return {
 				statusCode: 201,
 				args: {
 					id: updatedUsersId[0],
+					roleId: updatedUsersRow[0].roleId,
 					updatedAt: updatedUsersRow[0].updatedAt,
 				},
 			};

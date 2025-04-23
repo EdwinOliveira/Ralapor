@@ -1,12 +1,15 @@
-import type { CreateUserRequest, UserDTO } from "../../domains/User";
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+import type { CreateUserRequest, UserDTO } from "../../domains/User";
+import { HashProvider } from "../../providers/HashProvider";
+import { RandomProvider } from "../../providers/RandomProvider";
+import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseCase";
 
-const CreateUserUseCase = (context: Context) => {
-	const { findRoleByDesignation } = FindRoleByDesignationUseCase(context);
-	const repository = UserRemoteRepository(context.services.databaseService);
+const CreateUserUseCase = () => {
+	const repository = UserRemoteRepository();
+	const randomProvider = RandomProvider();
+	const hashProvider = HashProvider();
+	const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 
 	return {
 		createUser: async ({
@@ -38,8 +41,6 @@ const CreateUserUseCase = (context: Context) => {
 			) {
 				return { statusCode: 500 };
 			}
-
-			const { randomProvider, hashProvider } = context.providers;
 
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);

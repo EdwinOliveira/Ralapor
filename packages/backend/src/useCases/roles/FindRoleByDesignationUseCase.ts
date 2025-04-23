@@ -1,16 +1,13 @@
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import {
 	type FindRoleByDesignationRequest,
 	type RoleDTO,
 	roleDTOMapper,
 } from "../../domains/Role";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
-import type { Context } from "../../signatures/Context";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindRoleByDesignationUseCase = ({
-	services: { databaseService },
-}: Context) => {
-	const repository = RoleRemoteRepository(databaseService);
+const FindRoleByDesignationUseCase = () => {
+	const repository = RoleRemoteRepository();
 
 	return {
 		findRoleByDesignation: async ({

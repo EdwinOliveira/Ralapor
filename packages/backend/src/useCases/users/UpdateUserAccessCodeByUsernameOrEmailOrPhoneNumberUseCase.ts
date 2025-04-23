@@ -4,12 +4,13 @@ import type {
 	UserDTO,
 } from "../../domains/User";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import type { Context } from "../../signatures/Context";
+import { RandomProvider } from "../../providers/RandomProvider";
+import { HashProvider } from "../../providers/HashProvider";
 
-const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = (
-	context: Context,
-) => {
-	const repository = UserRemoteRepository(context.services.databaseService);
+const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
+	const repository = UserRemoteRepository();
+	const randomProvider = RandomProvider();
+	const hashProvider = HashProvider();
 
 	return {
 		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({
@@ -27,8 +28,6 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = (
 			if (foundUsersId.length === 0) {
 				return { statusCode: 404 };
 			}
-
-			const { randomProvider, hashProvider } = context.providers;
 
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);

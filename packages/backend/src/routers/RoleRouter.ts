@@ -9,13 +9,12 @@ import {
 import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
 import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
 import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
-import type { Context } from "../signatures/Context";
 import { SessionGuard } from "../guards/SessionGuard";
 
 const RoleRouter = () => {
 	const { isAuthenticated } = SessionGuard();
 
-	const subscribe = (router: Router, context: Context): Router => {
+	const subscribe = (router: Router): Router => {
 		router.get(
 			"/:id",
 			isAuthenticated,
@@ -29,7 +28,7 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findRoleById } = FindRoleByIdUseCase(context);
+				const { findRoleById } = FindRoleByIdUseCase();
 				const { statusCode, args } = await findRoleById({
 					schemaArgs,
 				});
@@ -51,7 +50,7 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { findRoleByDesignation } = FindRoleByDesignationUseCase(context);
+				const { findRoleByDesignation } = FindRoleByDesignationUseCase();
 				const { statusCode, args } = await findRoleByDesignation({
 					schemaArgs,
 				});
@@ -68,7 +67,7 @@ const RoleRouter = () => {
 				return void response.status(400).json({ errors: schemaErrors.issues });
 			}
 
-			const { createRole } = CreateRoleUseCase(context);
+			const { createRole } = CreateRoleUseCase();
 			const { statusCode, args } = await createRole({
 				schemaArgs,
 			});
@@ -92,7 +91,7 @@ const RoleRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
-				const { updateRoleById } = UpdateRoleByIdUseCase(context);
+				const { updateRoleById } = UpdateRoleByIdUseCase();
 				const { statusCode, args } = await updateRoleById({
 					schemaArgs,
 				});

@@ -1,10 +1,9 @@
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { UpdateUserByIdRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { Context } from "../../signatures/Context";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const UpdateUserByIdUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context.services.databaseService);
+const UpdateUserByIdUseCase = () => {
+	const repository = UserRemoteRepository();
 
 	return {
 		updateUserById: async ({
