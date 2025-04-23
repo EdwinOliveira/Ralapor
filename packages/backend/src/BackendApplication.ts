@@ -1,13 +1,16 @@
 import Express, { json, Router } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
+import type { Context } from "./signatures/Context";
 import { UserRouter } from "./routers/UserRouter";
 import { RoleRouter } from "./routers/RoleRouter";
 import { HashProvider } from "./providers/HashProvider";
 import { MailProvider } from "./providers/MailProvider";
 import { RandomProvider } from "./providers/RandomProvider";
 import { DatabaseService } from "./services/DatabaseService";
-import type { Context } from "./signatures/Context";
+import { CacheService } from "./services/CacheService";
+import { SessionProvider } from "./providers/SessionProvider";
 
 const BackendApplication = () => {
 	const httpApplication = Express();
@@ -17,14 +20,17 @@ const BackendApplication = () => {
 			hashProvider: HashProvider(),
 			mailProvider: MailProvider(),
 			randomProvider: RandomProvider(),
+			sessionProvider: SessionProvider(),
 		},
 		services: {
 			databaseService: DatabaseService(),
+			cacheService: CacheService(),
 		},
 	};
 
 	const createMiddleware = () => {
 		httpApplication.use(json());
+		httpApplication.use(cookieParser());
 		httpApplication.use(
 			cors({
 				origin: "http://localhost:5173",

@@ -14,24 +14,34 @@ import {
 	updateUserByIdSchema,
 } from "../domains/User";
 import type { Context } from "../signatures/Context";
+import { SessionProvider } from "../providers/SessionProvider";
+import { SessionGuard } from "../guards/SessionGuard";
 
 const UserRouter = () => {
+	const { isAuthenticated } = SessionGuard();
+
 	const subscribe = (router: Router, context: Context): Router => {
-		router.get("/:id", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				findUserByIdSchema.safeParse({ params: request.params });
+		router.get(
+			"/:id",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					findUserByIdSchema.safeParse({ params: request.params });
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-			const { findUserById } = FindUserByIdUseCase(context);
-			const { statusCode, args } = await findUserById({
-				schemaArgs,
-			});
+				const { findUserById } = FindUserByIdUseCase(context);
+				const { statusCode, args } = await findUserById({
+					schemaArgs,
+				});
 
-			return void response.status(statusCode).json(args);
-		});
+				return void response.status(statusCode).json(args);
+			},
+		);
 
 		router.get(
 			"/access-code/:accessCode",
@@ -45,6 +55,7 @@ const UserRouter = () => {
 						.json({ errors: schemaErrors.issues });
 				}
 
+				context.providers.sessionProvider = SessionProvider(request, response);
 				const { findUserByAccessCode } = FindUserByAccessCodeUseCase(context);
 				const { statusCode, args } = await findUserByAccessCode({
 					schemaArgs,

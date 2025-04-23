@@ -18,15 +18,37 @@ const FindUserByAccessCodeUseCase = (context: Context) => {
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
+			const { sessionProvider, randomProvider, hashProvider } =
+				context.providers;
+
 			const { affectedRows: foundUsersRow } = await repository.findUsers();
 
 			for (const foundUserRow of foundUsersRow) {
-				const isSameAccessCode = await context.providers.hashProvider.compare(
+				const isSameAccessCode = await hashProvider.compare(
 					accessCode,
 					foundUserRow.accessCode,
 				);
 
 				if (isSameAccessCode === true) {
+					const sessionId = randomProvider.createRandomUuid();
+					sessionProvider.addToSession(sessionId);
+
+					if (sessionId === undefined) {
+						return { statusCode: 500 };
+					}
+
+					await context.services.cacheService.addToCache(
+						`session:${sessionId}`,
+						{
+							sessionId: sessionId,
+							userId: foundUserRow.id,
+							roleId: foundUserRow.roleId,
+							expiresIn: new Date().setSeconds(
+								randomProvider.createExpirationTime(),
+							),
+						},
+					);
+
 					return {
 						statusCode: 200,
 						args: userDTOMapper(foundUserRow),

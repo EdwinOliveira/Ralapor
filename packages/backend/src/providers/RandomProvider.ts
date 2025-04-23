@@ -2,6 +2,12 @@ import { randomBytes } from "node:crypto";
 
 const RandomProvider = () => {
 	return {
+		createRandomUuid: () => {
+			return crypto.randomUUID();
+		},
+		createExpirationTime: () => {
+			return 86400; // It's 1 day dummy;
+		},
 		createRandomString: (size: number) => {
 			return randomBytes(size).toString("hex");
 		},

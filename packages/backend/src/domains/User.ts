@@ -137,7 +137,9 @@ interface UserRepository {
 	}: RepositoryRequest<
 		Pick<UserEntity, "id">,
 		Partial<Omit<UserEntity, "id" | "createdAt" | "updatedAt">>
-	>): Promise<RepositoryResponse<Pick<UserEntity, "updatedAt">>>;
+	>): Promise<
+		RepositoryResponse<Omit<UserEntity, "id" | "accessCode" | "createdAt">>
+	>;
 }
 
 export {

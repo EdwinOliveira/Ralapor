@@ -131,7 +131,16 @@ const UserRemoteRepository = ({
 
 			return {
 				affectedIds: [updatedUsers[0].id],
-				affectedRows: [{ updatedAt: updatedUsers[0].updatedAt }],
+				affectedRows: [
+					{
+						roleId: updatedUsers[0].roleId,
+						username: updatedUsers[0].username,
+						email: updatedUsers[0].email,
+						phoneNumber: updatedUsers[0].phoneNumber,
+						phoneNumberCode: updatedUsers[0].phoneNumberCode,
+						updatedAt: updatedUsers[0].updatedAt,
+					},
+				],
 			};
 		},
 	};
