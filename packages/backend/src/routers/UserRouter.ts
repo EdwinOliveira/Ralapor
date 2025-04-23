@@ -18,7 +18,7 @@ import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
 
 const UserRouter = () => {
-	const { isAuthenticated } = SessionGuard();
+	const { isAuthenticated, isAuthenticating } = SessionGuard();
 
 	const subscribe = (router: Router, context: Context): Router => {
 		router.get(
@@ -45,6 +45,7 @@ const UserRouter = () => {
 
 		router.get(
 			"/access-code/:accessCode",
+			isAuthenticating,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByAccessCodeSchema.safeParse({ params: request.params });

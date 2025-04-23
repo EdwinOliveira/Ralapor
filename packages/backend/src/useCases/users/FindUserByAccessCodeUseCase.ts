@@ -18,8 +18,10 @@ const FindUserByAccessCodeUseCase = (context: Context) => {
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>
 		> => {
-			const { sessionProvider, randomProvider, hashProvider } =
-				context.providers;
+			const {
+				providers: { sessionProvider, randomProvider, hashProvider },
+				services: { cacheService },
+			} = context;
 
 			const { affectedRows: foundUsersRow } = await repository.findUsers();
 
@@ -33,21 +35,14 @@ const FindUserByAccessCodeUseCase = (context: Context) => {
 					const sessionId = randomProvider.createRandomUuid();
 					sessionProvider.addToSession(sessionId);
 
-					if (sessionId === undefined) {
-						return { statusCode: 500 };
-					}
-
-					await context.services.cacheService.addToCache(
-						`session:${sessionId}`,
-						{
-							sessionId: sessionId,
-							userId: foundUserRow.id,
-							roleId: foundUserRow.roleId,
-							expiresIn: new Date().setSeconds(
-								randomProvider.createExpirationTime(),
-							),
-						},
-					);
+					await cacheService.addToCache(`session:${sessionId}`, {
+						sessionId: sessionId,
+						userId: foundUserRow.id,
+						roleId: foundUserRow.roleId,
+						expiresIn: new Date().setSeconds(
+							randomProvider.createExpirationTime(),
+						),
+					});
 
 					return {
 						statusCode: 200,

@@ -25,8 +25,10 @@ const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
 				return { statusCode: 404 };
 			}
 
-			const { randomProvider, hashProvider, sessionProvider } =
-				context.providers;
+			const {
+				providers: { randomProvider, hashProvider, sessionProvider },
+				services: { cacheService },
+			} = context;
 
 			const accessCode = randomProvider.createAccessCode(12);
 			const hashedAccessCode = await hashProvider.hash(accessCode);
@@ -43,22 +45,17 @@ const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
 
 			console.log(accessCode);
 
-			const cookie = context.providers.sessionProvider.getSession();
+			const cookie = sessionProvider.getSession();
 			if (cookie.sid === undefined) {
 				return { statusCode: 500 };
 			}
 
-			await context.services.cacheService.updateOnCache(
-				`session:${cookie.sid}`,
-				{
-					sessionId: cookie.sid,
-					userId: updatedUsersId[0],
-					roleId: updatedUsersRow[0].roleId,
-					expiresIn: new Date().setSeconds(
-						randomProvider.createExpirationTime(),
-					),
-				},
-			);
+			await cacheService.updateOnCache(`session:${cookie.sid}`, {
+				sessionId: cookie.sid,
+				userId: updatedUsersId[0],
+				roleId: updatedUsersRow[0].roleId,
+				expiresIn: new Date().setSeconds(randomProvider.createExpirationTime()),
+			});
 
 			return {
 				statusCode: 201,
