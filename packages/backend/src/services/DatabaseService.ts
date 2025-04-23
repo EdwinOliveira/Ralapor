@@ -31,6 +31,8 @@ const DatabaseService = () => {
 				table.string("phoneNumber");
 				table.string("phoneNumberCode");
 				table.string("accessCode");
+				table.boolean("isTemporaryTerminated");
+				table.boolean("isPermanentlyTerminated");
 				table.timestamps(true, true, true);
 			});
 		}

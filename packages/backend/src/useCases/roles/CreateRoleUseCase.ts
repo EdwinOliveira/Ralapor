@@ -3,8 +3,8 @@ import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
 import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const CreateRoleUseCase = (context: Context) => {
-	const repository = RoleRemoteRepository(context);
+const CreateRoleUseCase = ({ services: { databaseService } }: Context) => {
+	const repository = RoleRemoteRepository(databaseService);
 
 	return {
 		createRole: async ({

@@ -8,7 +8,7 @@ import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindUserByIdUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context);
+	const repository = UserRemoteRepository(context.services.databaseService);
 
 	return {
 		findUserById: async ({

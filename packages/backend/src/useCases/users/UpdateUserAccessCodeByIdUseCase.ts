@@ -7,7 +7,7 @@ import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { Context } from "../../signatures/Context";
 
 const UpdateUserAccessCodeByIdUseCase = (context: Context) => {
-	const repository = UserRemoteRepository(context);
+	const repository = UserRemoteRepository(context.services.databaseService);
 
 	return {
 		updateUserAccessCodeById: async ({

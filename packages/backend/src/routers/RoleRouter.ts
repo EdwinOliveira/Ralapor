@@ -60,27 +60,21 @@ const RoleRouter = () => {
 			},
 		);
 
-		router.post(
-			"/",
-			isAuthenticated,
-			async (request: Request, response: Response) => {
-				const { data: schemaArgs, error: schemaErrors } =
-					createRoleSchema.safeParse({ body: request.body });
+		router.post("/", async (request: Request, response: Response) => {
+			const { data: schemaArgs, error: schemaErrors } =
+				createRoleSchema.safeParse({ body: request.body });
 
-				if (schemaErrors !== undefined) {
-					return void response
-						.status(400)
-						.json({ errors: schemaErrors.issues });
-				}
+			if (schemaErrors !== undefined) {
+				return void response.status(400).json({ errors: schemaErrors.issues });
+			}
 
-				const { createRole } = CreateRoleUseCase(context);
-				const { statusCode, args } = await createRole({
-					schemaArgs,
-				});
+			const { createRole } = CreateRoleUseCase(context);
+			const { statusCode, args } = await createRole({
+				schemaArgs,
+			});
 
-				return void response.status(statusCode).json({ id: args?.id });
-			},
-		);
+			return void response.status(statusCode).json({ id: args?.id });
+		});
 
 		router.put(
 			"/:id",

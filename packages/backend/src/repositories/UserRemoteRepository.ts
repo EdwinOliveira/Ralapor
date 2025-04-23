@@ -1,11 +1,10 @@
 import type { UserEntity, UserRepository } from "../domains/User";
-import type { Context } from "../signatures/Context";
+import type { DatabaseService } from "../services/DatabaseService";
 
 const UserRemoteRepository = ({
-	services: {
-		databaseService: { createConnection, destroyConnection },
-	},
-}: Context): UserRepository => {
+	createConnection,
+	destroyConnection,
+}: ReturnType<typeof DatabaseService>): UserRepository => {
 	return {
 		findUsers: async () => {
 			const connection = createConnection();
@@ -86,7 +85,11 @@ const UserRemoteRepository = ({
 			const connection = createConnection();
 
 			const createdUser = await connection<UserEntity>("Users")
-				.insert(args)
+				.insert({
+					...args,
+					isTemporaryTerminated: false,
+					isPermanentlyTerminated: false,
+				})
 				.returning("id");
 
 			await destroyConnection(connection);
@@ -120,6 +123,10 @@ const UserRemoteRepository = ({
 					phoneNumber: args.phoneNumber || foundUser.phoneNumber,
 					phoneNumberCode: args.phoneNumberCode || foundUser.phoneNumberCode,
 					accessCode: args.accessCode || foundUser.accessCode,
+					isTemporaryTerminated:
+						args.isTemporaryTerminated || foundUser.isTemporaryTerminated,
+					isPermanentlyTerminated:
+						args.isPermanentlyTerminated || foundUser.isPermanentlyTerminated,
 				})
 				.returning("*");
 
@@ -131,16 +138,7 @@ const UserRemoteRepository = ({
 
 			return {
 				affectedIds: [updatedUsers[0].id],
-				affectedRows: [
-					{
-						roleId: updatedUsers[0].roleId,
-						username: updatedUsers[0].username,
-						email: updatedUsers[0].email,
-						phoneNumber: updatedUsers[0].phoneNumber,
-						phoneNumberCode: updatedUsers[0].phoneNumberCode,
-						updatedAt: updatedUsers[0].updatedAt,
-					},
-				],
+				affectedRows: updatedUsers,
 			};
 		},
 	};

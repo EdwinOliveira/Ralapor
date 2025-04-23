@@ -9,7 +9,7 @@ import type { Context } from "../../signatures/Context";
 const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = (
 	context: Context,
 ) => {
-	const repository = UserRemoteRepository(context);
+	const repository = UserRemoteRepository(context.services.databaseService);
 
 	return {
 		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({

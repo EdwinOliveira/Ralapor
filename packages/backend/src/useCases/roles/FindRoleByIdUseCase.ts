@@ -7,8 +7,8 @@ import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
 import type { Context } from "../../signatures/Context";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindRoleByIdUseCase = (context: Context) => {
-	const repository = RoleRemoteRepository(context);
+const FindRoleByIdUseCase = ({ services: { databaseService } }: Context) => {
+	const repository = RoleRemoteRepository(databaseService);
 
 	return {
 		findRoleById: async ({

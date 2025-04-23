@@ -3,8 +3,8 @@ import type { UpdateRoleByIdRequest, RoleDTO } from "../../domains/Role";
 import type { Context } from "../../signatures/Context";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
 
-const UpdateRoleByIdUseCase = (context: Context) => {
-	const repository = RoleRemoteRepository(context);
+const UpdateRoleByIdUseCase = ({ services: { databaseService } }: Context) => {
+	const repository = RoleRemoteRepository(databaseService);
 
 	return {
 		updateRoleById: async ({

@@ -12,6 +12,8 @@ type UserEntity = {
 	phoneNumber: string;
 	phoneNumberCode: string;
 	accessCode: string;
+	isTemporaryTerminated: boolean;
+	isPermanentlyTerminated: boolean;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -26,6 +28,8 @@ const userDTOMapper = (entity: UserEntity): UserDTO => {
 		email: entity.email,
 		phoneNumber: entity.phoneNumber,
 		phoneNumberCode: entity.phoneNumberCode,
+		isTemporaryTerminated: entity.isTemporaryTerminated,
+		isPermanentlyTerminated: entity.isPermanentlyTerminated,
 		createdAt: entity.createdAt,
 		updatedAt: entity.updatedAt,
 	};
@@ -78,6 +82,8 @@ const updateUserByIdSchema = z.object({
 		email: z.string().email().optional(),
 		phoneNumber: z.string().optional(),
 		phoneNumberCode: z.enum(["+351", "+44"]).optional(),
+		isTemporaryTerminated: z.boolean().optional(),
+		isPermanentlyTerminated: z.boolean().optional(),
 	}),
 });
 
@@ -129,7 +135,14 @@ interface UserRepository {
 		args,
 	}: RepositoryRequest<
 		unknown,
-		Omit<UserEntity, "id" | "createdAt" | "updatedAt">
+		Omit<
+			UserEntity,
+			| "id"
+			| "isTemporaryTerminated"
+			| "isPermanentlyTerminated"
+			| "createdAt"
+			| "updatedAt"
+		>
 	>): Promise<RepositoryResponse<unknown>>;
 	updateUserById({
 		query,
@@ -137,9 +150,7 @@ interface UserRepository {
 	}: RepositoryRequest<
 		Pick<UserEntity, "id">,
 		Partial<Omit<UserEntity, "id" | "createdAt" | "updatedAt">>
-	>): Promise<
-		RepositoryResponse<Omit<UserEntity, "id" | "accessCode" | "createdAt">>
-	>;
+	>): Promise<RepositoryResponse<UserEntity>>;
 }
 
 export {

@@ -6,7 +6,7 @@ import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseC
 
 const CreateUserUseCase = (context: Context) => {
 	const { findRoleByDesignation } = FindRoleByDesignationUseCase(context);
-	const repository = UserRemoteRepository(context);
+	const repository = UserRemoteRepository(context.services.databaseService);
 
 	return {
 		createUser: async ({
