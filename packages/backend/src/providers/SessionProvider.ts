@@ -9,13 +9,16 @@ const SessionProvider = (request?: Request, response?: Response) => {
 	const { createExpirationTime } = RandomProvider();
 
 	return {
-		getSession: (): Cookies => request?.cookies as Cookies,
+		getSession: () => request?.cookies as Cookies | undefined,
 		addToSession: (sessionId: string) =>
 			response?.cookie("sid", sessionId, {
 				httpOnly: true,
 				sameSite: "lax",
 				maxAge: createExpirationTime(),
 			}),
+		clearSession: () => {
+			response?.clearCookie("sid");
+		},
 	};
 };
 

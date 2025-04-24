@@ -5,6 +5,7 @@ type CacheData = {
 	userId: number;
 	roleId: number;
 	expiresIn: number;
+	refreshToken: string;
 };
 
 const CacheService = () => {

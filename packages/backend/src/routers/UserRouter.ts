@@ -7,17 +7,19 @@ import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAcc
 import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
 import {
 	createUserSchema,
+	deleteUserSessionByIdSchema,
 	findUserByAccessCodeSchema,
 	findUserByIdSchema,
 	updateUserAccessCodeByIdSchema,
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
 } from "../domains/User";
-import type { Context } from "../signatures/Context";
 import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
 import { CacheService } from "../services/CacheService";
 import { RandomProvider } from "../providers/RandomProvider";
+import { DeleteUserSessionByIdUseCase } from "../useCases/users/DeleteUserSessionByIdUseCase";
+import { TokenProvider } from "../providers/TokenProvider";
 
 const UserRouter = () => {
 	const { isAuthenticated, isAuthenticating } = SessionGuard();
@@ -68,10 +70,22 @@ const UserRouter = () => {
 				}
 
 				const randomProvider = RandomProvider();
-				const sessionProvider = SessionProvider();
+				const sessionProvider = SessionProvider(request, response);
 				const cacheService = CacheService();
+				const tokenProvider = TokenProvider();
 
 				const sessionId = randomProvider.createRandomUuid();
+
+				const refreshToken = await tokenProvider.createToken(
+					{ sessionId },
+					"7d",
+					process.env.SESSION_TOKEN_SECRET,
+				);
+
+				if (refreshToken === undefined) {
+					return void response.status(500).json();
+				}
+
 				sessionProvider.addToSession(sessionId);
 
 				await cacheService.addToCache(`session:${sessionId}`, {
@@ -81,6 +95,7 @@ const UserRouter = () => {
 					expiresIn: new Date().setSeconds(
 						randomProvider.createExpirationTime(),
 					),
+					refreshToken,
 				});
 
 				return void response.status(statusCode).json(args);
@@ -149,15 +164,26 @@ const UserRouter = () => {
 					schemaArgs,
 				});
 
-				const sessionProvider = SessionProvider();
+				const sessionProvider = SessionProvider(request, response);
 				const cookies = sessionProvider.getSession();
 
-				if (args === undefined || cookies.sid === undefined) {
+				if (args === undefined || cookies?.sid === undefined) {
 					return void response.status(500).json();
 				}
 
 				const cacheService = CacheService();
 				const randomProvider = RandomProvider();
+				const tokenProvider = TokenProvider();
+
+				const refreshToken = await tokenProvider.createToken(
+					{ sessionId: cookies.sid },
+					"7d",
+					process.env.SESSION_TOKEN_SECRET,
+				);
+
+				if (refreshToken === undefined) {
+					return void response.status(500).json();
+				}
 
 				await cacheService.updateOnCache(`session:${cookies.sid}`, {
 					sessionId: cookies.sid,
@@ -166,6 +192,7 @@ const UserRouter = () => {
 					expiresIn: new Date().setSeconds(
 						randomProvider.createExpirationTime(),
 					),
+					refreshToken,
 				});
 
 				return void response.status(statusCode).json({
@@ -201,6 +228,37 @@ const UserRouter = () => {
 					id: args?.id,
 					updatedAt: args?.updatedAt,
 				});
+			},
+		);
+
+		router.delete(
+			"/:id/sessions",
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					deleteUserSessionByIdSchema.safeParse({ params: request.params });
+
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { deleteUserSessionById } = DeleteUserSessionByIdUseCase();
+				const { statusCode } = await deleteUserSessionById({
+					schemaArgs,
+				});
+
+				const { getSession, clearSession } = SessionProvider(request, response);
+
+				const session = getSession();
+
+				if (session && session.sid !== undefined) {
+					const { removeFromCache } = CacheService();
+					await removeFromCache(`session:${session.sid}`);
+					clearSession();
+				}
+
+				return void response.status(statusCode).json();
 			},
 		);
 

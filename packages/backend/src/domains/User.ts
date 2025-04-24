@@ -114,6 +114,28 @@ type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest = z.infer<
 	typeof updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema
 >;
 
+const updateUserSessionByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type UpdateUserSessionByIdRequest = z.infer<typeof updateUserSessionByIdSchema>;
+
+const deleteUserSessionByIdSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+});
+
+type DeleteUserSessionByIdRequest = z.infer<typeof deleteUserSessionByIdSchema>;
+
 interface UserRepository {
 	findUsers(): Promise<RepositoryResponse<UserEntity>>;
 	findUserById({
@@ -170,4 +192,8 @@ export {
 	type UpdateUserAccessCodeByIdRequest,
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
+	updateUserSessionByIdSchema,
+	type UpdateUserSessionByIdRequest,
+	deleteUserSessionByIdSchema,
+	type DeleteUserSessionByIdRequest,
 };
