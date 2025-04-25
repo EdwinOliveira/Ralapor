@@ -185,13 +185,13 @@ const UserRouter = () => {
 					return void response.status(500).json();
 				}
 
+				const expirationTime = randomProvider.createExpirationTime();
+
 				await cacheService.updateOnCache(`session:${cookies.sid}`, {
 					sessionId: cookies.sid,
 					userId: args?.id,
 					roleId: args?.roleId,
-					expiresIn: new Date().setSeconds(
-						randomProvider.createExpirationTime(),
-					),
+					expiresIn: new Date().setSeconds(expirationTime),
 					refreshToken,
 				});
 

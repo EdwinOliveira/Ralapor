@@ -1,9 +1,15 @@
 import { type JwtPayload, sign, TokenExpiredError, verify } from "jsonwebtoken";
 
+type CheckTokenSignature =
+	| "TokenSuccess"
+	| "TokenExpiredError"
+	| "TokenInvalidError";
+
 type CheckTokenResponse = {
-	sessionId: string;
-	iat: number;
-	exp: number;
+	signature: CheckTokenSignature;
+	sessionId?: string;
+	iat?: number;
+	exp?: number;
 };
 
 const TokenProvider = () => {
@@ -21,21 +27,21 @@ const TokenProvider = () => {
 			});
 		},
 		checkToken: (token: string, tokenSecret = "JWTtokenSecret") => {
-			return new Promise<
-				CheckTokenResponse | "TokenExpiredError" | "TokenInvalidError"
-			>((resolve) => {
+			return new Promise<CheckTokenResponse>((resolve) => {
 				verify(token, tokenSecret, (error, data) => {
 					if (error?.inner instanceof TokenExpiredError) {
-						return resolve("TokenExpiredError");
+						return resolve({ signature: "TokenExpiredError" });
 					}
 
-					return data !== undefined
-						? resolve(data as CheckTokenResponse)
-						: resolve("TokenInvalidError");
+					return resolve(
+						data !== undefined && typeof data !== "string"
+							? { signature: "TokenSuccess" }
+							: { signature: "TokenInvalidError" },
+					);
 				});
 			});
 		},
 	};
 };
 
-export { TokenProvider };
+export { TokenProvider, type CheckTokenResponse };

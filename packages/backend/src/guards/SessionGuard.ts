@@ -32,10 +32,7 @@ const SessionGuard = () => {
 							process.env.SESSION_TOKEN_SECRET,
 						);
 
-						if (
-							tokenData !== "TokenExpiredError" &&
-							tokenData !== "TokenInvalidError"
-						) {
+						if (tokenData.signature === "TokenSuccess") {
 							const { createExpirationTime } = RandomProvider();
 							const expirationTime = createExpirationTime();
 
