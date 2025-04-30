@@ -1,0 +1,11 @@
+{
+	"create-user": {
+		"form": {
+			"form-header": {
+				"typography": {
+					"content": "Create your Ralapor user"
+				}
+			}
+		}
+	}
+}

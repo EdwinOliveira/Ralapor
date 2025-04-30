@@ -3,24 +3,22 @@ import FormGroup, { type FormGroupProps } from "./FormGroup";
 import FormHeader, { type FormHeaderProps } from "./FormHeader";
 
 type FormProps = {
-	name: string;
 	formHeader: FormHeaderProps;
-	formGroups: Array<FormGroupProps>;
+	formGroups: Record<string, FormGroupProps>;
 	formAction: FormActionProps;
 	onSubmit: (formEvent: React.FormEvent) => void;
 };
 
 const Form: React.FC<FormProps> = ({
-	name,
 	formHeader,
 	formGroups,
 	formAction,
 	onSubmit,
 }) => {
 	return (
-		<form id="form" name={name} onSubmit={onSubmit}>
+		<form onSubmit={onSubmit}>
 			<FormHeader {...formHeader} />
-			{formGroups.map((formGroup) => (
+			{Object.values(formGroups).map((formGroup) => (
 				<FormGroup key={formGroup.id} {...formGroup} />
 			))}
 			<FormAction {...formAction} />

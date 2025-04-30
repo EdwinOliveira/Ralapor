@@ -1,8 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import enGB from "./src/i18n/enGB";
-import ptPT from "./src/i18n/ptPT";
+import ptPT from "./i18n/ptPT.json";
+import enGB from "./i18n/enGB.json";
 
 i18n
 	.use(LanguageDetector)
@@ -14,8 +14,8 @@ i18n
 			escapeValue: false,
 		},
 		resources: {
-			"en-GB": enGB,
-			"pt-PT": ptPT,
+			"en-GB": { translation: enGB },
+			"pt-PT": { translation: ptPT },
 		},
 	});
 

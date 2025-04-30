@@ -2,18 +2,17 @@ import FormButton, { type FormButtonProps } from "./FormButton";
 import FormLink, { type FormLinkProps } from "./FormLink";
 
 export type FormActionProps = {
-	id: number;
-	formButtons: Array<FormButtonProps>;
-	formLinks: Array<FormLinkProps>;
+	formButtons: Record<string, FormButtonProps>;
+	formLinks: Record<string, FormLinkProps>;
 };
 
 const FormAction: React.FC<FormActionProps> = ({ formButtons, formLinks }) => {
 	return (
 		<div id="form-action">
-			{formButtons.map((formButton) => (
+			{Object.values(formButtons).map((formButton) => (
 				<FormButton key={formButton.id} {...formButton} />
 			))}
-			{formLinks.map((formLink) => (
+			{Object.values(formLinks).map((formLink) => (
 				<FormLink key={formLink.id} {...formLink} />
 			))}
 		</div>

@@ -1,0 +1,45 @@
+{
+	"form-header": {
+		"typography": {
+			"content": "create-user.form.form-header.typography.content",
+			"segment": "header"
+		}
+	},
+	"form-groups": {
+		"create-user": {
+			"id": 1,
+			"form-inputs": {
+				"username": {
+					"name": "username",
+					"type": "text",
+					"placeholder": "create-user.form.form-groups.create-user.form-inputs.username.placeholder"
+				},
+				"email": {
+					"name": "email",
+					"type": "email",
+					"placeholder": "create-user.form.form-groups.create-user.form-inputs.email.placeholder"
+				},
+				"phone-number": {
+					"name": "phone-number",
+					"type": "tel",
+					"placeholder": "create-user.form.form-groups.create-user.form-inputs.phone-number.placeholder"
+				}
+			}
+		}
+	},
+	"form-action": {
+		"formButtons": {
+			"continue": {
+				"id": 1
+			}
+		},
+		"formLinks": {
+			"access-user": {
+				"id": 1
+			},
+			"recover-user": {
+				"id": 2
+			}
+		}
+	}
+}

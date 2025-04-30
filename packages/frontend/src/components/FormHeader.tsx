@@ -1,7 +1,16 @@
-export type FormHeaderProps = {};
+import type { TypographyProps } from "./Typography";
+import Typography from "./Typography";
 
-const FormHeader: React.FC<FormHeaderProps> = () => {
-	return <div id="form-header" />;
+export type FormHeaderProps = {
+	typography: TypographyProps;
+};
+
+const FormHeader: React.FC<FormHeaderProps> = ({ typography }) => {
+	return (
+		<div id="form-header">
+			<Typography {...typography} />
+		</div>
+	);
 };
 
 export default FormHeader;
