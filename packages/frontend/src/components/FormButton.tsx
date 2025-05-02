@@ -8,9 +8,9 @@ export type FormButtonProps = {
 
 const FormButton: React.FC<FormButtonProps> = ({ typography }) => {
 	return (
-		<div id="form-button">
+		<button type="button" id="form-button">
 			<Typography {...typography} />
-		</div>
+		</button>
 	);
 };
 

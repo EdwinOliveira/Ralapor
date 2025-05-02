@@ -27,9 +27,17 @@
 				},
 				"phoneNumber": {
 					"id": 3,
-					"name": "phone-number",
+					"name": "phoneNumber",
 					"type": "tel",
 					"placeholder": "create-user.form.form-groups.create-user.form-inputs.phone-number.placeholder"
+				},
+				"phoneNumberCode": {
+					"id": 4,
+					"name": "phoneNumberCode",
+					"options": {
+						"0": {},
+						"1": {}
+					}
 				}
 			}
 		}
