@@ -1,20 +1,31 @@
 .header {
-	font-size: clamp(1rem, 1rem + 0.5vw, 2rem);
+	font-size: clamp(1rem, 1rem + 0.25vw, 1.25rem);
 	font-weight: 800;
 }
 
 .sub-header {
-	font-size: clamp(0.90rem, 0.90rem + 0.5vw, 1.90rem);
+	font-size: clamp(0.90rem, 0.90rem + 0.25vw, 1.15rem);
 	font-weight: 700;
 }
 
 .paragraph {
-	font-size: clamp(0.80rem, 0.80rem + 0.5vw, 1.80rem);
+	font-size: clamp(0.80rem, 0.80rem + 0.25vw, 1.05rem);
 	font-weight: 500;
 }
 
 .label {
-	font-size: clamp(0.70rem, 0.70rem + 0.5vw, 1.70rem);
-	font-weight: 300;
+	font-size: clamp(0.60rem, 0.60rem + 0.25vw, 0.85rem);
+	font-weight: 800;
 	opacity: 0.25;
+}
+
+.button {
+	font-size: clamp(0.80rem, 0.80rem + 0.25vw, 1.05rem);
+	font-weight: 500;
+}
+
+.link {
+	font-size: clamp(0.60rem, 0.60rem + 0.25vw, 0.85rem);
+	font-weight: 600;
+	opacity: 0.35;
 }

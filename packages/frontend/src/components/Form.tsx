@@ -1,3 +1,4 @@
+import "./Form.css";
 import FormAction, { type FormActionProps } from "./FormAction";
 import FormGroup, { type FormGroupProps } from "./FormGroup";
 import FormHeader, { type FormHeaderProps } from "./FormHeader";
@@ -16,11 +17,13 @@ const Form: React.FC<FormProps> = ({
 	onSubmit,
 }) => {
 	return (
-		<form onSubmit={onSubmit}>
+		<form id="form" onSubmit={onSubmit}>
 			<FormHeader {...formHeader} />
-			{Object.values(formGroups).map((formGroup) => (
-				<FormGroup key={formGroup.id} {...formGroup} />
-			))}
+			<div id="form__groups">
+				{Object.values(formGroups).map((formGroup) => (
+					<FormGroup key={formGroup.id} {...formGroup} />
+				))}
+			</div>
 			<FormAction {...formAction} />
 		</form>
 	);

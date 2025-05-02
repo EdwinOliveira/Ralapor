@@ -1,0 +1,11 @@
+#form-action {
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+}
+
+#form-action__links {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}

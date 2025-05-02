@@ -5,6 +5,45 @@
 				"typography": {
 					"content": "Create your Ralapor user"
 				}
+			},
+			"form-groups": {
+				"create-user": {
+					"typography": {
+						"content": "User Information"
+					},
+					"form-inputs": {
+						"username": {
+							"placeholder": "Username..."
+						},
+						"email": {
+							"placeholder": "Email..."
+						},
+						"phone-number": {
+							"placeholder": "Phone Number..."
+						}
+					}
+				}
+			},
+			"form-action": {
+				"form-buttons": {
+					"continue": {
+						"typography": {
+							"content": "Continue"
+						}
+					}
+				},
+				"form-links": {
+					"access-user": {
+						"typography": {
+							"content": "Already have a Ralapor user? Click here to access it"
+						}
+					},
+					"recover-user": {
+						"typography": {
+							"content": "Forgot your Ralapor user? Click here to access it"
+						}
+					}
+				}
 			}
 		}
 	}

@@ -12,8 +12,8 @@
 	--default-inverse: #fff;
 
 	font-family: "Poppins", sans-serif;
-	background-color: var(--default);
-	color: var(--default-inverse);
+	background-color: var(--default-inverse);
+	color: var(--default);
 }
 
 #root {

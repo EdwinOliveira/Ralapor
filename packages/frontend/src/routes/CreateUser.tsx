@@ -1,3 +1,4 @@
+import "./CreateUser.css";
 import Form from "../components/Form";
 import { useForm } from "../hooks/useForm";
 
@@ -8,12 +9,7 @@ const CreateUser = () => {
 
 	return (
 		<div id="create-user">
-			<Form
-				formHeader={createUserForm["form-header"]}
-				formGroups={createUserForm["form-groups"]}
-				formAction={createUserForm["form-action"]}
-				onSubmit={onSubmit}
-			/>
+			<Form {...createUserForm} onSubmit={onSubmit} />
 		</div>
 	);
 };

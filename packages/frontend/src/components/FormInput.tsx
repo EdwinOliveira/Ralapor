@@ -1,10 +1,10 @@
-import type { HTMLInputTypeAttribute } from "react";
+import "./FormInput.css";
 import { useTranslation } from "react-i18next";
 
 export type FormInputProps = {
 	id: number;
 	name: string;
-	type: HTMLInputTypeAttribute;
+	type: string;
 	placeholder: string;
 };
 

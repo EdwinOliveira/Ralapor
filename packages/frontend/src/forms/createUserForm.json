@@ -1,25 +1,32 @@
 {
-	"form-header": {
+	"formHeader": {
 		"typography": {
 			"content": "create-user.form.form-header.typography.content",
 			"segment": "header"
 		}
 	},
-	"form-groups": {
-		"create-user": {
+	"formGroups": {
+		"createUser": {
 			"id": 1,
-			"form-inputs": {
+			"typography": {
+				"content": "create-user.form.form-groups.create-user.typography.content",
+				"segment": "label"
+			},
+			"formInputs": {
 				"username": {
+					"id": 1,
 					"name": "username",
 					"type": "text",
 					"placeholder": "create-user.form.form-groups.create-user.form-inputs.username.placeholder"
 				},
 				"email": {
+					"id": 2,
 					"name": "email",
 					"type": "email",
 					"placeholder": "create-user.form.form-groups.create-user.form-inputs.email.placeholder"
 				},
-				"phone-number": {
+				"phoneNumber": {
+					"id": 3,
 					"name": "phone-number",
 					"type": "tel",
 					"placeholder": "create-user.form.form-groups.create-user.form-inputs.phone-number.placeholder"
@@ -27,18 +34,32 @@
 			}
 		}
 	},
-	"form-action": {
+	"formAction": {
 		"formButtons": {
 			"continue": {
-				"id": 1
+				"id": 1,
+				"typography": {
+					"content": "create-user.form.form-action.form-buttons.continue.typography.content",
+					"segment": "button"
+				}
 			}
 		},
 		"formLinks": {
-			"access-user": {
-				"id": 1
+			"accessUser": {
+				"id": 1,
+				"typography": {
+					"content": "create-user.form.form-action.form-links.access-user.typography.content",
+					"segment": "link",
+					"href": "/access-user"
+				}
 			},
-			"recover-user": {
-				"id": 2
+			"recoverUser": {
+				"id": 2,
+				"typography": {
+					"content": "create-user.form.form-action.form-links.recover-user.typography.content",
+					"segment": "link",
+					"href": "/recover-user"
+				}
 			}
 		}
 	}
