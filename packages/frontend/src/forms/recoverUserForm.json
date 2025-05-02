@@ -1,15 +1,15 @@
 {
 	"formHeader": {
 		"typography": {
-			"content": "create-user.form.form-header.typography.content",
+			"content": "recover-user.form.form-header.typography.content",
 			"segment": "header"
 		}
 	},
 	"formGroups": {
-		"createUser": {
+		"recoverUser": {
 			"id": 1,
 			"typography": {
-				"content": "create-user.form.form-groups.create-user.typography.content",
+				"content": "recover-user.form.form-groups.recover-user.typography.content",
 				"segment": "label"
 			},
 			"formInputs": {
@@ -39,7 +39,7 @@
 			"continue": {
 				"id": 1,
 				"typography": {
-					"content": "create-user.form.form-action.form-buttons.continue.typography.content",
+					"content": "recover-user.form.form-action.form-buttons.continue.typography.content",
 					"segment": "button"
 				}
 			}
@@ -48,18 +48,18 @@
 			"accessUser": {
 				"id": 1,
 				"typography": {
-					"content": "create-user.form.form-action.form-links.access-user.typography.content",
+					"content": "recover-user.form.form-action.form-links.access-user.typography.content",
 					"segment": "link"
 				},
 				"href": "/access-user"
 			},
-			"recoverUser": {
+			"createUser": {
 				"id": 2,
 				"typography": {
-					"content": "create-user.form.form-action.form-links.recover-user.typography.content",
+					"content": "recover-user.form.form-action.form-links.create-user.typography.content",
 					"segment": "link"
 				},
-				"href": "/recover-user"
+				"href": "/create-user"
 			}
 		}
 	}

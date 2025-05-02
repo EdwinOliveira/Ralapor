@@ -1,0 +1,15 @@
+#access-user {
+	min-height: inherit;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	align-self: center;
+}
+
+#access-user > form {
+	width: 80%;
+	min-width: 20rem;
+	max-width: 25rem;
+}
