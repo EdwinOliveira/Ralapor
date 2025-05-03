@@ -35,8 +35,26 @@
 					"id": 4,
 					"name": "phoneNumberCode",
 					"options": {
-						"0": {},
-						"1": {}
+						"0": {
+							"value": "+351",
+							"placeholder": {
+								"icon": "EnglandFlagIcon",
+								"typography": {
+									"content": "+351",
+									"segment": "selector"
+								}
+							}
+						},
+						"1": {
+							"value": "+44",
+							"placeholder": {
+								"icon": "PortugueseFlagIcon",
+								"typography": {
+									"content": "+44",
+									"segment": "selector"
+								}
+							}
+						}
 					}
 				}
 			}

@@ -1,15 +1,21 @@
 import type { ReactElement } from "react";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import Select from "react-select";
+import PortugueseFlagIcon from "./PortugueseFlagIcon";
+import EnglandFlagIcon from "./EnglandFlagIcon";
+import Typography, { type TypographyProps } from "./Typography";
 
 export type FormSelectorOption = {
 	value: string;
-	label: ReactElement;
+	placeholder: {
+		icon: string;
+		typography: TypographyProps;
+	};
 };
 
 export type FormSelectorProps = {
 	name: string;
-	selectorOptions: Array<FormSelectorOption>;
+	selectorOptions: Record<string, FormSelectorOption>;
 };
 
 const FormSelector: React.FC<FormSelectorProps> = ({
@@ -39,13 +45,36 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 		}),
 	};
 
+	const dynamicIcon = (): ReactElement => {
+		switch (selectorOptions[0].placeholder.icon) {
+			case "PortugueseFlagIcon": {
+				return <PortugueseFlagIcon />;
+			}
+			case "EnglandFlagIcon": {
+				return <EnglandFlagIcon />;
+			}
+			default: {
+				return <EnglandFlagIcon />;
+			}
+		}
+	};
+
+	const buildPlaceholder = (): ReactElement => {
+		return (
+			<>
+				{dynamicIcon()}
+				<Typography {...selectorOptions[0].placeholder.typography} />
+			</>
+		);
+	};
+
 	return (
 		<Select
-			options={selectorOptions}
+			options={Object.values(selectorOptions)}
 			styles={customStyles}
 			name={name}
 			defaultValue={selectorOptions[0]}
-			placeholder={selectorOptions[0].label}
+			placeholder={buildPlaceholder()}
 			isSearchable={false}
 		/>
 	);
