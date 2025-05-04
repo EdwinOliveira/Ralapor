@@ -34,6 +34,7 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 			},
 			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
 			borderRadius: "0.025rem",
+			cursor: "pointer",
 		}),
 		option: (provided) => ({
 			...provided,
@@ -44,6 +45,7 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 				backgroundColor: "var(--default-inverse)",
 			},
 			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
+			cursor: "pointer",
 		}),
 		singleValue: (provided) => ({
 			...provided,
