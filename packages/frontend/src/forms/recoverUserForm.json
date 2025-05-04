@@ -12,24 +12,33 @@
 				"content": "recover-user.form.form-groups.recover-user.typography.content",
 				"segment": "label"
 			},
-			"formInputs": {
+			"formControls": {
 				"username": {
 					"id": 1,
-					"name": "username",
-					"type": "text",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.username.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "username",
+						"type": "text",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.username.form-input.placeholder"
+					}
 				},
 				"email": {
 					"id": 2,
-					"name": "email",
-					"type": "email",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.email.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "email",
+						"type": "email",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.email.form-input.placeholder"
+					}
 				},
 				"phoneNumber": {
 					"id": 3,
-					"name": "phone-number",
-					"type": "tel",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.phone-number.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "phone-number",
+						"type": "tel",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.phone-number.form-input.placeholder"
+					}
 				}
 			}
 		}

@@ -12,12 +12,15 @@
 				"content": "access-user.form.form-groups.access-user.typography.content",
 				"segment": "label"
 			},
-			"formInputs": {
+			"formControls": {
 				"accessCode": {
 					"id": 1,
-					"name": "accessCode",
-					"type": "password",
-					"placeholder": "access-user.form.form-groups.access-user.form-inputs.accessCode.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "accessCode",
+						"type": "password",
+						"placeholder": "access-user.form.form-groups.access-user.form-controls.accessCode.form-input.placeholder"
+					}
 				}
 			}
 		}
