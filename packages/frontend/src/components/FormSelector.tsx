@@ -27,12 +27,13 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 			...provided,
 			height: "100%",
 			width: "8rem",
-			boxShadow: "var(--brand-borders)",
-			borderColor: "var(--brand-borders)",
+			boxShadow: "0 0 0 0.010rem currentColor",
+			border: "none",
 			"&:hover": {
-				borderColor: "var(--brand-borders)",
+				border: "none",
 			},
 			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
+			borderRadius: "0.025rem",
 		}),
 		option: (provided) => ({
 			...provided,
