@@ -12,46 +12,54 @@
 				"content": "create-user.form.form-groups.create-user.typography.content",
 				"segment": "label"
 			},
-			"formInputs": {
+			"formControls": {
 				"username": {
 					"id": 1,
-					"name": "username",
-					"type": "text",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.username.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "username",
+						"type": "text",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.username.form-input.placeholder"
+					}
 				},
 				"email": {
 					"id": 2,
-					"name": "email",
-					"type": "email",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.email.placeholder"
+					"signature": "formInput",
+					"formInput": {
+						"name": "email",
+						"type": "email",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.email.form-input.placeholder"
+					}
 				},
 				"phoneNumber": {
 					"id": 3,
-					"name": "phoneNumber",
-					"type": "tel",
-					"placeholder": "create-user.form.form-groups.create-user.form-inputs.phone-number.placeholder"
-				},
-				"phoneNumberCode": {
-					"id": 4,
-					"name": "phoneNumberCode",
-					"options": {
-						"0": {
-							"value": "+351",
-							"placeholder": {
-								"icon": "EnglandFlagIcon",
-								"typography": {
-									"content": "+351",
-									"segment": "selector"
+					"signature": "formPhoneNumberCode",
+					"formInput": {
+						"name": "phoneNumber",
+						"type": "tel",
+						"placeholder": "create-user.form.form-groups.create-user.form-controls.phone-number.form-input.placeholder"
+					},
+					"formSelector": {
+						"name": "phoneNumberCode",
+						"selectorOptions": {
+							"0": {
+								"value": "+351",
+								"placeholder": {
+									"icon": "EnglandFlagIcon",
+									"typography": {
+										"content": "+351",
+										"segment": "selector"
+									}
 								}
-							}
-						},
-						"1": {
-							"value": "+44",
-							"placeholder": {
-								"icon": "PortugueseFlagIcon",
-								"typography": {
-									"content": "+44",
-									"segment": "selector"
+							},
+							"1": {
+								"value": "+44",
+								"placeholder": {
+									"icon": "PortugueseFlagIcon",
+									"typography": {
+										"content": "+44",
+										"segment": "selector"
+									}
 								}
 							}
 						}

@@ -1,54 +1,57 @@
-import "./FormControl.css";
 import FormInput, { type FormInputProps } from "./FormInput";
-import FormPhoneNumberSelector, {
-	type FormPhoneNumberSelectorProps,
-} from "./FormPhoneNumberSelector";
+import FormPhoneNumberSelector from "./FormPhoneNumberCode";
 import FormSelector, { type FormSelectorProps } from "./FormSelector";
 
 export type FormControlProps = {
 	id?: number;
-} & (FormControlInput | FormControlSelector | FormControlPhoneNumberSelector);
+} & (FormInputSignature | FormControlSignature | FormPhoneNumberCodeSignature);
 
-type FormControlInput = {
-	type: "formControlInput";
-	formInputProps: FormInputProps;
+type FormInputSignature = {
+	signature: "formInput";
+	formInput: FormInputProps;
 };
 
-type FormControlSelector = {
-	type: "formControlSelector";
-	formSelectorProps: FormSelectorProps;
+type FormControlSignature = {
+	signature: "formSelector";
+	formSelector: FormSelectorProps;
 };
 
-type FormControlPhoneNumberSelector = {
-	type: "formControlPhoneNumberSelector";
-	formInputSelectorProps: FormPhoneNumberSelectorProps;
+type FormPhoneNumberCodeSignature = {
+	signature: "formPhoneNumberCode";
+	formInput: FormInputProps;
+	formSelector: FormSelectorProps;
 };
 
 export default function FormControl(props: FormControlProps) {
 	const isFormInputGuard = (
 		props: FormControlProps,
-	): props is FormControlInput => props.type === "formControlInput";
+	): props is FormInputSignature => props.signature === "formInput";
 
 	const isFormSelectorGuard = (
 		props: FormControlProps,
-	): props is FormControlSelector => props.type === "formControlSelector";
+	): props is FormControlSignature => props.signature === "formSelector";
 
-	const isFormInputSelectorGuard = (
+	const isFormPhoneNumberCodeGuard = (
 		props: FormControlProps,
-	): props is FormControlPhoneNumberSelector =>
-		props.type === "formControlPhoneNumberSelector";
+	): props is FormPhoneNumberCodeSignature =>
+		props.signature === "formPhoneNumberCode";
 
 	const dynamicComponent = () => {
 		if (isFormInputGuard(props)) {
-			return <FormInput {...props.formInputProps} />;
+			return <FormInput {...props.formInput} />;
 		}
 
 		if (isFormSelectorGuard(props)) {
-			return <FormSelector {...props.formSelectorProps} />;
+			return <FormSelector {...props.formSelector} />;
 		}
 
-		if (isFormInputSelectorGuard(props)) {
-			return <FormPhoneNumberSelector {...props.formInputSelectorProps} />;
+		if (isFormPhoneNumberCodeGuard(props)) {
+			return (
+				<FormPhoneNumberSelector
+					formInput={props.formInput}
+					formSelector={props.formSelector}
+				/>
+			);
 		}
 	};
 

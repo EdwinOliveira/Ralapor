@@ -4,6 +4,12 @@
 	gap: 0.5rem;
 }
 
+#form-group__controls {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
 #form-group__inputs {
 	display: flex;
 	flex-direction: column;

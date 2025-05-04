@@ -1,22 +1,22 @@
-import "./FormPhoneNumberSelector.css";
+import "./FormPhoneNumberCode.css";
 import FormInput, { type FormInputProps } from "./FormInput";
 import FormSelector, { type FormSelectorProps } from "./FormSelector";
 
-export type FormPhoneNumberSelectorProps = {
+export type FormPhoneNumberCodeProps = {
 	formInput: FormInputProps;
 	formSelector: FormSelectorProps;
 };
 
-const FormPhoneNumberSelector: React.FC<FormPhoneNumberSelectorProps> = ({
+const FormPhoneNumberCode: React.FC<FormPhoneNumberCodeProps> = ({
 	formInput,
 	formSelector,
 }) => {
 	return (
-		<div id="form-phone-number-selector">
+		<div id="form-phone-number-code">
 			<FormSelector {...formSelector} />
 			<FormInput {...formInput} />
 		</div>
 	);
 };
 
-export default FormPhoneNumberSelector;
+export default FormPhoneNumberCode;

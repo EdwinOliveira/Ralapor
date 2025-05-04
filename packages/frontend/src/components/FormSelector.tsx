@@ -27,26 +27,39 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 			...provided,
 			height: "100%",
 			width: "8rem",
+			boxShadow: "var(--brand-borders)",
+			borderColor: "var(--brand-borders)",
+			"&:hover": {
+				borderColor: "var(--brand-borders)",
+			},
+			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
 		}),
 		option: (provided) => ({
 			...provided,
 			display: "flex",
 			gap: "0.5rem",
+			backgroundColor: "var(--default-inverse)",
+			"&:hover": {
+				backgroundColor: "var(--default-inverse)",
+			},
+			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
 		}),
 		singleValue: (provided) => ({
 			...provided,
 			display: "flex",
 			gap: "0.5rem",
+			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
 		}),
 		placeholder: (provided) => ({
 			...provided,
 			display: "flex",
 			gap: "0.5rem",
+			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
 		}),
 	};
 
-	const dynamicIcon = (): ReactElement => {
-		switch (selectorOptions[0].placeholder.icon) {
+	const getDynamicIcon = (index = 0): ReactElement => {
+		switch (selectorOptions[index].placeholder.icon) {
 			case "PortugueseFlagIcon": {
 				return <PortugueseFlagIcon />;
 			}
@@ -59,22 +72,40 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 		}
 	};
 
-	const buildPlaceholder = (): ReactElement => {
+	const getPlaceholder = (index = 0) => {
 		return (
 			<>
-				{dynamicIcon()}
-				<Typography {...selectorOptions[0].placeholder.typography} />
+				{getDynamicIcon(index)}
+				<Typography {...selectorOptions[index].placeholder.typography} />
 			</>
 		);
 	};
 
+	const defaultOption = () => {
+		return {
+			value: selectorOptions[0].value,
+			label: getPlaceholder(0),
+		};
+	};
+
+	const options = () => {
+		const options = Object.values(selectorOptions).map(
+			(selectorOption, index) => ({
+				value: selectorOption.value,
+				label: getPlaceholder(index),
+			}),
+		);
+
+		return options;
+	};
+
 	return (
 		<Select
-			options={Object.values(selectorOptions)}
+			options={options()}
 			styles={customStyles}
 			name={name}
-			defaultValue={selectorOptions[0]}
-			placeholder={buildPlaceholder()}
+			defaultValue={defaultOption()}
+			placeholder={getPlaceholder()}
 			isSearchable={false}
 		/>
 	);

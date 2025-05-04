@@ -1,20 +1,20 @@
 import "./FormGroup.css";
-import FormInput, { type FormInputProps } from "./FormInput";
 import Typography, { type TypographyProps } from "./Typography";
+import FormControl, { type FormControlProps } from "./FormControl";
 
 export type FormGroupProps = {
 	id: number;
 	typography: TypographyProps;
-	formInputs: Record<string, FormInputProps>;
+	formControls: Record<string, FormControlProps>;
 };
 
-const FormGroup: React.FC<FormGroupProps> = ({ typography, formInputs }) => {
+const FormGroup: React.FC<FormGroupProps> = ({ typography, formControls }) => {
 	return (
 		<div id="form-group">
 			<Typography {...typography} />
-			<div id="form-group__inputs">
-				{Object.values(formInputs).map((formInput) => (
-					<FormInput key={formInput.id} {...formInput} />
+			<div id="form-group__controls">
+				{Object.values(formControls).map((formControl) => (
+					<FormControl key={formControl.id} {...formControl} />
 				))}
 			</div>
 		</div>

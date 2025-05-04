@@ -11,15 +11,21 @@
 					"typography": {
 						"content": "User Information"
 					},
-					"form-inputs": {
+					"form-controls": {
 						"username": {
-							"placeholder": "Username..."
+							"form-input": {
+								"placeholder": "Username..."
+							}
 						},
 						"email": {
-							"placeholder": "Email..."
+							"form-input": {
+								"placeholder": "Email..."
+							}
 						},
 						"phone-number": {
-							"placeholder": "Phone Number..."
+							"form-input": {
+								"placeholder": "Phone Number..."
+							}
 						}
 					}
 				}
