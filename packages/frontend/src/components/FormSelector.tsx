@@ -28,7 +28,7 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 			...provided,
 			height: "100%",
 			width: "8rem",
-			boxShadow: "0 0 0 0.010rem currentColor",
+			boxShadow: "0 0 0.075rem 0 currentColor",
 			border: "none",
 			"&:hover": {
 				border: "none",
