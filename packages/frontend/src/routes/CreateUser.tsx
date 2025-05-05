@@ -1,9 +1,9 @@
 import "./CreateUser.css";
+import type { FormEvent } from "react";
 import Form from "../components/Form";
 import { useForm } from "../hooks/useForm";
 import { useNavigate } from "react-router";
-import { useCreateUser } from "../hooks/useCreateUser";
-import type { FormEvent } from "react";
+import { useCreateUser } from "../state/users/useCases/useCreateUser";
 
 const CreateUser = () => {
 	const { createUserForm } = useForm();
@@ -20,7 +20,7 @@ const CreateUser = () => {
 			phoneNumberCode: formData.get("phoneNumberCode")?.toString() ?? "",
 		});
 
-		// await navigateTo("/access-user");
+		await navigateTo("/access-user");
 	};
 
 	return (

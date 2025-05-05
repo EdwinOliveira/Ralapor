@@ -1,4 +1,4 @@
-import { useFetch } from "./useFetch";
+import { useFetch } from "../../../hooks/useFetch";
 
 type CreateUserRequest = {
 	username: string;
@@ -18,9 +18,13 @@ const useCreateUser = () => {
 				httpBody: request,
 			});
 
-			return { status: response.status };
+			if (response.ok === false) {
+				return;
+			}
+
+			return;
 		} catch (error) {
-			console.log(error);
+			return;
 		}
 	};
 
