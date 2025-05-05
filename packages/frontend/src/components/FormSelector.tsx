@@ -34,7 +34,7 @@ const FormSelector: React.FC<FormSelectorProps> = ({
 				border: "none",
 			},
 			fontSize: "clamp(0.70rem, 0.70rem + 0.25vw, 0.95rem)",
-			borderRadius: "0.025rem",
+			borderRadius: "0.075rem",
 			cursor: "pointer",
 		}),
 		option: (provided) => ({
