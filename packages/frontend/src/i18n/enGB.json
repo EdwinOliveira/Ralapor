@@ -25,6 +25,24 @@
 						"phone-number": {
 							"form-input": {
 								"placeholder": "Phone Number..."
+							},
+							"form-selector": {
+								"selector-options": {
+									"0": {
+										"placeholder": {
+											"typography": {
+												"content": "+351"
+											}
+										}
+									},
+									"1": {
+										"placeholder": {
+											"typography": {
+												"content": "+44"
+											}
+										}
+									}
+								}
 							}
 						}
 					}

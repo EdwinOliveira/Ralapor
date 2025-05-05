@@ -47,7 +47,7 @@
 								"placeholder": {
 									"icon": "EnglandFlagIcon",
 									"typography": {
-										"content": "+351",
+										"content": "create-user.form.form-groups.create-user.form-controls.phone-number.form-selector.selector-options.0.placeholder.typography.content",
 										"segment": "selector"
 									}
 								}
@@ -57,7 +57,7 @@
 								"placeholder": {
 									"icon": "PortugueseFlagIcon",
 									"typography": {
-										"content": "+44",
+										"content": "create-user.form.form-groups.create-user.form-controls.phone-number.form-selector.selector-options.1.placeholder.typography.content",
 										"segment": "selector"
 									}
 								}
