@@ -2,13 +2,25 @@ import "./CreateUser.css";
 import Form from "../components/Form";
 import { useForm } from "../hooks/useForm";
 import { useNavigate } from "react-router";
+import { useCreateUser } from "../hooks/useCreateUser";
+import type { FormEvent } from "react";
 
 const CreateUser = () => {
 	const { createUserForm } = useForm();
+	const { createUser } = useCreateUser();
 	const navigateTo = useNavigate();
 
-	const onSubmit = async (formEvent: React.FormEvent) => {
-		await navigateTo("/access-user");
+	const onSubmit = async (formEvent: FormEvent<HTMLFormElement>) => {
+		const formData = new FormData(formEvent.currentTarget);
+
+		await createUser({
+			username: formData.get("username")?.toString() ?? "",
+			email: formData.get("email")?.toString() ?? "",
+			phoneNumber: formData.get("phoneNumber")?.toString() ?? "",
+			phoneNumberCode: formData.get("phoneNumberCode")?.toString() ?? "",
+		});
+
+		// await navigateTo("/access-user");
 	};
 
 	return (

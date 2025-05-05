@@ -14,6 +14,7 @@ export type FormSelectorOption = {
 };
 
 export type FormSelectorProps = {
+	id: number;
 	name: string;
 	selectorOptions: Record<string, FormSelectorOption>;
 };

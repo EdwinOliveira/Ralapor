@@ -8,7 +8,7 @@ export type FormButtonProps = {
 
 const FormButton: React.FC<FormButtonProps> = ({ typography }) => {
 	return (
-		<button type="button" id="form-button">
+		<button type="submit" id="form-button">
 			<Typography {...typography} />
 		</button>
 	);

@@ -35,11 +35,13 @@
 					"id": 3,
 					"signature": "formPhoneNumberCode",
 					"formInput": {
+						"id": 1,
 						"name": "phoneNumber",
 						"type": "tel",
 						"placeholder": "create-user.form.form-groups.create-user.form-controls.phone-number.form-input.placeholder"
 					},
 					"formSelector": {
+						"id": 2,
 						"name": "phoneNumberCode",
 						"selectorOptions": {
 							"0": {

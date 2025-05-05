@@ -15,6 +15,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, type, placeholder }) => {
 		<input
 			id={`form-input__${name}`}
 			type={type}
+			name={name}
 			placeholder={t(placeholder)}
 		/>
 	);
