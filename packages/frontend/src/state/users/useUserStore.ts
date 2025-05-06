@@ -15,6 +15,8 @@ type User = {
 
 type UserStoreSignature = {
 	users: User[];
+	findUsers: () => Array<User>;
+	findUserById: (query: Pick<User, "id">) => User | undefined;
 	addUser: (args: User) => void;
 	updateUserById: (
 		query: Pick<User, "id">,
@@ -22,10 +24,17 @@ type UserStoreSignature = {
 	) => void;
 };
 
-const useUserStore = create<UserStoreSignature>((set) => {
+const useUserStore = create<UserStoreSignature>((set, get) => {
 	return {
 		users: [],
+		findUsers: () => {
+			return get().users;
+		},
+		findUserById: (query) => {
+			return get().users.find((user) => user.id === query.id);
+		},
 		addUser: (args) => {
+			console.log(args);
 			return set((state) => ({ users: [...state.users, args] }));
 		},
 		updateUserById: (query, args) => {
