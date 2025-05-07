@@ -14,28 +14,24 @@ const useUpdateUserByUsernameOrEmailOrPhoneNumber = () => {
 	const updateUserByUsernameOrEmailOrPhoneNumber = async (
 		request: UpdateUserByUsernameOrEmailOrPhoneNumberRequest,
 	) => {
-		try {
-			const response = await createRequest({
-				httpRoute: "users/:username/:email/:phoneNumber/access-code",
-				httpMethod: "PUT",
-				httpParams: request,
-			});
+		const response = await createRequest({
+			httpRoute: "users/:username/:email/:phoneNumber/access-code",
+			httpMethod: "PUT",
+			httpParams: request,
+		});
 
-			if (response.ok === false) {
-				return { status: response.status };
-			}
-
-			const updatedUser: Pick<User, "id" | "updatedAt"> = await response.json();
-
-			updateUserById(
-				{ id: updatedUser.id },
-				{ updatedAt: updatedUser.updatedAt },
-			);
-
+		if (response.ok === false) {
 			return { status: response.status };
-		} catch (error) {
-			console.log(error);
 		}
+
+		const updatedUser: Pick<User, "id" | "updatedAt"> = await response.json();
+
+		updateUserById(
+			{ id: updatedUser.id },
+			{ updatedAt: updatedUser.updatedAt },
+		);
+
+		return { status: response.status };
 	};
 
 	return { updateUserByUsernameOrEmailOrPhoneNumber };

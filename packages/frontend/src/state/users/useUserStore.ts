@@ -34,7 +34,6 @@ const useUserStore = create<UserStoreSignature>((set, get) => {
 			return get().users.find((user) => user.id === query.id);
 		},
 		addUser: (args) => {
-			console.log(args);
 			return set((state) => ({ users: [...state.users, args] }));
 		},
 		updateUserById: (query, args) => {

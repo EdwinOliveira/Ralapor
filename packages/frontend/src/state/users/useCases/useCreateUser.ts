@@ -11,21 +11,17 @@ const useCreateUser = () => {
 	const { createRequest } = useFetch();
 
 	const createUser = async (request: CreateUserRequest) => {
-		try {
-			const response = await createRequest({
-				httpRoute: "users",
-				httpMethod: "POST",
-				httpBody: request,
-			});
+		const response = await createRequest({
+			httpRoute: "users",
+			httpMethod: "POST",
+			httpBody: request,
+		});
 
-			if (response.ok === false) {
-				return;
-			}
-
-			return;
-		} catch (error) {
+		if (response.ok === false) {
 			return;
 		}
+
+		return;
 	};
 
 	return { createUser };

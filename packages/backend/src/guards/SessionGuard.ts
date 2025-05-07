@@ -20,8 +20,6 @@ const SessionGuard = () => {
 						CacheService();
 					const foundSession = await findOnCache(`session:${session.sid}`);
 
-					console.log(foundSession);
-
 					if (foundSession !== undefined) {
 						if (Date.now() <= foundSession.expiresIn) {
 							return void next();

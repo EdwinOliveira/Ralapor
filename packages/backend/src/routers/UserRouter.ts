@@ -26,6 +26,24 @@ const UserRouter = () => {
 
 	const subscribe = (router: Router): Router => {
 		router.get(
+			"/sessions",
+			isAuthenticated,
+			async (request: Request, response: Response) => {
+				const { getSession } = SessionProvider(request, response);
+				const session = getSession();
+
+				const { findOnCache } = CacheService();
+				const foundSession = await findOnCache(`session:${session?.sid}`);
+
+				/**
+				 * Guard will validate the user session.
+				 * This endpoint only exists to be called so the guard does the validation work.
+				 */
+				return void response.status(200).json(foundSession);
+			},
+		);
+
+		router.get(
 			"/:id",
 			isAuthenticated,
 			async (request: Request, response: Response) => {
