@@ -8,10 +8,10 @@ type FindSessionResponse = {
 	refreshToken: string;
 };
 
-const useFindSession = () => {
+const useFindUserSession = () => {
 	const { createRequest } = useFetch();
 
-	const findSession = async () => {
+	const findUserSession = async () => {
 		const response = await createRequest({
 			httpRoute: "users/sessions",
 			httpMethod: "GET",
@@ -24,7 +24,7 @@ const useFindSession = () => {
 		return (await response.json()) as FindSessionResponse;
 	};
 
-	return { findSession };
+	return { findUserSession };
 };
 
-export { useFindSession };
+export { useFindUserSession };
