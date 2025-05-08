@@ -14,24 +14,24 @@ import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<AuthenticationProvider>
-			<BrowserRouter>
-				<Routes>
-					<Route path="*" element={<p>There's nothing here: 404!</p>} />
-					<Route path="/hero" element={<Hero />} />
-					<Route
-						path="dashboard"
-						element={
+		<BrowserRouter>
+			<Routes>
+				<Route path="*" element={<p>There's nothing here: 404!</p>} />
+				<Route path="/hero" element={<Hero />} />
+				<Route
+					path="dashboard"
+					element={
+						<AuthenticationProvider>
 							<ProtectedRoute>
 								<Dashboard />
 							</ProtectedRoute>
-						}
-					/>
-					<Route path="/create-user" element={<CreateUser />} />
-					<Route path="/access-user" element={<AccessUser />} />
-					<Route path="/recover-user" element={<RecoverUser />} />
-				</Routes>
-			</BrowserRouter>
-		</AuthenticationProvider>
+						</AuthenticationProvider>
+					}
+				/>
+				<Route path="/create-user" element={<CreateUser />} />
+				<Route path="/access-user" element={<AccessUser />} />
+				<Route path="/recover-user" element={<RecoverUser />} />
+			</Routes>
+		</BrowserRouter>
 	</StrictMode>,
 );
