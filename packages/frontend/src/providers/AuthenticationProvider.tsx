@@ -15,20 +15,22 @@ export const AuthenticationProvider: React.FC<{
 
 	useEffect(() => {
 		const callFindUserSession = async () => {
-			const session = await findUserSession();
+			try {
+				const session = await findUserSession();
 
-			if (session !== undefined) {
-				const user = await findUserById({ id: session.userId });
-				console.log(user);
+				if (session !== undefined) {
+					const user = await findUserById({ id: session.userId });
+					console.log(user);
 
-				if (user !== undefined) {
-					addUser(user);
-					isAuthenticated = users.length !== 0;
-					console.log(isAuthenticated);
+					if (user !== undefined) {
+						addUser(user);
+						isAuthenticated = users.length !== 0;
+						console.log(isAuthenticated);
+					}
 				}
+			} finally {
+				setIsLoading(false);
 			}
-
-			setIsLoading(false);
 		};
 
 		callFindUserSession();
