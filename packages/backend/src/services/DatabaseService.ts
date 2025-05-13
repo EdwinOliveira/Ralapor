@@ -61,7 +61,22 @@ const DatabaseService = () => {
 			await connection.schema.createTable("Substances", (table) => {
 				table.increments("id").primary();
 				table.string("designation");
+				table.string("description");
 				table.enum("classification", ["fruits", "vegetables", "meat", "fish"]);
+				table.timestamps(true, true, true);
+			});
+		}
+	};
+
+	const createRecipesTable = async (connection: knex.Knex) => {
+		const tableExists = await connection.schema.hasTable("Recipes");
+
+		if (tableExists === false) {
+			await connection.schema.createTable("Recipes", (table) => {
+				table.increments("id").primary();
+				table.string("designation");
+				table.string("description");
+				table.enum("dietaryPattern", ["plant-based", "animal-based"]);
 				table.timestamps(true, true, true);
 			});
 		}
@@ -73,6 +88,7 @@ const DatabaseService = () => {
 		createUsersTable,
 		createRolesTable,
 		createSubstancesTable,
+		createRecipesTable,
 	};
 };
 
