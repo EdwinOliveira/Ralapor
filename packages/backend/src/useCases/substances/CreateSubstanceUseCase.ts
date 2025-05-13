@@ -5,11 +5,11 @@ import type {
 import { SubstanceRemoteRepository } from "../../repositories/SubstanceRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const CreateUserUseCase = () => {
+const CreateSubstanceUseCase = () => {
 	const repository = SubstanceRemoteRepository();
 
 	return {
-		createUser: async ({
+		createSubstance: async ({
 			schemaArgs: {
 				body: { designation, description, classification },
 			},
@@ -42,4 +42,4 @@ const CreateUserUseCase = () => {
 	};
 };
 
-export { CreateUserUseCase };
+export { CreateSubstanceUseCase };
