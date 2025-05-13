@@ -1,37 +1,37 @@
 import {
 	substanceDTOMapper,
-	type FindSubstancesByQueryRequest,
+	type FindSubstanceByIdRequest,
 	type SubstanceDTO,
 } from "../../domains/Substance";
 import { SubstanceRemoteRepository } from "../../repositories/SubstanceRemoteRepository";
 import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
-const FindSubstanceByQueryUseCase = () => {
+const FindSubstanceByIdUseCase = () => {
 	const repository = SubstanceRemoteRepository();
 
 	return {
-		findSubstanceByQuery: async ({
+		findSubstanceById: async ({
 			schemaArgs: {
-				query: { classification },
+				params: { id },
 			},
-		}: UseCaseRequest<FindSubstancesByQueryRequest>): Promise<
+		}: UseCaseRequest<FindSubstanceByIdRequest>): Promise<
 			UseCaseResponse<SubstanceDTO>
 		> => {
-			const { affectedRows: foundSubstancesRow } =
-				await repository.findSubstances({
-					query: { classification },
+			const { affectedRows: foundSubstancessRow } =
+				await repository.findSubstanceById({
+					query: { id },
 				});
 
-			if (foundSubstancesRow.length === 0) {
+			if (foundSubstancessRow.length === 0) {
 				return { statusCode: 404 };
 			}
 
 			return {
 				statusCode: 200,
-				args: substanceDTOMapper(foundSubstancesRow[0]),
+				args: substanceDTOMapper(foundSubstancessRow[0]),
 			};
 		},
 	};
 };
 
-export { FindSubstanceByQueryUseCase };
+export { FindSubstanceByIdUseCase };

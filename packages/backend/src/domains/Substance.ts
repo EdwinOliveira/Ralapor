@@ -77,6 +77,11 @@ interface SubstanceRepository {
 	}: RepositoryRequest<
 		Partial<Pick<SubstanceEntity, "classification">>
 	>): Promise<RepositoryResponse<SubstanceEntity>>;
+	findSubstanceByDesignation({
+		query,
+	}: RepositoryRequest<Pick<SubstanceEntity, "designation">>): Promise<
+		RepositoryResponse<SubstanceEntity>
+	>;
 	findSubstanceById({
 		query,
 	}: RepositoryRequest<Pick<SubstanceEntity, "id">>): Promise<

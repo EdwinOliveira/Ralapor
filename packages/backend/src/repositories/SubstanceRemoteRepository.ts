@@ -49,6 +49,25 @@ const SubstanceRemoteRepository = (): SubstanceRepository => {
 
 			return { affectedIds: [substance.id], affectedRows: [substance] };
 		},
+		findSubstanceByDesignation: async ({ query }) => {
+			if (query === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			const connection = createConnection();
+
+			const substance = await connection<SubstanceEntity>("Substances")
+				.where("designation", query?.designation)
+				.first();
+
+			await destroyConnection(connection);
+
+			if (substance === undefined) {
+				return { affectedIds: [], affectedRows: [] };
+			}
+
+			return { affectedIds: [substance.id], affectedRows: [substance] };
+		},
 		createSubstance: async ({ args }) => {
 			if (args === undefined) {
 				return { affectedIds: [], affectedRows: [] };
