@@ -1,4 +1,8 @@
 import { z } from "zod";
+import type {
+	RepositoryRequest,
+	RepositoryResponse,
+} from "../signatures/Repository";
 
 type SubstanceEntity = {
 	id: number;
@@ -67,6 +71,32 @@ const updateSubstanceByIdSchema = z.object({
 
 type UpdateSubstanceByIdRequest = z.infer<typeof updateSubstanceByIdSchema>;
 
+interface SubstanceRepository {
+	findSubstances({
+		query,
+	}: RepositoryRequest<
+		Partial<Pick<SubstanceEntity, "classification">>
+	>): Promise<RepositoryResponse<SubstanceEntity>>;
+	findSubstanceById({
+		query,
+	}: RepositoryRequest<Pick<SubstanceEntity, "id">>): Promise<
+		RepositoryResponse<SubstanceEntity>
+	>;
+	createSubstance({
+		args,
+	}: RepositoryRequest<
+		unknown,
+		Pick<SubstanceEntity, "designation" | "description" | "classification">
+	>): Promise<RepositoryResponse<unknown>>;
+	updateSubstanceById({
+		query,
+		args,
+	}: RepositoryRequest<
+		Pick<SubstanceEntity, "id">,
+		Partial<Omit<SubstanceEntity, "id" | "createdAt" | "updatedAt">>
+	>): Promise<RepositoryResponse<Pick<SubstanceEntity, "updatedAt">>>;
+}
+
 export {
 	type SubstanceEntity,
 	type SubstanceDTO,
@@ -79,4 +109,5 @@ export {
 	type CreateSubstanceRequest,
 	updateSubstanceByIdSchema,
 	type UpdateSubstanceByIdRequest,
+	type SubstanceRepository,
 };
