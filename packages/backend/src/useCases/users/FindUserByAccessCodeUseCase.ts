@@ -14,7 +14,7 @@ const FindUserByAccessCodeUseCase = () => {
 	return {
 		findUserByAccessCode: async ({
 			schemaArgs: {
-				params: { accessCode },
+				body: { accessCode },
 			},
 		}: UseCaseRequest<FindUserByAccessCodeRequest>): Promise<
 			UseCaseResponse<UserDTO>

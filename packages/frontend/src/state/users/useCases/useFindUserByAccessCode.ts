@@ -11,9 +11,9 @@ const useFindUserByAccessCode = () => {
 
 	const findUserByAccessCode = async (request: FindUserByAccessCodeRequest) => {
 		const response = await createRequest({
-			httpRoute: "users/access-code/:accessCode",
-			httpMethod: "GET",
-			httpParams: request,
+			httpRoute: "users/access-code",
+			httpMethod: "POST",
+			httpBody: request,
 		});
 
 		if (response.ok === false) {

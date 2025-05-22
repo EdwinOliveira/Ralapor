@@ -47,7 +47,7 @@ const findUserByIdSchema = z.object({
 type FindUserByIdRequest = z.infer<typeof findUserByIdSchema>;
 
 const findUserByAccessCodeSchema = z.object({
-	params: z.object({
+	body: z.object({
 		accessCode: z.string(),
 	}),
 });

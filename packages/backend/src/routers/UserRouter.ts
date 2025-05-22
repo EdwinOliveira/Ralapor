@@ -65,12 +65,12 @@ const UserRouter = () => {
 			},
 		);
 
-		router.get(
-			"/access-code/:accessCode",
+		router.post(
+			"/access-code",
 			isAuthenticating,
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
-					findUserByAccessCodeSchema.safeParse({ params: request.params });
+					findUserByAccessCodeSchema.safeParse({ body: request.body });
 
 				if (schemaErrors !== undefined) {
 					return void response
