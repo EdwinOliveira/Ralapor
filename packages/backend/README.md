@@ -1,5 +1,6 @@
 # Things to do
 
-- Rate Limiter
 - Https
+- Multi-Factor Authentication
+- Remember Device
 - ...
