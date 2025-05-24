@@ -12,7 +12,7 @@ const useCreateUser = () => {
 
 	const createUser = async (request: CreateUserRequest) => {
 		const response = await createRequest({
-			httpRoute: "users",
+			httpRoute: "/users",
 			httpMethod: "POST",
 			httpBody: request,
 		});

@@ -15,9 +15,9 @@ const useUpdateUserByUsernameOrEmailOrPhoneNumber = () => {
 		request: UpdateUserByUsernameOrEmailOrPhoneNumberRequest,
 	) => {
 		const response = await createRequest({
-			httpRoute: "users/:username/:email/:phoneNumber/access-code",
+			httpRoute: "/users/access-code",
 			httpMethod: "PUT",
-			httpParams: request,
+			httpBody: request,
 		});
 
 		if (response.ok === false) {

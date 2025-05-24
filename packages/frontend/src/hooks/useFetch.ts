@@ -14,26 +14,21 @@ const useFetch = () => {
 		httpParams,
 		httpBody,
 	}: CreateRequestProps) => {
-		let buildedURL = `http://localhost:8000/${httpRoute}`;
-
 		if (httpQueries !== undefined) {
 			for (const httpQuery of Object.entries(httpQueries)) {
-				buildedURL = buildedURL.includes("?")
-					? `${buildedURL}&${httpQuery[0]}=${httpQuery[1]}`
-					: `${buildedURL}?${httpQuery[0]}=${httpQuery[1]}`;
+				httpRoute = httpRoute.includes("?")
+					? `${httpRoute}&${httpQuery[0]}=${httpQuery[1]}`
+					: `${httpRoute}?${httpQuery[0]}=${httpQuery[1]}`;
 			}
 		}
 
 		if (httpParams !== undefined) {
 			for (const httpParam of Object.entries(httpParams)) {
-				buildedURL = buildedURL.replace(
-					`:${httpParam[0]}`,
-					String(httpParam[1]),
-				);
+				httpRoute = httpRoute.replace(`:${httpParam[0]}`, String(httpParam[1]));
 			}
 		}
 
-		return fetch(buildedURL, {
+		return fetch(httpRoute, {
 			method: httpMethod,
 			credentials: "include",
 			headers: { "Content-Type": "application/json" },

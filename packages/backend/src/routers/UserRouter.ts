@@ -230,12 +230,12 @@ const UserRouter = () => {
 		);
 
 		router.put(
-			"/:username/:email/:phoneNumber/access-code",
+			"/access-code",
 			createRateLimit(15 * 60 * 1000, 5),
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
-						params: request.params,
+						body: request.body,
 					});
 
 				if (schemaErrors !== undefined) {

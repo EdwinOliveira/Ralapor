@@ -13,7 +13,7 @@ const useFindUserSession = () => {
 
 	const findUserSession = async () => {
 		const response = await createRequest({
-			httpRoute: "users/sessions",
+			httpRoute: "/users/sessions",
 			httpMethod: "GET",
 		});
 

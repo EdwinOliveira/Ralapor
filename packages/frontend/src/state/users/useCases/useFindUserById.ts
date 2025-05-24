@@ -10,7 +10,7 @@ const useFindUserById = () => {
 
 	const findUserById = async (request: FindUserByIdRequest) => {
 		const response = await createRequest({
-			httpRoute: "users/:id",
+			httpRoute: "/users/:id",
 			httpMethod: "GET",
 			httpParams: request,
 		});

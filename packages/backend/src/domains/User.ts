@@ -103,7 +103,7 @@ type UpdateUserAccessCodeByIdRequest = z.infer<
 >;
 
 const updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema = z.object({
-	params: z.object({
+	body: z.object({
 		username: z.string().optional(),
 		email: z.string().email().optional(),
 		phoneNumber: z.string().optional(),
