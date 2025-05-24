@@ -20,9 +20,11 @@ import { CacheService } from "../services/CacheService";
 import { RandomProvider } from "../providers/RandomProvider";
 import { DeleteUserSessionByIdUseCase } from "../useCases/users/DeleteUserSessionByIdUseCase";
 import { TokenProvider } from "../providers/TokenProvider";
+import { RateLimitProvider } from "../providers/RateLimitProvider";
 
 const UserRouter = () => {
 	const { isAuthenticated, isAuthenticating } = SessionGuard();
+	const { createRateLimit } = RateLimitProvider();
 
 	const subscribe = (router: Router): Router => {
 		router.get(
@@ -68,6 +70,7 @@ const UserRouter = () => {
 		router.post(
 			"/access-code",
 			isAuthenticating,
+			createRateLimit(15 * 60 * 1000, 5),
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					findUserByAccessCodeSchema.safeParse({ body: request.body });
@@ -120,21 +123,27 @@ const UserRouter = () => {
 			},
 		);
 
-		router.post("/", async (request: Request, response: Response) => {
-			const { data: schemaArgs, error: schemaErrors } =
-				createUserSchema.safeParse({ body: request.body });
+		router.post(
+			"/",
+			createRateLimit(15 * 60 * 1000, 5),
+			async (request: Request, response: Response) => {
+				const { data: schemaArgs, error: schemaErrors } =
+					createUserSchema.safeParse({ body: request.body });
 
-			if (schemaErrors !== undefined) {
-				return void response.status(400).json({ errors: schemaErrors.issues });
-			}
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
 
-			const { createUser } = CreateUserUseCase();
-			const { statusCode, args } = await createUser({
-				schemaArgs,
-			});
+				const { createUser } = CreateUserUseCase();
+				const { statusCode, args } = await createUser({
+					schemaArgs,
+				});
 
-			return void response.status(statusCode).json({ id: args?.id });
-		});
+				return void response.status(statusCode).json({ id: args?.id });
+			},
+		);
 
 		router.put(
 			"/:id",
@@ -222,6 +231,7 @@ const UserRouter = () => {
 
 		router.put(
 			"/:username/:email/:phoneNumber/access-code",
+			createRateLimit(15 * 60 * 1000, 5),
 			async (request: Request, response: Response) => {
 				const { data: schemaArgs, error: schemaErrors } =
 					updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema.safeParse({
