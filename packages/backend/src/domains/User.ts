@@ -48,7 +48,9 @@ type FindUserByIdRequest = z.infer<typeof findUserByIdSchema>;
 
 const findUserByAccessCodeSchema = z.object({
 	body: z.object({
-		accessCode: z.string(),
+		accessCode: z
+			.string()
+			.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/),
 		rememberDevice: z.boolean().default(false),
 	}),
 });
