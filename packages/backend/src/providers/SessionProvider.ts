@@ -10,11 +10,11 @@ const SessionProvider = (request?: Request, response?: Response) => {
 
 	return {
 		getSession: () => request?.cookies as Cookies | undefined,
-		addToSession: (sessionId: string) =>
+		addToSession: (sessionId: string, remembersDevice: boolean) =>
 			response?.cookie("sid", sessionId, {
 				httpOnly: true,
 				sameSite: "lax",
-				maxAge: createExpirationTime(),
+				maxAge: remembersDevice ? createExpirationTime() : undefined,
 			}),
 		clearSession: () => {
 			response?.clearCookie("sid");

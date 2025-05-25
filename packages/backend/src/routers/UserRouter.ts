@@ -107,7 +107,7 @@ const UserRouter = () => {
 					return void response.status(500).json();
 				}
 
-				sessionProvider.addToSession(sessionId);
+				sessionProvider.addToSession(sessionId, schemaArgs.body.rememberDevice);
 
 				await cacheService.addToCache(`session:${sessionId}`, {
 					sessionId: sessionId,
@@ -117,6 +117,7 @@ const UserRouter = () => {
 						randomProvider.createExpirationTime(),
 					),
 					refreshToken,
+					deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
 				});
 
 				return void response.status(statusCode).json(args);
@@ -198,11 +199,11 @@ const UserRouter = () => {
 					return void response.status(500).json();
 				}
 
-				const cacheService = CacheService();
-				const randomProvider = RandomProvider();
-				const tokenProvider = TokenProvider();
+				const { findOnCache, addToCache, updateOnCache } = CacheService();
+				const { createRandomUuid, createExpirationTime } = RandomProvider();
+				const { createToken } = TokenProvider();
 
-				const refreshToken = await tokenProvider.createToken(
+				const refreshToken = await createToken(
 					{ sessionId: cookies.sid },
 					"7d",
 					process.env.SESSION_TOKEN_SECRET,
@@ -212,15 +213,24 @@ const UserRouter = () => {
 					return void response.status(500).json();
 				}
 
-				const expirationTime = randomProvider.createExpirationTime();
+				const foundSession = await findOnCache(`session:${cookies.sid}`);
 
-				await cacheService.updateOnCache(`session:${cookies.sid}`, {
-					sessionId: cookies.sid,
-					userId: args?.id,
-					roleId: args?.roleId,
-					expiresIn: new Date().setSeconds(expirationTime),
-					refreshToken,
-				});
+				if (foundSession === undefined) {
+					await addToCache(`session:${cookies.sid}`, {
+						sessionId: cookies.sid,
+						userId: args.id,
+						roleId: args.roleId,
+						expiresIn: createExpirationTime(),
+						refreshToken,
+						deviceUuid: createRandomUuid(),
+					});
+				} else {
+					await updateOnCache(`session:${cookies.sid}`, {
+						...foundSession,
+						expiresIn: createExpirationTime(),
+						refreshToken,
+					});
+				}
 
 				return void response.status(statusCode).json({
 					id: args?.id,

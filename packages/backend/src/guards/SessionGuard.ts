@@ -40,6 +40,7 @@ const SessionGuard = () => {
 								roleId: foundSession.roleId,
 								expiresIn: new Date().setSeconds(expirationTime),
 								refreshToken: foundSession.refreshToken,
+								deviceUuid: foundSession.deviceUuid,
 							});
 
 							return void next();

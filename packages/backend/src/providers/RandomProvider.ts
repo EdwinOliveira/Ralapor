@@ -6,7 +6,7 @@ const RandomProvider = () => {
 			return crypto.randomUUID();
 		},
 		createExpirationTime: () => {
-			return 86400; // It's 1 day dummy;
+			return new Date().setSeconds(86400); // It's 1 day dummy;
 		},
 		createRandomString: (size: number) => {
 			return randomBytes(size).toString("hex");
