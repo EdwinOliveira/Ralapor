@@ -1,12 +1,18 @@
 import { Client } from "memjs";
 
-type CacheData = {
+type CacheData = CacheSession | CacheMFACode;
+
+type CacheSession = {
 	sessionId: string;
 	userId: number;
 	roleId: number;
 	expiresIn: number;
 	refreshToken: string;
 	deviceUuid: string;
+};
+
+type CacheMFACode = {
+	code: string;
 };
 
 const CacheService = () => {
@@ -20,8 +26,12 @@ const CacheService = () => {
 		}
 	};
 
-	const addToCache = async (property: string, data: CacheData) => {
-		cache.add(property, JSON.stringify(data));
+	const addToCache = async (
+		property: string,
+		data: CacheData,
+		expiresIn?: number,
+	) => {
+		cache.add(property, JSON.stringify(data), { expires: expiresIn });
 	};
 
 	const updateOnCache = async (property: string, data: CacheData) => {

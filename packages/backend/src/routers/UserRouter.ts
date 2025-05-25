@@ -120,6 +120,10 @@ const UserRouter = () => {
 					deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
 				});
 
+				await cacheService.addToCache(`code:session:${sessionId}`, {
+					code: randomProvider.createRandomString(4),
+				});
+
 				return void response.status(statusCode).json(args);
 			},
 		);
