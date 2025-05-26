@@ -15,7 +15,7 @@ const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	return {
 		updateUserAccessCodeByUsernameOrEmailOrPhoneNumber: async ({
 			schemaArgs: {
-				params: { username, email, phoneNumber },
+				body: { username, email, phoneNumber },
 			},
 		}: UseCaseRequest<UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest>): Promise<
 			UseCaseResponse<Pick<UserDTO, "id" | "updatedAt">>
