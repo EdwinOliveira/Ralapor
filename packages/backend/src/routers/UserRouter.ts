@@ -114,9 +114,7 @@ const UserRouter = () => {
           sessionId: sessionId,
           userId: args.id,
           roleId: args.roleId,
-          expiresIn: new Date().setSeconds(
-            randomProvider.createExpirationTime()
-          ),
+          expiresIn: randomProvider.createExpirationTime(),
           refreshToken,
           deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
         });
@@ -141,7 +139,8 @@ const UserRouter = () => {
 
         const { getSession } = SessionProvider(request, response);
         const { findOnCache, addToCache, isSessionCache } = CacheService();
-        const { createRandomString } = RandomProvider();
+        const { createRandomString, createMFAExpirationTime } =
+          RandomProvider();
 
         const cachedSession = getSession();
 
@@ -157,7 +156,11 @@ const UserRouter = () => {
 
         await addToCache(
           `session:${foundSession.sessionId}:mfa`,
-          { code: createRandomString(4) },
+          {
+            code: createRandomString(4),
+            expiresIn: createMFAExpirationTime(),
+            isChecked: false,
+          },
           300
         );
 

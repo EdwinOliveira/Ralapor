@@ -13,6 +13,8 @@ type CacheSession = {
 
 type CacheMFACode = {
   code: string;
+  expiresIn: number;
+  isChecked: boolean;
 };
 
 const CacheService = () => {

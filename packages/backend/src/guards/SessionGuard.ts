@@ -42,7 +42,7 @@ const SessionGuard = () => {
                 sessionId: foundSession.sessionId,
                 userId: foundSession.userId,
                 roleId: foundSession.roleId,
-                expiresIn: new Date().setSeconds(expirationTime),
+                expiresIn: expirationTime,
                 refreshToken: foundSession.refreshToken,
                 deviceUuid: foundSession.deviceUuid,
               });
