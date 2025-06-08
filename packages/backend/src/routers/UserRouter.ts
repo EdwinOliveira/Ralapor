@@ -9,11 +9,12 @@ import {
   createUserSchema,
   deleteUserSessionByIdSchema,
   createUserSessionSchema,
-  createUserSessionMFASchema,
+  createUserSessionChallengeSchema,
   findUserByIdSchema,
   updateUserAccessCodeByIdSchema,
   updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
   updateUserByIdSchema,
+  updateUserSessionChallengeCheckSchema,
 } from "../domains/User";
 import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
@@ -124,12 +125,12 @@ const UserRouter = () => {
     );
 
     router.post(
-      "/session/mfa",
+      "/session/challenge",
       isAuthenticating,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: _schemaArgs, error: schemaErrors } =
-          createUserSessionMFASchema.safeParse({ body: request.body });
+          createUserSessionChallengeSchema.safeParse({ body: request.body });
 
         if (schemaErrors !== undefined) {
           return void response
@@ -139,7 +140,7 @@ const UserRouter = () => {
 
         const { getSession } = SessionProvider(request, response);
         const { findOnCache, addToCache, isSessionCache } = CacheService();
-        const { createRandomString, createMFAExpirationTime } =
+        const { createRandomString, createChallengeExpirationTime } =
           RandomProvider();
 
         const cachedSession = getSession();
@@ -155,16 +156,16 @@ const UserRouter = () => {
         }
 
         await addToCache(
-          `session:${foundSession.sessionId}:mfa`,
+          `session:${foundSession.sessionId}:challenge`,
           {
             code: createRandomString(4),
-            expiresIn: createMFAExpirationTime(),
+            expiresIn: createChallengeExpirationTime(),
             isChecked: false,
           },
           300
         );
 
-        // TODO: Send MFA Code To Client By Email or Phone Number
+        // TODO: Send Challenge Code To Client By Email or Phone Number
 
         return void response.status(200).json();
       }
@@ -312,6 +313,52 @@ const UserRouter = () => {
           id: args?.id,
           updatedAt: args?.updatedAt,
         });
+      }
+    );
+
+    router.put(
+      "/session/challenge",
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { data: schemaArgs, error: schemaErrors } =
+          updateUserSessionChallengeCheckSchema.safeParse({
+            body: request.body,
+          });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { getSession } = SessionProvider(request, response);
+        const { findOnCache, addToCache, isSessionCache } = CacheService();
+        const { createRandomString, createChallengeExpirationTime } =
+          RandomProvider();
+
+        const cachedSession = getSession();
+
+        if (cachedSession?.sid === undefined) {
+          return void response.status(500).json();
+        }
+
+        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
+
+        if (!isSessionCache(foundSession)) {
+          return void response.status(500).json();
+        }
+
+        await addToCache(
+          `session:${foundSession.sessionId}:challenge`,
+          {
+            code: createRandomString(4),
+            expiresIn: createChallengeExpirationTime(),
+            isChecked: false,
+          },
+          300
+        );
+
+        return void response.status(200).json();
       }
     );
 

@@ -57,13 +57,15 @@ const createUserSessionSchema = z.object({
 
 type CreateUserSessionRequest = z.infer<typeof createUserSessionSchema>;
 
-const createUserSessionMFASchema = z.object({
+const createUserSessionChallengeSchema = z.object({
   body: z.object({
     alternative: z.enum(["phoneNumber", "email"]),
   }),
 });
 
-type CreateUserSessionMFARequest = z.infer<typeof createUserSessionMFASchema>;
+type CreateUserSessionChallengeRequest = z.infer<
+  typeof createUserSessionChallengeSchema
+>;
 
 const createUserSchema = z.object({
   body: z.object({
@@ -136,6 +138,16 @@ const updateUserSessionByIdSchema = z.object({
 
 type UpdateUserSessionByIdRequest = z.infer<typeof updateUserSessionByIdSchema>;
 
+const updateUserSessionChallengeCheckSchema = z.object({
+  body: z.object({
+    code: z.string(),
+  }),
+});
+
+type UpdateUserSessionChallengeCheckRequest = z.infer<
+  typeof updateUserSessionChallengeCheckSchema
+>;
+
 const deleteUserSessionByIdSchema = z.object({
   params: z.object({
     id: z
@@ -195,8 +207,8 @@ export {
   type FindUserByIdRequest,
   createUserSessionSchema,
   type CreateUserSessionRequest,
-  createUserSessionMFASchema,
-  type CreateUserSessionMFARequest,
+  createUserSessionChallengeSchema,
+  type CreateUserSessionChallengeRequest,
   createUserSchema,
   type CreateUserRequest,
   updateUserByIdSchema,
@@ -207,6 +219,8 @@ export {
   type UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
   updateUserSessionByIdSchema,
   type UpdateUserSessionByIdRequest,
+  updateUserSessionChallengeCheckSchema,
+  type UpdateUserSessionChallengeCheckRequest,
   deleteUserSessionByIdSchema,
   type DeleteUserSessionByIdRequest,
 };

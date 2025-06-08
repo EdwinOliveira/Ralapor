@@ -1,6 +1,6 @@
 import { Client } from "memjs";
 
-type CacheData = CacheSession | CacheMFACode;
+type CacheData = CacheSession | CacheChallengeCode;
 
 type CacheSession = {
   sessionId: string;
@@ -11,7 +11,7 @@ type CacheSession = {
   deviceUuid: string;
 };
 
-type CacheMFACode = {
+type CacheChallengeCode = {
   code: string;
   expiresIn: number;
   isChecked: boolean;
@@ -34,7 +34,9 @@ const CacheService = () => {
     return !!(cache && "sessionId" in cache);
   };
 
-  const isMFACache = (cache: CacheData | undefined): cache is CacheMFACode => {
+  const isChallengeCache = (
+    cache: CacheData | undefined
+  ): cache is CacheChallengeCode => {
     return !!(cache && "code" in cache);
   };
 
@@ -57,7 +59,7 @@ const CacheService = () => {
   return {
     findOnCache,
     isSessionCache,
-    isMFACache,
+    isChallengeCache,
     addToCache,
     updateOnCache,
     removeFromCache,

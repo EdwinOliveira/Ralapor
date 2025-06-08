@@ -8,7 +8,7 @@ const RandomProvider = () => {
     createExpirationTime: () => {
       return new Date().setSeconds(86400); // It's 1 day dummy;
     },
-    createMFAExpirationTime: () => {
+    createChallengeExpirationTime: () => {
       return new Date().setSeconds(300); // It's 5 minutes dummy;
     },
     createRandomString: (size: number) => {
