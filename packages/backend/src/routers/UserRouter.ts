@@ -9,6 +9,7 @@ import {
   createUserSchema,
   deleteUserSessionByIdSchema,
   createUserSessionSchema,
+  createUserSessionMFASchema,
   findUserByIdSchema,
   updateUserAccessCodeByIdSchema,
   updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
@@ -68,7 +69,7 @@ const UserRouter = () => {
     );
 
     router.post(
-      "/access-code",
+      "/session",
       isAuthenticating,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
@@ -120,15 +121,49 @@ const UserRouter = () => {
           deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
         });
 
-        await cacheService.addToCache(
-          `authentication_code:session:${sessionId}`,
-          { code: randomProvider.createRandomString(4) },
+        return void response.status(statusCode).json(args);
+      }
+    );
+
+    router.post(
+      "/session/mfa",
+      isAuthenticating,
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { data: _schemaArgs, error: schemaErrors } =
+          createUserSessionMFASchema.safeParse({ body: request.body });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { getSession } = SessionProvider(request, response);
+        const { findOnCache, addToCache, isSessionCache } = CacheService();
+        const { createRandomString } = RandomProvider();
+
+        const cachedSession = getSession();
+
+        if (cachedSession?.sid === undefined) {
+          return void response.status(500).json();
+        }
+
+        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
+
+        if (!isSessionCache(foundSession)) {
+          return void response.status(500).json();
+        }
+
+        await addToCache(
+          `session:${foundSession.sessionId}:mfa`,
+          { code: createRandomString(4) },
           300
         );
 
         // TODO: Send MFA Code To Client By Email or Phone Number
 
-        return void response.status(statusCode).json(args);
+        return void response.status(200).json();
       }
     );
 

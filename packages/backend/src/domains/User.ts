@@ -57,6 +57,14 @@ const createUserSessionSchema = z.object({
 
 type CreateUserSessionRequest = z.infer<typeof createUserSessionSchema>;
 
+const createUserSessionMFASchema = z.object({
+  body: z.object({
+    alternative: z.enum(["phoneNumber", "email"]),
+  }),
+});
+
+type CreateUserSessionMFARequest = z.infer<typeof createUserSessionMFASchema>;
+
 const createUserSchema = z.object({
   body: z.object({
     username: z.string(),
@@ -187,6 +195,8 @@ export {
   type FindUserByIdRequest,
   createUserSessionSchema,
   type CreateUserSessionRequest,
+  createUserSessionMFASchema,
+  type CreateUserSessionMFARequest,
   createUserSchema,
   type CreateUserRequest,
   updateUserByIdSchema,
