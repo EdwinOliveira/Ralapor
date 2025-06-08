@@ -1,6 +1,6 @@
 import type { Request, Response, Router } from "express";
 import { FindUserByIdUseCase } from "../useCases/users/FindUserByIdUseCase";
-import { FindUserByAccessCodeUseCase } from "../useCases/users/FindUserByAccessCodeUseCase";
+import { CreateUserSessionUseCase } from "../useCases/users/CreateUserSessionUseCase";
 import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 import { UpdateUserByIdUseCase } from "../useCases/users/UpdateUserByIdUseCase";
 import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAccessCodeByIdUseCase";
@@ -8,7 +8,7 @@ import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../us
 import {
   createUserSchema,
   deleteUserSessionByIdSchema,
-  findUserByAccessCodeSchema,
+  createUserSessionSchema,
   findUserByIdSchema,
   updateUserAccessCodeByIdSchema,
   updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
@@ -73,7 +73,7 @@ const UserRouter = () => {
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
-          findUserByAccessCodeSchema.safeParse({ body: request.body });
+          createUserSessionSchema.safeParse({ body: request.body });
 
         if (schemaErrors !== undefined) {
           return void response
@@ -81,8 +81,8 @@ const UserRouter = () => {
             .json({ errors: schemaErrors.issues });
         }
 
-        const { findUserByAccessCode } = FindUserByAccessCodeUseCase();
-        const { statusCode, args } = await findUserByAccessCode({
+        const { createUserSession } = CreateUserSessionUseCase();
+        const { statusCode, args } = await createUserSession({
           schemaArgs,
         });
 
