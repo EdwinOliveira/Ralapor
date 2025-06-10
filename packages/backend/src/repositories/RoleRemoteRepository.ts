@@ -2,110 +2,110 @@ import type { RoleEntity, RoleRepository } from "../domains/Role";
 import { DatabaseService } from "../services/DatabaseService";
 
 const RoleRemoteRepository = (): RoleRepository => {
-	const { createConnection, destroyConnection } = DatabaseService();
+  const { createConnection, destroyConnection } = DatabaseService();
 
-	return {
-		findRoles: async () => {
-			const connection = createConnection();
-			const roles = await connection<RoleEntity>("Roles");
-			await destroyConnection(connection);
+  return {
+    findRoles: async () => {
+      const connection = createConnection();
+      const roles = await connection<RoleEntity>("Roles");
+      await destroyConnection(connection);
 
-			return {
-				affectedIds: roles.map((role) => role.id),
-				affectedRows: roles,
-			};
-		},
-		findRoleByDesignation: async ({ query }) => {
-			if (query === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      return {
+        affectedIds: roles.map((role) => role.id),
+        affectedRows: roles,
+      };
+    },
+    findRoleByDesignation: async ({ query }) => {
+      if (query === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			const connection = createConnection();
+      const connection = createConnection();
 
-			const role = await connection<RoleEntity>("Roles")
-				.where("designation", query?.designation)
-				.first();
+      const role = await connection<RoleEntity>("Roles")
+        .where("designation", query?.designation)
+        .first();
 
-			await destroyConnection(connection);
+      await destroyConnection(connection);
 
-			if (role === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      if (role === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			return { affectedIds: [role.id], affectedRows: [role] };
-		},
-		findRoleById: async ({ query }) => {
-			if (query === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      return { affectedIds: [role.id], affectedRows: [role] };
+    },
+    findRoleById: async ({ query }) => {
+      if (query === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			const connection = createConnection();
+      const connection = createConnection();
 
-			const role = await connection<RoleEntity>("Roles")
-				.where("id", query?.id)
-				.first();
+      const role = await connection<RoleEntity>("Roles")
+        .where("id", query?.id)
+        .first();
 
-			await destroyConnection(connection);
+      await destroyConnection(connection);
 
-			if (role === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      if (role === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			return { affectedIds: [role.id], affectedRows: [role] };
-		},
-		createRole: async ({ args }) => {
-			if (args === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      return { affectedIds: [role.id], affectedRows: [role] };
+    },
+    createRole: async ({ args }) => {
+      if (args === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			const connection = createConnection();
+      const connection = createConnection();
 
-			const createdUser = await connection<RoleEntity>("Roles")
-				.insert(args)
-				.returning("id");
+      const createdRole = await connection<RoleEntity>("Roles")
+        .insert(args)
+        .returning("id");
 
-			await destroyConnection(connection);
+      await destroyConnection(connection);
 
-			if (createdUser.length === 0) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      if (createdRole.length === 0) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			return { affectedIds: [createdUser[0].id], affectedRows: [] };
-		},
-		updateRoleById: async ({ query, args }) => {
-			if (query === undefined || args === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      return { affectedIds: [createdRole[0].id], affectedRows: [] };
+    },
+    updateRoleById: async ({ query, args }) => {
+      if (query === undefined || args === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			const connection = createConnection();
+      const connection = createConnection();
 
-			const foundRole = await connection<RoleEntity>("Roles")
-				.where("id", query.id)
-				.first();
+      const foundRole = await connection<RoleEntity>("Roles")
+        .where("id", query.id)
+        .first();
 
-			if (foundRole === undefined) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      if (foundRole === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			const updatedRoles = await connection<RoleEntity>("Roles")
-				.where("id", query.id)
-				.update({
-					designation: args.designation || foundRole.designation,
-				})
-				.returning("*");
+      const updatedRoles = await connection<RoleEntity>("Roles")
+        .where("id", query.id)
+        .update({
+          designation: args.designation || foundRole.designation,
+        })
+        .returning("*");
 
-			await destroyConnection(connection);
+      await destroyConnection(connection);
 
-			if (updatedRoles.length === 0) {
-				return { affectedIds: [], affectedRows: [] };
-			}
+      if (updatedRoles.length === 0) {
+        return { affectedIds: [], affectedRows: [] };
+      }
 
-			return {
-				affectedIds: [updatedRoles[0].id],
-				affectedRows: [{ updatedAt: updatedRoles[0].updatedAt }],
-			};
-		},
-	};
+      return {
+        affectedIds: [updatedRoles[0].id],
+        affectedRows: [{ updatedAt: updatedRoles[0].updatedAt }],
+      };
+    },
+  };
 };
 
 export { RoleRemoteRepository };
