@@ -414,6 +414,7 @@ const UserRouter = () => {
     router.delete(
       "/:id/sessions",
       isAuthenticated,
+      isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           deleteUserSessionByIdSchema.safeParse({ params: request.params });
