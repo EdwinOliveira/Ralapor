@@ -52,13 +52,11 @@ const DatabaseService = () => {
         table.timestamps(true, true, true);
       });
 
-      const designations: Array<
-        "consumer" | "publisher" | "publisher-consumer"
-      > = ["consumer", "publisher", "publisher-consumer"];
-
-      for (const designation of designations) {
-        await connection.insert({ designation });
-      }
+      await connection("Roles").insert([
+        { designation: "consumer" },
+        { designation: "publisher" },
+        { designation: "publisher-consumer" },
+      ]);
     }
   };
 
