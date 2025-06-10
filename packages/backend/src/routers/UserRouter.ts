@@ -23,9 +23,11 @@ import { RandomProvider } from "../providers/RandomProvider";
 import { DeleteUserSessionByIdUseCase } from "../useCases/users/DeleteUserSessionByIdUseCase";
 import { TokenProvider } from "../providers/TokenProvider";
 import { RateLimitProvider } from "../providers/RateLimitProvider";
+import { ChallengeGuard } from "../guards/ChallengeGuard";
 
 const UserRouter = () => {
   const { isAuthenticated, isAuthenticating } = SessionGuard();
+  const { isChallengeCompleted } = ChallengeGuard();
   const { createRateLimit } = RateLimitProvider();
 
   const subscribe = (router: Router): Router => {
@@ -50,6 +52,7 @@ const UserRouter = () => {
     router.get(
       "/:id",
       isAuthenticated,
+      isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           findUserByIdSchema.safeParse({ params: request.params });
@@ -155,15 +158,11 @@ const UserRouter = () => {
           return void response.status(500).json();
         }
 
-        await addToCache(
-          `session:${foundSession.sessionId}:challenge`,
-          {
-            code: createRandomString(4),
-            expiresIn: createChallengeExpirationTime(),
-            isChecked: false,
-          },
-          300
-        );
+        await addToCache(`session:${foundSession.sessionId}:challenge`, {
+          code: createRandomString(4),
+          expiresIn: createChallengeExpirationTime(),
+          isChecked: false,
+        });
 
         // TODO: Send Challenge Code To Client By Email or Phone Number
 
@@ -196,6 +195,7 @@ const UserRouter = () => {
     router.put(
       "/:id",
       isAuthenticated,
+      isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           updateUserByIdSchema.safeParse({
@@ -224,6 +224,7 @@ const UserRouter = () => {
     router.put(
       "/:id/access-code",
       isAuthenticated,
+      isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           updateUserAccessCodeByIdSchema.safeParse({ params: request.params });
@@ -318,6 +319,7 @@ const UserRouter = () => {
 
     router.put(
       "/session/challenge",
+      isAuthenticated,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
@@ -332,9 +334,8 @@ const UserRouter = () => {
         }
 
         const { getSession } = SessionProvider(request, response);
-        const { findOnCache, addToCache, isSessionCache } = CacheService();
-        const { createRandomString, createChallengeExpirationTime } =
-          RandomProvider();
+        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+          CacheService();
 
         const cachedSession = getSession();
 
@@ -348,15 +349,63 @@ const UserRouter = () => {
           return void response.status(500).json();
         }
 
-        await addToCache(
-          `session:${foundSession.sessionId}:challenge`,
-          {
-            code: createRandomString(4),
-            expiresIn: createChallengeExpirationTime(),
-            isChecked: false,
-          },
-          300
+        const foundSessionChallenge = await findOnCache(
+          `session:${foundSession.sessionId}:challenge`
         );
+
+        if (!isChallengeCache(foundSessionChallenge)) {
+          return void response.status(500).json();
+        }
+
+        if (schemaArgs.body.code !== foundSessionChallenge.code) {
+          return void response.status(400).json();
+        }
+
+        await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
+          ...foundSessionChallenge,
+          isChecked: true,
+        });
+
+        return void response.status(200).json();
+      }
+    );
+
+    router.put(
+      "/session/challenge/revoke",
+      isAuthenticated,
+      isChallengeCompleted,
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { getSession } = SessionProvider(request, response);
+
+        const {
+          findOnCache,
+          removeFromCache,
+          isSessionCache,
+          isChallengeCache,
+        } = CacheService();
+
+        const cachedSession = getSession();
+
+        if (cachedSession?.sid === undefined) {
+          return void response.status(500).json();
+        }
+
+        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
+
+        if (!isSessionCache(foundSession)) {
+          return void response.status(500).json();
+        }
+
+        const foundSessionChallenge = await findOnCache(
+          `session:${foundSession.sessionId}:challenge`
+        );
+
+        if (!isChallengeCache(foundSessionChallenge)) {
+          return void response.status(500).json();
+        }
+
+        await removeFromCache(`session:${foundSession.sessionId}:challenge`);
 
         return void response.status(200).json();
       }
@@ -364,6 +413,7 @@ const UserRouter = () => {
 
     router.delete(
       "/:id/sessions",
+      isAuthenticated,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           deleteUserSessionByIdSchema.safeParse({ params: request.params });
