@@ -1,30 +1,30 @@
 import { useFetch } from "../../../hooks/useFetch";
 
 type FindSessionResponse = {
-	sessionId: string;
-	userId: number;
-	roleId: number;
-	expiresIn: number;
-	refreshToken: string;
+  sessionId: string;
+  userId: number;
+  roleId: number;
+  expiresIn: number;
+  refreshToken: string;
 };
 
 const useFindUserSession = () => {
-	const { createRequest } = useFetch();
+  const { createRequest } = useFetch();
 
-	const findUserSession = async () => {
-		const response = await createRequest({
-			httpRoute: "/users/sessions",
-			httpMethod: "GET",
-		});
+  const findUserSession = async () => {
+    const response = await createRequest({
+      httpRoute: "/users/session",
+      httpMethod: "GET",
+    });
 
-		if (response.ok === false) {
-			return;
-		}
+    if (response.ok === false) {
+      return;
+    }
 
-		return (await response.json()) as FindSessionResponse;
-	};
+    return (await response.json()) as FindSessionResponse;
+  };
 
-	return { findUserSession };
+  return { findUserSession };
 };
 
 export { useFindUserSession };
