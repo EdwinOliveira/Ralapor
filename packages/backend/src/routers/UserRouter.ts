@@ -15,6 +15,7 @@ import {
 	updateUserAccessCodeByUsernameOrEmailOrPhoneNumberSchema,
 	updateUserByIdSchema,
 	updateUserSessionChallengeIsCheckedSchema,
+	updateUserSessionChallengeIsRevokedSchema,
 } from "../domains/User";
 import { SessionProvider } from "../providers/SessionProvider";
 import { SessionGuard } from "../guards/SessionGuard";
@@ -128,7 +129,7 @@ const UserRouter = () => {
 		);
 
 		router.post(
-			"/session/challenge",
+			"/:id/session/challenge",
 			isAuthenticating,
 			createRateLimit(15 * 60 * 1000, 5),
 			async (request: Request, response: Response) => {
@@ -162,11 +163,12 @@ const UserRouter = () => {
 					code: createRandomString(4),
 					expiresIn: createChallengeExpirationTime(),
 					isChecked: false,
+					isRevoked: false,
 				});
 
 				// TODO: Send Challenge Code To Client By Email or Phone Number
 
-				return void response.status(200).json();
+				return void response.status(201).json();
 			},
 		);
 
@@ -367,7 +369,7 @@ const UserRouter = () => {
 					isChecked: true,
 				});
 
-				return void response.status(200).json();
+				return void response.status(201).json();
 			},
 		);
 
@@ -377,14 +379,21 @@ const UserRouter = () => {
 			isChallengeCompleted,
 			createRateLimit(15 * 60 * 1000, 5),
 			async (request: Request, response: Response) => {
-				const { getSession } = SessionProvider(request, response);
+				const { data: _schemaArgs, error: schemaErrors } =
+					updateUserSessionChallengeIsRevokedSchema.safeParse({
+						params: request.params,
+						body: request.body,
+					});
 
-				const {
-					findOnCache,
-					removeFromCache,
-					isSessionCache,
-					isChallengeCache,
-				} = CacheService();
+				if (schemaErrors !== undefined) {
+					return void response
+						.status(400)
+						.json({ errors: schemaErrors.issues });
+				}
+
+				const { getSession } = SessionProvider(request, response);
+				const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+					CacheService();
 
 				const cachedSession = getSession();
 
@@ -406,9 +415,12 @@ const UserRouter = () => {
 					return void response.status(500).json();
 				}
 
-				await removeFromCache(`session:${foundSession.sessionId}:challenge`);
+				await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
+					...foundSessionChallenge,
+					isRevoked: true,
+				});
 
-				return void response.status(200).json();
+				return void response.status(201).json();
 			},
 		);
 

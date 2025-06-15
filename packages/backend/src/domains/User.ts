@@ -58,6 +58,12 @@ const createUserSessionSchema = z.object({
 type CreateUserSessionRequest = z.infer<typeof createUserSessionSchema>;
 
 const createUserSessionChallengeSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
 	body: z.object({
 		alternative: z.enum(["phoneNumber", "email"]),
 	}),
@@ -154,6 +160,22 @@ type UpdateUserSessionChallengeIsCheckedRequest = z.infer<
 	typeof updateUserSessionChallengeIsCheckedSchema
 >;
 
+const updateUserSessionChallengeIsRevokedSchema = z.object({
+	params: z.object({
+		id: z
+			.string()
+			.transform((id) => Number.parseInt(id))
+			.refine((id) => !Number.isNaN(id)),
+	}),
+	body: z.object({
+		code: z.string().optional(),
+	}),
+});
+
+type UpdateUserSessionChallengeIsRevokedRequest = z.infer<
+	typeof updateUserSessionChallengeIsRevokedSchema
+>;
+
 const deleteUserSessionByIdSchema = z.object({
 	params: z.object({
 		id: z
@@ -227,6 +249,8 @@ export {
 	type UpdateUserSessionByIdRequest,
 	updateUserSessionChallengeIsCheckedSchema,
 	type UpdateUserSessionChallengeIsCheckedRequest,
+	updateUserSessionChallengeIsRevokedSchema,
+	type UpdateUserSessionChallengeIsRevokedRequest,
 	deleteUserSessionByIdSchema,
 	type DeleteUserSessionByIdRequest,
 };

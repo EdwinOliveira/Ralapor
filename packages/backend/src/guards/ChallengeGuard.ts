@@ -34,7 +34,9 @@ const ChallengeGuard = () => {
 					return void response.status(401).json();
 				}
 
-				if (!foundSessionChallenge.isChecked) {
+				const { isChecked, isRevoked } = foundSessionChallenge;
+
+				if (!isChecked || isRevoked) {
 					return void response.status(401).json();
 				}
 
