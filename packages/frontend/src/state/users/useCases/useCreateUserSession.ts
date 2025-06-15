@@ -1,15 +1,15 @@
 import { useFetch } from "../../../hooks/useFetch";
 import { useUserStore, type User } from "../useUserStore";
 
-type FindUserByAccessCodeRequest = {
+type CreateUserSessionRequest = {
 	accessCode: string;
 };
 
-const useFindUserByAccessCode = () => {
+const useCreateUserSession = () => {
 	const { createRequest } = useFetch();
 	const { addUser } = useUserStore();
 
-	const findUserByAccessCode = async (request: FindUserByAccessCodeRequest) => {
+	const createUserSession = async (request: CreateUserSessionRequest) => {
 		const response = await createRequest({
 			httpRoute: "/users/access-code",
 			httpMethod: "POST",
@@ -24,7 +24,7 @@ const useFindUserByAccessCode = () => {
 		addUser(foundUser);
 	};
 
-	return { findUserByAccessCode };
+	return { createUserSession };
 };
 
-export { useFindUserByAccessCode, type FindUserByAccessCodeRequest };
+export { useCreateUserSession, type CreateUserSessionRequest };
