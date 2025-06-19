@@ -1,11 +1,11 @@
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import {
   type CreateUserSessionRequest,
   type UserDTO,
   userDTOMapper,
 } from "../../domains/User";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import { HashProvider } from "../../providers/HashProvider";
+import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const CreateUserSessionUseCase = () => {
   const repository = UserRemoteRepository();

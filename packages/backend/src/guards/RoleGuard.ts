@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { SessionProvider } from "../providers/SessionProvider";
-import { CacheService } from "../services/CacheService";
 import { RoleRemoteRepository } from "../repositories/RoleRemoteRepository";
+import { CacheService } from "../services/CacheService";
 
 const RoleGuard = () => {
   const repository = RoleRemoteRepository();

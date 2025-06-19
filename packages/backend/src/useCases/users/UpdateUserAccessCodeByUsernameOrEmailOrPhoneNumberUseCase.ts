@@ -1,11 +1,11 @@
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import type {
 	UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberRequest,
 	UserDTO,
 } from "../../domains/User";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import { RandomProvider } from "../../providers/RandomProvider";
 import { HashProvider } from "../../providers/HashProvider";
+import { RandomProvider } from "../../providers/RandomProvider";
+import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase = () => {
 	const repository = UserRemoteRepository();

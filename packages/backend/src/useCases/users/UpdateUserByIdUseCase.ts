@@ -1,6 +1,6 @@
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { UpdateUserByIdRequest, UserDTO } from "../../domains/User";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const UpdateUserByIdUseCase = () => {
 	const repository = UserRemoteRepository();
