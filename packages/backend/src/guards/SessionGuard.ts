@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { RandomProvider } from "../providers/RandomProvider";
 import { SessionProvider } from "../providers/SessionProvider";
 import { TokenProvider } from "../providers/TokenProvider";
-import { CacheService } from "../services/CacheService";
+import { CacheDataSource } from "../datasources/CacheDataSource";
 
 const SessionGuard = () => {
   return {
@@ -21,7 +21,7 @@ const SessionGuard = () => {
             updateOnCache,
             removeFromCache,
             isSessionCache,
-          } = CacheService();
+          } = CacheDataSource();
           const foundSession = await findOnCache(`session:${session.sid}`);
 
           if (isSessionCache(foundSession)) {
@@ -71,7 +71,7 @@ const SessionGuard = () => {
 
         if (session && session.sid !== undefined) {
           const { findOnCache, removeFromCache, isSessionCache } =
-            CacheService();
+            CacheDataSource();
           const foundSession = await findOnCache(`session:${session.sid}`);
 
           if (

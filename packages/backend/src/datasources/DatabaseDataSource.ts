@@ -1,6 +1,6 @@
 import knex from "knex";
 
-const DatabaseService = () => {
+const DatabaseDataSource = () => {
   const createConnection = () => {
     return knex({
       client: "pg",
@@ -60,42 +60,12 @@ const DatabaseService = () => {
     }
   };
 
-  const createSubstancesTable = async (connection: knex.Knex) => {
-    const tableExists = await connection.schema.hasTable("Substances");
-
-    if (tableExists === false) {
-      await connection.schema.createTable("Substances", (table) => {
-        table.increments("id").primary();
-        table.string("designation");
-        table.string("description");
-        table.enum("classification", ["fruits", "vegetables", "meat", "fish"]);
-        table.timestamps(true, true, true);
-      });
-    }
-  };
-
-  const createRecipesTable = async (connection: knex.Knex) => {
-    const tableExists = await connection.schema.hasTable("Recipes");
-
-    if (tableExists === false) {
-      await connection.schema.createTable("Recipes", (table) => {
-        table.increments("id").primary();
-        table.string("designation");
-        table.string("description");
-        table.enum("dietaryPattern", ["plant-based", "animal-based"]);
-        table.timestamps(true, true, true);
-      });
-    }
-  };
-
   return {
     createConnection,
     destroyConnection,
     createUsersTable,
     createRolesTable,
-    createSubstancesTable,
-    createRecipesTable,
   };
 };
 
-export { DatabaseService };
+export { DatabaseDataSource };

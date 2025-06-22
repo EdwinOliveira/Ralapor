@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { SessionProvider } from "../providers/SessionProvider";
 import { RoleRemoteRepository } from "../repositories/RoleRemoteRepository";
-import { CacheService } from "../services/CacheService";
+import { CacheDataSource } from "../datasources/CacheDataSource";
 
 const RoleGuard = () => {
   const repository = RoleRemoteRepository();
@@ -19,7 +19,7 @@ const RoleGuard = () => {
         return void response.status(401).json();
       }
 
-      const { findOnCache, isSessionCache } = CacheService();
+      const { findOnCache, isSessionCache } = CacheDataSource();
       const cachedSession = await findOnCache(`session:${session.sid}`);
 
       if (!isSessionCache(cachedSession)) {
