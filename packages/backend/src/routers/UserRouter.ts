@@ -32,101 +32,9 @@ const UserRouter = () => {
   const { createRateLimit } = RateLimitProvider();
 
   const subscribe = (router: Router): Router => {
-    router.get(
-      "/session",
-      isAuthenticated,
-      async (request: Request, response: Response) => {
-        const { getSession } = SessionProvider(request, response);
-        const session = getSession();
-
-        const { findOnCache } = CacheDataSource();
-        const foundSession = await findOnCache(`session:${session?.sid}`);
-
-        /**
-         * Guard will validate the user session.
-         * This endpoint only exists to be called so the guard does the validation work.
-         */
-        return void response.status(200).json(foundSession);
-      }
-    );
-
-    router.get(
-      "/:id",
-      isAuthenticated,
-      isChallengeCompleted,
-      async (request: Request, response: Response) => {
-        const { data: schemaArgs, error: schemaErrors } =
-          findUserByIdSchema.safeParse({ params: request.params });
-
-        if (schemaErrors !== undefined) {
-          return void response
-            .status(400)
-            .json({ errors: schemaErrors.issues });
-        }
-
-        const { findUserById } = FindUserByIdUseCase();
-        const { statusCode, args } = await findUserById({
-          schemaArgs,
-        });
-
-        return void response.status(statusCode).json(args);
-      }
-    );
-
-    router.post(
-      "/session",
-      isAuthenticating,
-      createRateLimit(15 * 60 * 1000, 5),
-      async (request: Request, response: Response) => {
-        const { data: schemaArgs, error: schemaErrors } =
-          createUserSessionSchema.safeParse({ body: request.body });
-
-        if (schemaErrors !== undefined) {
-          return void response
-            .status(400)
-            .json({ errors: schemaErrors.issues });
-        }
-
-        const { createUserSession } = CreateUserSessionUseCase();
-        const { statusCode, args } = await createUserSession({
-          schemaArgs,
-        });
-
-        if (args === undefined) {
-          return void response.status(statusCode).json();
-        }
-
-        const randomProvider = RandomProvider();
-        const sessionProvider = SessionProvider(request, response);
-        const CacheDataSource = CacheDataSource();
-        const tokenProvider = TokenProvider();
-
-        const sessionId = randomProvider.createRandomUuid();
-
-        const refreshToken = await tokenProvider.createToken(
-          { sessionId },
-          "7d",
-          process.env.SESSION_TOKEN_SECRET
-        );
-
-        if (refreshToken === undefined) {
-          return void response.status(500).json();
-        }
-
-        sessionProvider.addToSession(sessionId, schemaArgs.body.rememberDevice);
-
-        await CacheDataSource.addToCache(`session:${sessionId}`, {
-          sessionId: sessionId,
-          userId: args.id,
-          roleId: args.roleId,
-          expiresIn: randomProvider.createExpirationTime(),
-          refreshToken,
-          deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
-        });
-
-        return void response.status(statusCode).json(args);
-      }
-    );
+    /**
+     * MFA
+     */
 
     router.post(
       "/:id/session/challenge",
@@ -169,6 +77,230 @@ const UserRouter = () => {
         // TODO: Send Challenge Code To Client By Email or Phone Number
 
         return void response.status(201).json();
+      }
+    );
+
+    router.put(
+      "/:id/session/challenge/is-checked",
+      isAuthenticated,
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { data: schemaArgs, error: schemaErrors } =
+          updateUserSessionChallengeIsCheckedSchema.safeParse({
+            params: request.params,
+            body: request.body,
+          });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { getSession } = SessionProvider(request, response);
+        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+          CacheDataSource();
+
+        const cachedSession = getSession();
+
+        if (cachedSession?.sid === undefined) {
+          return void response.status(500).json();
+        }
+
+        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
+
+        if (!isSessionCache(foundSession)) {
+          return void response.status(500).json();
+        }
+
+        const foundSessionChallenge = await findOnCache(
+          `session:${foundSession.sessionId}:challenge`
+        );
+
+        if (!isChallengeCache(foundSessionChallenge)) {
+          return void response.status(500).json();
+        }
+
+        if (schemaArgs.body.code !== foundSessionChallenge.code) {
+          return void response.status(400).json();
+        }
+
+        await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
+          ...foundSessionChallenge,
+          isChecked: true,
+        });
+
+        return void response.status(201).json();
+      }
+    );
+
+    router.put(
+      "/:id/session/challenge/revoke",
+      isAuthenticated,
+      isChallengeCompleted,
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { data: _schemaArgs, error: schemaErrors } =
+          updateUserSessionChallengeIsRevokedSchema.safeParse({
+            params: request.params,
+            body: request.body,
+          });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { getSession } = SessionProvider(request, response);
+        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+          CacheDataSource();
+
+        const cachedSession = getSession();
+
+        if (cachedSession?.sid === undefined) {
+          return void response.status(500).json();
+        }
+
+        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
+
+        if (!isSessionCache(foundSession)) {
+          return void response.status(500).json();
+        }
+
+        const foundSessionChallenge = await findOnCache(
+          `session:${foundSession.sessionId}:challenge`
+        );
+
+        if (!isChallengeCache(foundSessionChallenge)) {
+          return void response.status(500).json();
+        }
+
+        await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
+          ...foundSessionChallenge,
+          isRevoked: true,
+        });
+
+        return void response.status(201).json();
+      }
+    );
+
+    /**
+     * Sessions
+     */
+
+    router.post(
+      "/session",
+      isAuthenticating,
+      createRateLimit(15 * 60 * 1000, 5),
+      async (request: Request, response: Response) => {
+        const { data: schemaArgs, error: schemaErrors } =
+          createUserSessionSchema.safeParse({ body: request.body });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { createUserSession } = CreateUserSessionUseCase();
+        const { statusCode, args } = await createUserSession({
+          schemaArgs,
+        });
+
+        if (args === undefined) {
+          return void response.status(statusCode).json();
+        }
+
+        const randomProvider = RandomProvider();
+        const sessionProvider = SessionProvider(request, response);
+        const { addToCache } = CacheDataSource();
+        const tokenProvider = TokenProvider();
+
+        const sessionId = randomProvider.createRandomUuid();
+
+        const refreshToken = await tokenProvider.createToken(
+          { sessionId },
+          "7d",
+          process.env.SESSION_TOKEN_SECRET
+        );
+
+        if (refreshToken === undefined) {
+          return void response.status(500).json();
+        }
+
+        sessionProvider.addToSession(sessionId, schemaArgs.body.rememberDevice);
+
+        await addToCache(`session:${sessionId}`, {
+          sessionId: sessionId,
+          userId: args.id,
+          roleId: args.roleId,
+          expiresIn: randomProvider.createExpirationTime(),
+          refreshToken,
+          deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
+        });
+
+        return void response.status(statusCode).json(args);
+      }
+    );
+
+    router.delete(
+      "/:id/session",
+      isAuthenticated,
+      isChallengeCompleted,
+      async (request: Request, response: Response) => {
+        const { data: schemaArgs, error: schemaErrors } =
+          deleteUserSessionByIdSchema.safeParse({ params: request.params });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { deleteUserSessionById } = DeleteUserSessionByIdUseCase();
+        const { statusCode } = await deleteUserSessionById({
+          schemaArgs,
+        });
+
+        const { getSession, clearSession } = SessionProvider(request, response);
+
+        const session = getSession();
+
+        if (session && session.sid !== undefined) {
+          const { removeFromCache } = CacheDataSource();
+          await removeFromCache(`session:${session.sid}`);
+          clearSession();
+        }
+
+        return void response.status(statusCode).json();
+      }
+    );
+
+    /**
+     * CRUD
+     */
+
+    router.get(
+      "/:id",
+      isAuthenticated,
+      isChallengeCompleted,
+      async (request: Request, response: Response) => {
+        const { data: schemaArgs, error: schemaErrors } =
+          findUserByIdSchema.safeParse({ params: request.params });
+
+        if (schemaErrors !== undefined) {
+          return void response
+            .status(400)
+            .json({ errors: schemaErrors.issues });
+        }
+
+        const { findUserById } = FindUserByIdUseCase();
+        const { statusCode, args } = await findUserById({
+          schemaArgs,
+        });
+
+        return void response.status(statusCode).json(args);
       }
     );
 
@@ -316,144 +448,6 @@ const UserRouter = () => {
           id: args?.id,
           updatedAt: args?.updatedAt,
         });
-      }
-    );
-
-    router.put(
-      "/:id/session/challenge/is-checked",
-      isAuthenticated,
-      createRateLimit(15 * 60 * 1000, 5),
-      async (request: Request, response: Response) => {
-        const { data: schemaArgs, error: schemaErrors } =
-          updateUserSessionChallengeIsCheckedSchema.safeParse({
-            params: request.params,
-            body: request.body,
-          });
-
-        if (schemaErrors !== undefined) {
-          return void response
-            .status(400)
-            .json({ errors: schemaErrors.issues });
-        }
-
-        const { getSession } = SessionProvider(request, response);
-        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
-          CacheDataSource();
-
-        const cachedSession = getSession();
-
-        if (cachedSession?.sid === undefined) {
-          return void response.status(500).json();
-        }
-
-        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
-
-        if (!isSessionCache(foundSession)) {
-          return void response.status(500).json();
-        }
-
-        const foundSessionChallenge = await findOnCache(
-          `session:${foundSession.sessionId}:challenge`
-        );
-
-        if (!isChallengeCache(foundSessionChallenge)) {
-          return void response.status(500).json();
-        }
-
-        if (schemaArgs.body.code !== foundSessionChallenge.code) {
-          return void response.status(400).json();
-        }
-
-        await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
-          ...foundSessionChallenge,
-          isChecked: true,
-        });
-
-        return void response.status(201).json();
-      }
-    );
-
-    router.put(
-      "/:id/session/challenge/revoke",
-      isAuthenticated,
-      isChallengeCompleted,
-      createRateLimit(15 * 60 * 1000, 5),
-      async (request: Request, response: Response) => {
-        const { data: _schemaArgs, error: schemaErrors } =
-          updateUserSessionChallengeIsRevokedSchema.safeParse({
-            params: request.params,
-            body: request.body,
-          });
-
-        if (schemaErrors !== undefined) {
-          return void response
-            .status(400)
-            .json({ errors: schemaErrors.issues });
-        }
-
-        const { getSession } = SessionProvider(request, response);
-        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
-          CacheDataSource();
-
-        const cachedSession = getSession();
-
-        if (cachedSession?.sid === undefined) {
-          return void response.status(500).json();
-        }
-
-        const foundSession = await findOnCache(`session:${cachedSession.sid}`);
-
-        if (!isSessionCache(foundSession)) {
-          return void response.status(500).json();
-        }
-
-        const foundSessionChallenge = await findOnCache(
-          `session:${foundSession.sessionId}:challenge`
-        );
-
-        if (!isChallengeCache(foundSessionChallenge)) {
-          return void response.status(500).json();
-        }
-
-        await updateOnCache(`session:${foundSession.sessionId}:challenge`, {
-          ...foundSessionChallenge,
-          isRevoked: true,
-        });
-
-        return void response.status(201).json();
-      }
-    );
-
-    router.delete(
-      "/:id/session",
-      isAuthenticated,
-      isChallengeCompleted,
-      async (request: Request, response: Response) => {
-        const { data: schemaArgs, error: schemaErrors } =
-          deleteUserSessionByIdSchema.safeParse({ params: request.params });
-
-        if (schemaErrors !== undefined) {
-          return void response
-            .status(400)
-            .json({ errors: schemaErrors.issues });
-        }
-
-        const { deleteUserSessionById } = DeleteUserSessionByIdUseCase();
-        const { statusCode } = await deleteUserSessionById({
-          schemaArgs,
-        });
-
-        const { getSession, clearSession } = SessionProvider(request, response);
-
-        const session = getSession();
-
-        if (session && session.sid !== undefined) {
-          const { removeFromCache } = CacheDataSource();
-          await removeFromCache(`session:${session.sid}`);
-          clearSession();
-        }
-
-        return void response.status(statusCode).json();
       }
     );
 

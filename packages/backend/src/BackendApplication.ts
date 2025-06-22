@@ -35,8 +35,6 @@ const BackendApplication = () => {
         createConnection,
         createUsersTable,
         createRolesTable,
-        createRecipesTable,
-        createSubstancesTable,
         destroyConnection,
       } = DatabaseDataSource();
 
@@ -45,8 +43,6 @@ const BackendApplication = () => {
       try {
         await createUsersTable(connection);
         await createRolesTable(connection);
-        await createRecipesTable(connection);
-        await createSubstancesTable(connection);
       } finally {
         await destroyConnection(connection);
       }
