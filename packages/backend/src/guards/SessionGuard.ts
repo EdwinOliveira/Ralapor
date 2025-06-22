@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { CacheService } from "../services/CacheService";
+import { RandomProvider } from "../providers/RandomProvider";
 import { SessionProvider } from "../providers/SessionProvider";
 import { TokenProvider } from "../providers/TokenProvider";
-import { RandomProvider } from "../providers/RandomProvider";
+import { CacheService } from "../services/CacheService";
 
 const SessionGuard = () => {
   return {

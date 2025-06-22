@@ -1,4 +1,4 @@
-import { type JwtPayload, sign, TokenExpiredError, verify } from "jsonwebtoken";
+import { type JwtPayload, TokenExpiredError, sign, verify } from "jsonwebtoken";
 
 type CheckTokenSignature =
 	| "TokenSuccess"

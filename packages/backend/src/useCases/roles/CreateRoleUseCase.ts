@@ -1,6 +1,6 @@
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { CreateRoleRequest, RoleDTO } from "../../domains/Role";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const CreateRoleUseCase = () => {
 	const repository = RoleRemoteRepository();

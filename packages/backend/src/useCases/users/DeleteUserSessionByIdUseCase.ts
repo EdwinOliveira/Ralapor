@@ -1,6 +1,6 @@
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
 import type { DeleteUserSessionByIdRequest } from "../../domains/User";
+import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const DeleteUserSessionByIdUseCase = () => {
 	const repository = UserRemoteRepository();

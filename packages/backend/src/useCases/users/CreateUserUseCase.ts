@@ -1,8 +1,8 @@
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import type { CreateUserRequest, UserDTO } from "../../domains/User";
 import { HashProvider } from "../../providers/HashProvider";
 import { RandomProvider } from "../../providers/RandomProvider";
 import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseCase";
 
 const CreateUserUseCase = () => {

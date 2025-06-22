@@ -1,10 +1,10 @@
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 import {
 	type FindRoleByIdRequest,
 	type RoleDTO,
 	roleDTOMapper,
 } from "../../domains/Role";
 import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
+import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
 
 const FindRoleByIdUseCase = () => {
 	const repository = RoleRemoteRepository();

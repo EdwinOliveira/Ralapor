@@ -1,16 +1,16 @@
 import type { Request, Response, Router } from "express";
-import { FindRoleByIdUseCase } from "../useCases/roles/FindRoleByIdUseCase";
 import {
   createRoleSchema,
   findRoleByDesignationSchema,
   findRoleByIdSchema,
   updateRoleByIdSchema,
 } from "../domains/Role";
-import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
-import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
-import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
-import { SessionGuard } from "../guards/SessionGuard";
 import { ChallengeGuard } from "../guards/ChallengeGuard";
+import { SessionGuard } from "../guards/SessionGuard";
+import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
+import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
+import { FindRoleByIdUseCase } from "../useCases/roles/FindRoleByIdUseCase";
+import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
 
 const RoleRouter = () => {
   const { isAuthenticated } = SessionGuard();
