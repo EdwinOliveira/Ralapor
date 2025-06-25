@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { RandomProvider } from "../providers/RandomProvider";
 import { SessionProvider } from "../providers/SessionProvider";
 import { TokenProvider } from "../providers/TokenProvider";
-import { CacheDataSource } from "../datasources/CacheDataSource";
+import { CacheDataSource } from "../dataSource/CacheDataSource";
 
 const SessionGuard = () => {
   return {

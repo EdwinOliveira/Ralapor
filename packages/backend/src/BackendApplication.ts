@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { UserRouter } from "./routers/UserRouter";
 import { RoleRouter } from "./routers/RoleRouter";
-import { DatabaseDataSource } from "./datasources/DatabaseDataSource";
+import { DatabaseDataSource } from "./dataSource/DatabaseDataSource";
 
 const BackendApplication = () => {
   const httpApplication = Express();

@@ -1,5 +1,5 @@
 import type { RoleEntity, RoleRepository } from "../domains/Role";
-import { DatabaseDataSource } from "../datasources/DatabaseDataSource";
+import { DatabaseDataSource } from "../dataSource/DatabaseDataSource";
 
 const RoleRemoteRepository = (): RoleRepository => {
   const { createConnection, destroyConnection } = DatabaseDataSource();

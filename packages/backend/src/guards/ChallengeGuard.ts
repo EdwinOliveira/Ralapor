@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { SessionProvider } from "../providers/SessionProvider";
-import { CacheDataSource } from "../datasources/CacheDataSource";
+import { CacheDataSource } from "../dataSource/CacheDataSource";
 
 const ChallengeGuard = () => {
   return {

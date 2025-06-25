@@ -17,7 +17,7 @@ import { RandomProvider } from "../providers/RandomProvider";
 import { RateLimitProvider } from "../providers/RateLimitProvider";
 import { SessionProvider } from "../providers/SessionProvider";
 import { TokenProvider } from "../providers/TokenProvider";
-import { CacheDataSource } from "../datasources/CacheDataSource";
+import { CacheDataSource } from "../dataSource/CacheDataSource";
 import { CreateUserSessionUseCase } from "../useCases/users/CreateUserSessionUseCase";
 import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
 import { DeleteUserSessionByIdUseCase } from "../useCases/users/DeleteUserSessionByIdUseCase";

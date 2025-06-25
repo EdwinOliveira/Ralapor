@@ -1,5 +1,5 @@
 import type { UserEntity, UserRepository } from "../domains/User";
-import { DatabaseDataSource } from "../datasources/DatabaseDataSource";
+import { DatabaseDataSource } from "../dataSource/DatabaseDataSource";
 
 const UserRemoteRepository = (): UserRepository => {
   const { createConnection, destroyConnection } = DatabaseDataSource();
