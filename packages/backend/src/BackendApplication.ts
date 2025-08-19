@@ -1,11 +1,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import Express, { json, Router } from 'express';
+import Express, { json } from 'express';
 import 'dotenv/config';
-
-import { DatabaseDataSource } from './dataSource/DatabaseDataSource';
-import { RoleRouter } from './routers/RoleRouter';
-import { UserRouter } from './routers/UserRouter';
 
 const BackendApplication = () => {
   const httpApplication = Express();
@@ -22,32 +18,10 @@ const BackendApplication = () => {
     );
   };
 
-  const createRoutes = async () => {
-    const userRouter = UserRouter().subscribe(Router());
-    httpApplication.use('/users', userRouter);
-
-    const roleRouter = RoleRouter().subscribe(Router());
-    httpApplication.use('/roles', roleRouter);
-  };
+  const createRoutes = async () => {};
 
   const createListner = () => {
     httpApplication.listen(httpAddress, async () => {
-      const {
-        createConnection,
-        createRolesTable,
-        createUsersTable,
-        destroyConnection,
-      } = DatabaseDataSource();
-
-      const connection = createConnection();
-
-      try {
-        await createUsersTable(connection);
-        await createRolesTable(connection);
-      } finally {
-        await destroyConnection(connection);
-      }
-
       console.log(`Server initialized on PORT:${httpAddress}!`);
     });
   };
