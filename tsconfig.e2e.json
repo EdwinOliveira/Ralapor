@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["**/*.spec.ts", "**/*.e2e.ts"],
+  "exclude": ["playwright-report", "test-results"]
+}
