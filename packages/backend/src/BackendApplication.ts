@@ -1,7 +1,9 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import Express, { json } from 'express';
+import Express, { json, Router } from 'express';
 import 'dotenv/config';
+
+import { UserRouter } from './routers/UserRouter';
 
 const BackendApplication = () => {
   const httpApplication = Express();
@@ -18,7 +20,9 @@ const BackendApplication = () => {
     );
   };
 
-  const createRoutes = async () => {};
+  const createRoutes = async () => {
+    httpApplication.use('/users', UserRouter().subscribe(Router()));
+  };
 
   const createListner = () => {
     httpApplication.listen(httpAddress, async () => {

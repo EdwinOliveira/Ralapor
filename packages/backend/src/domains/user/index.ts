@@ -1,3 +1,10 @@
+import z from 'zod';
+
+import {
+  RepositoryRequest,
+  RepositoryResponse,
+} from '../../signatures/Repository';
+
 type UserEntity = {
   accessCode: string;
   createdAt: number;
@@ -27,4 +34,50 @@ const UserDTOMapper = () => {
   };
 };
 
-export { type UserDTO, UserDTOMapper, type UserEntity };
+const createUserSchema = z.object({
+  body: z.object({
+    email: z.string().nonempty(),
+    phoneNumber: z.string().nonempty(),
+    phoneNumberCode: z.enum(['+351', '+44']),
+    username: z.string().nonempty(),
+  }),
+});
+
+type CreateUserRequest = z.infer<typeof createUserSchema>;
+
+interface UserRepository {
+  findUserById: ({
+    queryParams,
+  }: RepositoryRequest<Pick<UserEntity, 'id'>, unknown>) => Promise<
+    RepositoryResponse<UserEntity>
+  >;
+  findUserByUsernameOrEmailOrPhoneNumber: ({
+    queryParams,
+  }: RepositoryRequest<
+    Partial<
+      Pick<UserEntity, 'email' | 'phoneNumber' | 'phoneNumberCode' | 'username'>
+    >,
+    unknown
+  >) => Promise<RepositoryResponse<UserEntity>>;
+  createUser: ({
+    queryArgs,
+  }: RepositoryRequest<
+    unknown,
+    Omit<UserEntity, 'id' | 'createdAt' | 'updatedAt'>
+  >) => Promise<RepositoryResponse<Pick<UserEntity, 'id'>>>;
+  updateUserById: ({
+    queryArgs,
+  }: RepositoryRequest<
+    Pick<UserEntity, 'id'>,
+    Partial<Omit<UserEntity, 'id' | 'createdAt' | 'updatedAt'>>
+  >) => Promise<RepositoryResponse<Pick<UserEntity, 'id'>>>;
+}
+
+export {
+  type CreateUserRequest,
+  createUserSchema,
+  type UserDTO,
+  UserDTOMapper,
+  type UserEntity,
+  type UserRepository,
+};
