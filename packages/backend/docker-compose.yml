@@ -7,7 +7,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: ralaporAdmin
-      POSTGRES_PASSWORD: ralaporAdmin  
+      POSTGRES_PASSWORD: ralaporAdmin
       POSTGRES_DB: ralapor
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -16,7 +16,7 @@ services:
     image: memcached:latest
     container_name: memcached
     ports:
-      - "11211:11211"
+      - '11211:11211'
     restart: unless-stopped
 
 volumes:

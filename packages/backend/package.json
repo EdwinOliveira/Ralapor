@@ -1,31 +1,22 @@
 {
-	"name": "@oliveira/ralapor-backend",
-	"main": "backendApplication.js",
-	"scripts": {
-		"dev": "tsx --watch src/BackendApplication.ts"
-	},
-	"dependencies": {
-		"cookie-parser": "^1.4.7",
-		"cors": "^2.8.5",
-		"express": "^4.21.2",
-		"express-rate-limit": "^7.5.0",
-		"jsonwebtoken": "^9.0.2",
-		"knex": "^3.1.0",
-		"memjs": "^1.3.2",
-		"nodemailer": "^6.10.0",
-		"pg": "^8.13.3",
-		"zod": "^3.24.2"
-	},
-	"devDependencies": {
-		"@types/cookie-parser": "^1.4.8",
-		"@types/cors": "^2.8.17",
-		"@types/express": "^5.0.0",
-		"@types/express-session": "^1.18.1",
-		"@types/jsonwebtoken": "^9.0.9",
-		"@types/memjs": "^1.3.3",
-		"@types/node": "^22.13.9",
-		"@types/nodemailer": "^6.4.17",
-		"dotenv": "^16.4.7",
-		"tsx": "^4.19.3"
-	}
+  "name": "@oliveira/ralapor-backend",
+  "main": "BackendApplication.js",
+  "scripts": {},
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.0.7",
+    "dotenv": "^17.0.1",
+    "tsx": "^4.20.3"
+  }
 }
