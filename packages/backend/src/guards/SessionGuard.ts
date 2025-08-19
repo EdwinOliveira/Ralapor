@@ -1,8 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
-import { RandomProvider } from "../providers/RandomProvider";
-import { SessionProvider } from "../providers/SessionProvider";
-import { TokenProvider } from "../providers/TokenProvider";
-import { CacheDataSource } from "../dataSource/CacheDataSource";
+import type { NextFunction, Request, Response } from 'express';
+
+import { CacheDataSource } from '../dataSource/CacheDataSource';
+import { RandomProvider } from '../providers/RandomProvider';
+import { SessionProvider } from '../providers/SessionProvider';
+import { TokenProvider } from '../providers/TokenProvider';
 
 const SessionGuard = () => {
   return {
@@ -12,15 +13,15 @@ const SessionGuard = () => {
       next: NextFunction
     ) => {
       try {
-        const { getSession, clearSession } = SessionProvider(request, response);
+        const { clearSession, getSession } = SessionProvider(request, response);
         const session = getSession();
 
         if (session && session.sid !== undefined) {
           const {
             findOnCache,
-            updateOnCache,
-            removeFromCache,
             isSessionCache,
+            removeFromCache,
+            updateOnCache,
           } = CacheDataSource();
           const foundSession = await findOnCache(`session:${session.sid}`);
 
@@ -34,17 +35,17 @@ const SessionGuard = () => {
               process.env.SESSION_TOKEN_SECRET
             );
 
-            if (tokenData.signature === "TokenSuccess") {
+            if (tokenData.signature === 'TokenSuccess') {
               const { createExpirationTime } = RandomProvider();
               const expirationTime = createExpirationTime();
 
               await updateOnCache(`session:${foundSession.sessionId}`, {
-                sessionId: foundSession.sessionId,
-                userId: foundSession.userId,
-                roleId: foundSession.roleId,
+                deviceUuid: foundSession.deviceUuid,
                 expiresIn: expirationTime,
                 refreshToken: foundSession.refreshToken,
-                deviceUuid: foundSession.deviceUuid,
+                roleId: foundSession.roleId,
+                sessionId: foundSession.sessionId,
+                userId: foundSession.userId,
               });
 
               return void next();
@@ -56,7 +57,7 @@ const SessionGuard = () => {
         }
 
         return void response.status(401).json();
-      } catch (error) {
+      } catch {
         return void response.status(500).json();
       }
     },
@@ -66,11 +67,11 @@ const SessionGuard = () => {
       next: NextFunction
     ) => {
       try {
-        const { getSession, clearSession } = SessionProvider(request, response);
+        const { clearSession, getSession } = SessionProvider(request, response);
         const session = getSession();
 
         if (session && session.sid !== undefined) {
-          const { findOnCache, removeFromCache, isSessionCache } =
+          const { findOnCache, isSessionCache, removeFromCache } =
             CacheDataSource();
           const foundSession = await findOnCache(`session:${session.sid}`);
 
@@ -86,7 +87,7 @@ const SessionGuard = () => {
         }
 
         return void next();
-      } catch (error) {
+      } catch {
         return void response.status(500).json();
       }
     },

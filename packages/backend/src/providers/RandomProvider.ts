@@ -1,24 +1,12 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes } from 'node:crypto';
 
 const RandomProvider = () => {
   return {
-    createRandomUuid: () => {
-      return crypto.randomUUID();
-    },
-    createExpirationTime: () => {
-      return new Date().setSeconds(86400); // It's 1 day dummy;
-    },
-    createChallengeExpirationTime: () => {
-      return new Date().setSeconds(300); // It's 5 minutes dummy;
-    },
-    createRandomString: (size: number) => {
-      return randomBytes(size).toString("hex");
-    },
     createAccessCode: (size: number) => {
-      const upperCaseCharacters = "ABCDEFGIJKLMNOPQRSTUVYXZ";
-      const lowerCaseCharacters = "abcdefghijklmnopqrstuvyxz";
-      const symbolsCharacters = "_";
-      const numbersCharacters = "0123456789";
+      const upperCaseCharacters = 'ABCDEFGIJKLMNOPQRSTUVYXZ';
+      const lowerCaseCharacters = 'abcdefghijklmnopqrstuvyxz';
+      const symbolsCharacters = '_';
+      const numbersCharacters = '0123456789';
 
       const randomCharacter = (characters: string) => {
         return characters.charAt(Math.floor(Math.random() * characters.length));
@@ -53,7 +41,19 @@ const RandomProvider = () => {
         }
       }
 
-      return accessCode.join("");
+      return accessCode.join('');
+    },
+    createChallengeExpirationTime: () => {
+      return new Date().setSeconds(300); // It's 5 minutes dummy;
+    },
+    createExpirationTime: () => {
+      return new Date().setSeconds(86400); // It's 1 day dummy;
+    },
+    createRandomString: (size: number) => {
+      return randomBytes(size).toString('hex');
+    },
+    createRandomUuid: () => {
+      return crypto.randomUUID();
     },
   };
 };

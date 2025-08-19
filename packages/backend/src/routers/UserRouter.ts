@@ -1,4 +1,6 @@
-import type { Request, Response, Router } from "express";
+import type { Request, Response, Router } from 'express';
+
+import { CacheDataSource } from '../dataSource/CacheDataSource';
 import {
   createUserSchema,
   createUserSessionChallengeSchema,
@@ -10,21 +12,20 @@ import {
   updateUserByIdSchema,
   updateUserSessionChallengeIsCheckedSchema,
   updateUserSessionChallengeIsRevokedSchema,
-} from "../domains/User";
-import { ChallengeGuard } from "../guards/ChallengeGuard";
-import { SessionGuard } from "../guards/SessionGuard";
-import { RandomProvider } from "../providers/RandomProvider";
-import { RateLimitProvider } from "../providers/RateLimitProvider";
-import { SessionProvider } from "../providers/SessionProvider";
-import { TokenProvider } from "../providers/TokenProvider";
-import { CacheDataSource } from "../dataSource/CacheDataSource";
-import { CreateUserSessionUseCase } from "../useCases/users/CreateUserSessionUseCase";
-import { CreateUserUseCase } from "../useCases/users/CreateUserUseCase";
-import { DeleteUserSessionByIdUseCase } from "../useCases/users/DeleteUserSessionByIdUseCase";
-import { FindUserByIdUseCase } from "../useCases/users/FindUserByIdUseCase";
-import { UpdateUserAccessCodeByIdUseCase } from "../useCases/users/UpdateUserAccessCodeByIdUseCase";
-import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from "../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase";
-import { UpdateUserByIdUseCase } from "../useCases/users/UpdateUserByIdUseCase";
+} from '../domains/User';
+import { ChallengeGuard } from '../guards/ChallengeGuard';
+import { SessionGuard } from '../guards/SessionGuard';
+import { RandomProvider } from '../providers/RandomProvider';
+import { RateLimitProvider } from '../providers/RateLimitProvider';
+import { SessionProvider } from '../providers/SessionProvider';
+import { TokenProvider } from '../providers/TokenProvider';
+import { CreateUserSessionUseCase } from '../useCases/users/CreateUserSessionUseCase';
+import { CreateUserUseCase } from '../useCases/users/CreateUserUseCase';
+import { DeleteUserSessionByIdUseCase } from '../useCases/users/DeleteUserSessionByIdUseCase';
+import { FindUserByIdUseCase } from '../useCases/users/FindUserByIdUseCase';
+import { UpdateUserAccessCodeByIdUseCase } from '../useCases/users/UpdateUserAccessCodeByIdUseCase';
+import { UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase } from '../useCases/users/UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase';
+import { UpdateUserByIdUseCase } from '../useCases/users/UpdateUserByIdUseCase';
 
 const UserRouter = () => {
   const { isAuthenticated, isAuthenticating } = SessionGuard();
@@ -37,11 +38,11 @@ const UserRouter = () => {
      */
 
     router.post(
-      "/:id/session/challenge",
+      '/:id/session/challenge',
       isAuthenticating,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
-        const { data: _schemaArgs, error: schemaErrors } =
+        const { error: schemaErrors } =
           createUserSessionChallengeSchema.safeParse({ body: request.body });
 
         if (schemaErrors !== undefined) {
@@ -51,8 +52,8 @@ const UserRouter = () => {
         }
 
         const { getSession } = SessionProvider(request, response);
-        const { findOnCache, addToCache, isSessionCache } = CacheDataSource();
-        const { createRandomString, createChallengeExpirationTime } =
+        const { addToCache, findOnCache, isSessionCache } = CacheDataSource();
+        const { createChallengeExpirationTime, createRandomString } =
           RandomProvider();
 
         const cachedSession = getSession();
@@ -81,14 +82,14 @@ const UserRouter = () => {
     );
 
     router.put(
-      "/:id/session/challenge/is-checked",
+      '/:id/session/challenge/is-checked',
       isAuthenticated,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           updateUserSessionChallengeIsCheckedSchema.safeParse({
-            params: request.params,
             body: request.body,
+            params: request.params,
           });
 
         if (schemaErrors !== undefined) {
@@ -98,7 +99,7 @@ const UserRouter = () => {
         }
 
         const { getSession } = SessionProvider(request, response);
-        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+        const { findOnCache, isChallengeCache, isSessionCache, updateOnCache } =
           CacheDataSource();
 
         const cachedSession = getSession();
@@ -135,15 +136,15 @@ const UserRouter = () => {
     );
 
     router.put(
-      "/:id/session/challenge/revoke",
+      '/:id/session/challenge/revoke',
       isAuthenticated,
       isChallengeCompleted,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
-        const { data: _schemaArgs, error: schemaErrors } =
+        const { error: schemaErrors } =
           updateUserSessionChallengeIsRevokedSchema.safeParse({
-            params: request.params,
             body: request.body,
+            params: request.params,
           });
 
         if (schemaErrors !== undefined) {
@@ -153,7 +154,7 @@ const UserRouter = () => {
         }
 
         const { getSession } = SessionProvider(request, response);
-        const { findOnCache, updateOnCache, isSessionCache, isChallengeCache } =
+        const { findOnCache, isChallengeCache, isSessionCache, updateOnCache } =
           CacheDataSource();
 
         const cachedSession = getSession();
@@ -190,7 +191,7 @@ const UserRouter = () => {
      */
 
     router.post(
-      "/session",
+      '/session',
       isAuthenticating,
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
@@ -204,7 +205,7 @@ const UserRouter = () => {
         }
 
         const { createUserSession } = CreateUserSessionUseCase();
-        const { statusCode, args } = await createUserSession({
+        const { args, statusCode } = await createUserSession({
           schemaArgs,
         });
 
@@ -221,7 +222,7 @@ const UserRouter = () => {
 
         const refreshToken = await tokenProvider.createToken(
           { sessionId },
-          "7d",
+          '7d',
           process.env.SESSION_TOKEN_SECRET
         );
 
@@ -232,12 +233,12 @@ const UserRouter = () => {
         sessionProvider.addToSession(sessionId, schemaArgs.body.rememberDevice);
 
         await addToCache(`session:${sessionId}`, {
-          sessionId: sessionId,
-          userId: args.id,
-          roleId: args.roleId,
+          deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : '',
           expiresIn: randomProvider.createExpirationTime(),
           refreshToken,
-          deviceUuid: schemaArgs.body.rememberDevice ? crypto.randomUUID() : "",
+          roleId: args.roleId,
+          sessionId: sessionId,
+          userId: args.id,
         });
 
         return void response.status(statusCode).json(args);
@@ -245,7 +246,7 @@ const UserRouter = () => {
     );
 
     router.delete(
-      "/:id/session",
+      '/:id/session',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -263,7 +264,7 @@ const UserRouter = () => {
           schemaArgs,
         });
 
-        const { getSession, clearSession } = SessionProvider(request, response);
+        const { clearSession, getSession } = SessionProvider(request, response);
 
         const session = getSession();
 
@@ -282,7 +283,7 @@ const UserRouter = () => {
      */
 
     router.get(
-      "/:id",
+      '/:id',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -296,7 +297,7 @@ const UserRouter = () => {
         }
 
         const { findUserById } = FindUserByIdUseCase();
-        const { statusCode, args } = await findUserById({
+        const { args, statusCode } = await findUserById({
           schemaArgs,
         });
 
@@ -305,7 +306,7 @@ const UserRouter = () => {
     );
 
     router.post(
-      "/",
+      '/',
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
@@ -318,7 +319,7 @@ const UserRouter = () => {
         }
 
         const { createUser } = CreateUserUseCase();
-        const { statusCode, args } = await createUser({
+        const { args, statusCode } = await createUser({
           schemaArgs,
         });
 
@@ -327,14 +328,14 @@ const UserRouter = () => {
     );
 
     router.put(
-      "/:id",
+      '/:id',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           updateUserByIdSchema.safeParse({
-            params: request.params,
             body: request.body,
+            params: request.params,
           });
 
         if (schemaErrors !== undefined) {
@@ -344,7 +345,7 @@ const UserRouter = () => {
         }
 
         const { updateUserById } = UpdateUserByIdUseCase();
-        const { statusCode, args } = await updateUserById({
+        const { args, statusCode } = await updateUserById({
           schemaArgs,
         });
 
@@ -356,7 +357,7 @@ const UserRouter = () => {
     );
 
     router.put(
-      "/:id/access-code",
+      '/:id/access-code',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -370,7 +371,7 @@ const UserRouter = () => {
         }
 
         const { updateUserAccessCodeById } = UpdateUserAccessCodeByIdUseCase();
-        const { statusCode, args } = await updateUserAccessCodeById({
+        const { args, statusCode } = await updateUserAccessCodeById({
           schemaArgs,
         });
 
@@ -381,13 +382,13 @@ const UserRouter = () => {
           return void response.status(500).json();
         }
 
-        const { findOnCache, addToCache, updateOnCache } = CacheDataSource();
-        const { createRandomUuid, createExpirationTime } = RandomProvider();
+        const { addToCache, findOnCache, updateOnCache } = CacheDataSource();
+        const { createExpirationTime, createRandomUuid } = RandomProvider();
         const { createToken } = TokenProvider();
 
         const refreshToken = await createToken(
           { sessionId: cookies.sid },
-          "7d",
+          '7d',
           process.env.SESSION_TOKEN_SECRET
         );
 
@@ -399,12 +400,12 @@ const UserRouter = () => {
 
         if (foundSession === undefined) {
           await addToCache(`session:${cookies.sid}`, {
-            sessionId: cookies.sid,
-            userId: args.id,
-            roleId: args.roleId,
+            deviceUuid: createRandomUuid(),
             expiresIn: createExpirationTime(),
             refreshToken,
-            deviceUuid: createRandomUuid(),
+            roleId: args.roleId,
+            sessionId: cookies.sid,
+            userId: args.id,
           });
         } else {
           await updateOnCache(`session:${cookies.sid}`, {
@@ -422,7 +423,7 @@ const UserRouter = () => {
     );
 
     router.put(
-      "/access-code",
+      '/access-code',
       createRateLimit(15 * 60 * 1000, 5),
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
@@ -439,7 +440,7 @@ const UserRouter = () => {
         const { updateUserAccessCodeByUsernameOrEmailOrPhoneNumber } =
           UpdateUserAccessCodeByUsernameOrEmailOrPhoneNumberUseCase();
 
-        const { statusCode, args } =
+        const { args, statusCode } =
           await updateUserAccessCodeByUsernameOrEmailOrPhoneNumber({
             schemaArgs,
           });

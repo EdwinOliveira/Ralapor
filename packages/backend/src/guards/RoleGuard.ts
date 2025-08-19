@@ -1,7 +1,8 @@
-import type { NextFunction, Request, Response } from "express";
-import { SessionProvider } from "../providers/SessionProvider";
-import { RoleRemoteRepository } from "../repositories/RoleRemoteRepository";
-import { CacheDataSource } from "../dataSource/CacheDataSource";
+import type { NextFunction, Request, Response } from 'express';
+
+import { CacheDataSource } from '../dataSource/CacheDataSource';
+import { SessionProvider } from '../providers/SessionProvider';
+import { RoleRemoteRepository } from '../repositories/RoleRemoteRepository';
 
 const RoleGuard = () => {
   const repository = RoleRemoteRepository();
@@ -10,7 +11,7 @@ const RoleGuard = () => {
     request: Request,
     response: Response,
     next: NextFunction,
-    designation: "publisher" | "consumer" | "publisher-consumer"
+    designation: 'publisher' | 'consumer' | 'publisher-consumer'
   ) => {
     try {
       const session = SessionProvider(request, response).getSession();
@@ -38,27 +39,27 @@ const RoleGuard = () => {
       }
 
       return next();
-    } catch (error) {
+    } catch {
       return void response.status(500).json();
     }
   };
 
   return {
-    isPublisher: async (
-      request: Request,
-      response: Response,
-      next: NextFunction
-    ) => findRoleByDesignation(request, response, next, "publisher"),
     isConsumer: async (
       request: Request,
       response: Response,
       next: NextFunction
-    ) => findRoleByDesignation(request, response, next, "consumer"),
+    ) => findRoleByDesignation(request, response, next, 'consumer'),
+    isPublisher: async (
+      request: Request,
+      response: Response,
+      next: NextFunction
+    ) => findRoleByDesignation(request, response, next, 'publisher'),
     isPublisherConsumer: async (
       request: Request,
       response: Response,
       next: NextFunction
-    ) => findRoleByDesignation(request, response, next, "publisher-consumer"),
+    ) => findRoleByDesignation(request, response, next, 'publisher-consumer'),
   };
 };
 

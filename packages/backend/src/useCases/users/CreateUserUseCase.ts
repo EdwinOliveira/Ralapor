@@ -1,9 +1,10 @@
-import type { CreateUserRequest, UserDTO } from "../../domains/User";
-import { HashProvider } from "../../providers/HashProvider";
-import { RandomProvider } from "../../providers/RandomProvider";
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
-import { FindRoleByDesignationUseCase } from "../roles/FindRoleByDesignationUseCase";
+import type { CreateUserRequest, UserDTO } from '../../domains/User';
+import type { UseCaseRequest, UseCaseResponse } from '../../signatures/UseCase';
+
+import { HashProvider } from '../../providers/HashProvider';
+import { RandomProvider } from '../../providers/RandomProvider';
+import { UserRemoteRepository } from '../../repositories/UserRemoteRepository';
+import { FindRoleByDesignationUseCase } from '../roles/FindRoleByDesignationUseCase';
 
 const CreateUserUseCase = () => {
   const repository = UserRemoteRepository();
@@ -14,14 +15,14 @@ const CreateUserUseCase = () => {
   return {
     createUser: async ({
       schemaArgs: {
-        body: { username, email, phoneNumber, phoneNumberCode },
+        body: { email, phoneNumber, phoneNumberCode, username },
       },
     }: UseCaseRequest<CreateUserRequest>): Promise<
-      UseCaseResponse<Pick<UserDTO, "id">>
+      UseCaseResponse<Pick<UserDTO, 'id'>>
     > => {
       const { affectedIds: foundUsersId } =
         await repository.findUserByUsernameOrEmailOrPhoneNumber({
-          query: { username, email, phoneNumber },
+          query: { email, phoneNumber, username },
         });
 
       if (foundUsersId.length !== 0) {
@@ -29,10 +30,10 @@ const CreateUserUseCase = () => {
       }
 
       const {
-        statusCode: findRoleByDesignationStatusCode,
         args: findRoleByDesignationArgs,
+        statusCode: findRoleByDesignationStatusCode,
       } = await findRoleByDesignation({
-        schemaArgs: { params: { designation: "consumer" } },
+        schemaArgs: { params: { designation: 'consumer' } },
       });
 
       if (
@@ -47,12 +48,12 @@ const CreateUserUseCase = () => {
 
       const { affectedIds: createdUsersId } = await repository.createUser({
         args: {
-          username,
+          accessCode: hashedAccessCode,
           email,
           phoneNumber,
           phoneNumberCode,
           roleId: findRoleByDesignationArgs.id,
-          accessCode: hashedAccessCode,
+          username,
         },
       });
 
@@ -63,8 +64,8 @@ const CreateUserUseCase = () => {
       console.log(accessCode);
 
       return {
-        statusCode: 201,
         args: { id: createdUsersId[0] },
+        statusCode: 201,
       };
     },
   };

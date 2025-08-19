@@ -1,25 +1,26 @@
-import type { Request, Response } from "express";
-import { RandomProvider } from "./RandomProvider";
+import type { Request, Response } from 'express';
+
+import { RandomProvider } from './RandomProvider';
 
 type Cookies = {
-	sid: string | undefined;
+  sid: string | undefined;
 };
 
 const SessionProvider = (request?: Request, response?: Response) => {
-	const { createExpirationTime } = RandomProvider();
+  const { createExpirationTime } = RandomProvider();
 
-	return {
-		getSession: () => request?.cookies as Cookies | undefined,
-		addToSession: (sessionId: string, remembersDevice: boolean) =>
-			response?.cookie("sid", sessionId, {
-				httpOnly: true,
-				sameSite: "lax",
-				maxAge: remembersDevice ? createExpirationTime() : undefined,
-			}),
-		clearSession: () => {
-			response?.clearCookie("sid");
-		},
-	};
+  return {
+    addToSession: (sessionId: string, remembersDevice: boolean) =>
+      response?.cookie('sid', sessionId, {
+        httpOnly: true,
+        maxAge: remembersDevice ? createExpirationTime() : undefined,
+        sameSite: 'lax',
+      }),
+    clearSession: () => {
+      response?.clearCookie('sid');
+    },
+    getSession: () => request?.cookies as Cookies | undefined,
+  };
 };
 
 export { SessionProvider };

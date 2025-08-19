@@ -1,10 +1,11 @@
+import type { UseCaseRequest, UseCaseResponse } from '../../signatures/UseCase';
+
 import {
   type FindRoleByDesignationRequest,
   type RoleDTO,
   roleDTOMapper,
-} from "../../domains/Role";
-import { RoleRemoteRepository } from "../../repositories/RoleRemoteRepository";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+} from '../../domains/Role';
+import { RoleRemoteRepository } from '../../repositories/RoleRemoteRepository';
 
 const FindRoleByDesignationUseCase = () => {
   const repository = RoleRemoteRepository();
@@ -27,8 +28,8 @@ const FindRoleByDesignationUseCase = () => {
       }
 
       return {
-        statusCode: 200,
         args: roleDTOMapper(foundRolesRow[0]),
+        statusCode: 200,
       };
     },
   };

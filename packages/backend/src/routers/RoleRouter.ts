@@ -1,16 +1,17 @@
-import type { Request, Response, Router } from "express";
+import type { Request, Response, Router } from 'express';
+
 import {
   createRoleSchema,
   findRoleByDesignationSchema,
   findRoleByIdSchema,
   updateRoleByIdSchema,
-} from "../domains/Role";
-import { ChallengeGuard } from "../guards/ChallengeGuard";
-import { SessionGuard } from "../guards/SessionGuard";
-import { CreateRoleUseCase } from "../useCases/roles/CreateRoleUseCase";
-import { FindRoleByDesignationUseCase } from "../useCases/roles/FindRoleByDesignationUseCase";
-import { FindRoleByIdUseCase } from "../useCases/roles/FindRoleByIdUseCase";
-import { UpdateRoleByIdUseCase } from "../useCases/roles/UpdateRoleByIdUseCase";
+} from '../domains/Role';
+import { ChallengeGuard } from '../guards/ChallengeGuard';
+import { SessionGuard } from '../guards/SessionGuard';
+import { CreateRoleUseCase } from '../useCases/roles/CreateRoleUseCase';
+import { FindRoleByDesignationUseCase } from '../useCases/roles/FindRoleByDesignationUseCase';
+import { FindRoleByIdUseCase } from '../useCases/roles/FindRoleByIdUseCase';
+import { UpdateRoleByIdUseCase } from '../useCases/roles/UpdateRoleByIdUseCase';
 
 const RoleRouter = () => {
   const { isAuthenticated } = SessionGuard();
@@ -18,7 +19,7 @@ const RoleRouter = () => {
 
   const subscribe = (router: Router): Router => {
     router.get(
-      "/:id",
+      '/:id',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -32,7 +33,7 @@ const RoleRouter = () => {
         }
 
         const { findRoleById } = FindRoleByIdUseCase();
-        const { statusCode, args } = await findRoleById({
+        const { args, statusCode } = await findRoleById({
           schemaArgs,
         });
 
@@ -41,7 +42,7 @@ const RoleRouter = () => {
     );
 
     router.get(
-      "/designation/:designation",
+      '/designation/:designation',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -55,7 +56,7 @@ const RoleRouter = () => {
         }
 
         const { findRoleByDesignation } = FindRoleByDesignationUseCase();
-        const { statusCode, args } = await findRoleByDesignation({
+        const { args, statusCode } = await findRoleByDesignation({
           schemaArgs,
         });
 
@@ -64,7 +65,7 @@ const RoleRouter = () => {
     );
 
     router.post(
-      "/",
+      '/',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
@@ -78,7 +79,7 @@ const RoleRouter = () => {
         }
 
         const { createRole } = CreateRoleUseCase();
-        const { statusCode, args } = await createRole({
+        const { args, statusCode } = await createRole({
           schemaArgs,
         });
 
@@ -87,14 +88,14 @@ const RoleRouter = () => {
     );
 
     router.put(
-      "/:id",
+      '/:id',
       isAuthenticated,
       isChallengeCompleted,
       async (request: Request, response: Response) => {
         const { data: schemaArgs, error: schemaErrors } =
           updateRoleByIdSchema.safeParse({
-            params: request.params,
             body: request.body,
+            params: request.params,
           });
 
         if (schemaErrors !== undefined) {
@@ -104,7 +105,7 @@ const RoleRouter = () => {
         }
 
         const { updateRoleById } = UpdateRoleByIdUseCase();
-        const { statusCode, args } = await updateRoleById({
+        const { args, statusCode } = await updateRoleById({
           schemaArgs,
         });
 

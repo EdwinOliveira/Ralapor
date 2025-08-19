@@ -1,14 +1,14 @@
-import { Client } from "memjs";
+import { Client } from 'memjs';
 
 type CacheData = CacheSession | CacheChallengeCode;
 
 type CacheSession = {
-  sessionId: string;
-  userId: number;
-  roleId: number;
+  deviceUuid: string;
   expiresIn: number;
   refreshToken: string;
-  deviceUuid: string;
+  roleId: number;
+  sessionId: string;
+  userId: number;
 };
 
 type CacheChallengeCode = {
@@ -19,7 +19,7 @@ type CacheChallengeCode = {
 };
 
 const CacheDataSource = () => {
-  const cache = Client.create("", { expires: 3600 });
+  const cache = Client.create('', { expires: 3600 });
 
   const findOnCache = async (property: string) => {
     const { value: cachedData } = await cache.get(property);
@@ -32,13 +32,13 @@ const CacheDataSource = () => {
   const isSessionCache = (
     cache: CacheData | undefined
   ): cache is CacheSession => {
-    return !!(cache && "sessionId" in cache);
+    return !!(cache && 'sessionId' in cache);
   };
 
   const isChallengeCache = (
     cache: CacheData | undefined
   ): cache is CacheChallengeCode => {
-    return !!(cache && "code" in cache);
+    return !!(cache && 'code' in cache);
   };
 
   const addToCache = async (
@@ -58,12 +58,12 @@ const CacheDataSource = () => {
   };
 
   return {
-    findOnCache,
-    isSessionCache,
-    isChallengeCache,
     addToCache,
-    updateOnCache,
+    findOnCache,
+    isChallengeCache,
+    isSessionCache,
     removeFromCache,
+    updateOnCache,
   };
 };
 

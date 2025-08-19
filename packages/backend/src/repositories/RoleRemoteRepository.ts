@@ -1,19 +1,29 @@
-import type { RoleEntity, RoleRepository } from "../domains/Role";
-import { DatabaseDataSource } from "../dataSource/DatabaseDataSource";
+import type { RoleEntity, RoleRepository } from '../domains/Role';
+
+import { DatabaseDataSource } from '../dataSource/DatabaseDataSource';
 
 const RoleRemoteRepository = (): RoleRepository => {
   const { createConnection, destroyConnection } = DatabaseDataSource();
 
   return {
-    findRoles: async () => {
+    createRole: async ({ args }) => {
+      if (args === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
+
       const connection = createConnection();
-      const roles = await connection<RoleEntity>("Roles");
+
+      const createdRole = await connection<RoleEntity>('Roles')
+        .insert(args)
+        .returning('id');
+
       await destroyConnection(connection);
 
-      return {
-        affectedIds: roles.map((role) => role.id),
-        affectedRows: roles,
-      };
+      if (createdRole.length === 0) {
+        return { affectedIds: [], affectedRows: [] };
+      }
+
+      return { affectedIds: [createdRole[0].id], affectedRows: [] };
     },
     findRoleByDesignation: async ({ query }) => {
       if (query === undefined) {
@@ -22,8 +32,8 @@ const RoleRemoteRepository = (): RoleRepository => {
 
       const connection = createConnection();
 
-      const role = await connection<RoleEntity>("Roles")
-        .where("designation", query?.designation)
+      const role = await connection<RoleEntity>('Roles')
+        .where('designation', query?.designation)
         .first();
 
       await destroyConnection(connection);
@@ -41,8 +51,8 @@ const RoleRemoteRepository = (): RoleRepository => {
 
       const connection = createConnection();
 
-      const role = await connection<RoleEntity>("Roles")
-        .where("id", query?.id)
+      const role = await connection<RoleEntity>('Roles')
+        .where('id', query?.id)
         .first();
 
       await destroyConnection(connection);
@@ -53,46 +63,37 @@ const RoleRemoteRepository = (): RoleRepository => {
 
       return { affectedIds: [role.id], affectedRows: [role] };
     },
-    createRole: async ({ args }) => {
-      if (args === undefined) {
-        return { affectedIds: [], affectedRows: [] };
-      }
-
+    findRoles: async () => {
       const connection = createConnection();
-
-      const createdRole = await connection<RoleEntity>("Roles")
-        .insert(args)
-        .returning("id");
-
+      const roles = await connection<RoleEntity>('Roles');
       await destroyConnection(connection);
 
-      if (createdRole.length === 0) {
-        return { affectedIds: [], affectedRows: [] };
-      }
-
-      return { affectedIds: [createdRole[0].id], affectedRows: [] };
+      return {
+        affectedIds: roles.map((role) => role.id),
+        affectedRows: roles,
+      };
     },
-    updateRoleById: async ({ query, args }) => {
+    updateRoleById: async ({ args, query }) => {
       if (query === undefined || args === undefined) {
         return { affectedIds: [], affectedRows: [] };
       }
 
       const connection = createConnection();
 
-      const foundRole = await connection<RoleEntity>("Roles")
-        .where("id", query.id)
+      const foundRole = await connection<RoleEntity>('Roles')
+        .where('id', query.id)
         .first();
 
       if (foundRole === undefined) {
         return { affectedIds: [], affectedRows: [] };
       }
 
-      const updatedRoles = await connection<RoleEntity>("Roles")
-        .where("id", query.id)
+      const updatedRoles = await connection<RoleEntity>('Roles')
+        .where('id', query.id)
         .update({
           designation: args.designation || foundRole.designation,
         })
-        .returning("*");
+        .returning('*');
 
       await destroyConnection(connection);
 

@@ -1,6 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
-import { SessionProvider } from "../providers/SessionProvider";
-import { CacheDataSource } from "../dataSource/CacheDataSource";
+import type { NextFunction, Request, Response } from 'express';
+
+import { CacheDataSource } from '../dataSource/CacheDataSource';
+import { SessionProvider } from '../providers/SessionProvider';
 
 const ChallengeGuard = () => {
   return {
@@ -17,7 +18,7 @@ const ChallengeGuard = () => {
           return void response.status(401).json();
         }
 
-        const { findOnCache, isSessionCache, isChallengeCache } =
+        const { findOnCache, isChallengeCache, isSessionCache } =
           CacheDataSource();
 
         const foundSession = await findOnCache(`session:${session.sid}`);
@@ -41,7 +42,7 @@ const ChallengeGuard = () => {
         }
 
         return void next();
-      } catch (error) {
+      } catch {
         return void response.status(500).json();
       }
     },

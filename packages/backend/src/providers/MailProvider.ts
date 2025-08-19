@@ -1,34 +1,34 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 type SendMailSignature = {
-	toAddress: string;
-	subject: string;
-	text?: string;
-	html?: string;
+  html?: string;
+  subject: string;
+  text?: string;
+  toAddress: string;
 };
 
 const MailProvider = () => {
-	return {
-		sendMail: async (args: SendMailSignature) => {
-			const transporter = nodemailer.createTransport({
-				host: "smtp.ethereal.email",
-				port: 587,
-				secure: false,
-				auth: {
-					user: process.env.NODEMAILER_USER,
-					pass: process.env.NODEMAILER_PASSWORD,
-				},
-			});
+  return {
+    sendMail: async (args: SendMailSignature) => {
+      const transporter = nodemailer.createTransport({
+        auth: {
+          pass: process.env.NODEMAILER_PASSWORD,
+          user: process.env.NODEMAILER_USER,
+        },
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+      });
 
-			return await transporter.sendMail({
-				from: process.env.NODEMAILER_USER,
-				to: args.toAddress,
-				subject: args.subject,
-				text: args.text,
-				html: args.html,
-			});
-		},
-	};
+      return await transporter.sendMail({
+        from: process.env.NODEMAILER_USER,
+        html: args.html,
+        subject: args.subject,
+        text: args.text,
+        to: args.toAddress,
+      });
+    },
+  };
 };
 
 export { MailProvider };

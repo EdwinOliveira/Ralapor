@@ -1,36 +1,37 @@
+import type { UseCaseRequest, UseCaseResponse } from '../../signatures/UseCase';
+
 import {
-	type FindUserByIdRequest,
-	type UserDTO,
-	userDTOMapper,
-} from "../../domains/User";
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+  type FindUserByIdRequest,
+  type UserDTO,
+  userDTOMapper,
+} from '../../domains/User';
+import { UserRemoteRepository } from '../../repositories/UserRemoteRepository';
 
 const FindUserByIdUseCase = () => {
-	const repository = UserRemoteRepository();
+  const repository = UserRemoteRepository();
 
-	return {
-		findUserById: async ({
-			schemaArgs: {
-				params: { id },
-			},
-		}: UseCaseRequest<FindUserByIdRequest>): Promise<
-			UseCaseResponse<UserDTO>
-		> => {
-			const { affectedRows: foundUsersRow } = await repository.findUserById({
-				query: { id },
-			});
+  return {
+    findUserById: async ({
+      schemaArgs: {
+        params: { id },
+      },
+    }: UseCaseRequest<FindUserByIdRequest>): Promise<
+      UseCaseResponse<UserDTO>
+    > => {
+      const { affectedRows: foundUsersRow } = await repository.findUserById({
+        query: { id },
+      });
 
-			if (foundUsersRow.length === 0) {
-				return { statusCode: 404 };
-			}
+      if (foundUsersRow.length === 0) {
+        return { statusCode: 404 };
+      }
 
-			return {
-				statusCode: 200,
-				args: userDTOMapper(foundUsersRow[0]),
-			};
-		},
-	};
+      return {
+        args: userDTOMapper(foundUsersRow[0]),
+        statusCode: 200,
+      };
+    },
+  };
 };
 
 export { FindUserByIdUseCase };

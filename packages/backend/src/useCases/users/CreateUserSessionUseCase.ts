@@ -1,11 +1,12 @@
+import type { UseCaseRequest, UseCaseResponse } from '../../signatures/UseCase';
+
 import {
   type CreateUserSessionRequest,
   type UserDTO,
   userDTOMapper,
-} from "../../domains/User";
-import { HashProvider } from "../../providers/HashProvider";
-import { UserRemoteRepository } from "../../repositories/UserRemoteRepository";
-import type { UseCaseRequest, UseCaseResponse } from "../../signatures/UseCase";
+} from '../../domains/User';
+import { HashProvider } from '../../providers/HashProvider';
+import { UserRemoteRepository } from '../../repositories/UserRemoteRepository';
 
 const CreateUserSessionUseCase = () => {
   const repository = UserRemoteRepository();
@@ -29,8 +30,8 @@ const CreateUserSessionUseCase = () => {
 
         if (isSameAccessCode === true) {
           return {
-            statusCode: 200,
             args: userDTOMapper(foundUserRow),
+            statusCode: 200,
           };
         }
       }

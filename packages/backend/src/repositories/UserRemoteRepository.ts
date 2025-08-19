@@ -1,19 +1,33 @@
-import type { UserEntity, UserRepository } from "../domains/User";
-import { DatabaseDataSource } from "../dataSource/DatabaseDataSource";
+import type { UserEntity, UserRepository } from '../domains/User';
+
+import { DatabaseDataSource } from '../dataSource/DatabaseDataSource';
 
 const UserRemoteRepository = (): UserRepository => {
   const { createConnection, destroyConnection } = DatabaseDataSource();
 
   return {
-    findUsers: async () => {
+    createUser: async ({ args }) => {
+      if (args === undefined) {
+        return { affectedIds: [], affectedRows: [] };
+      }
+
       const connection = createConnection();
-      const users = await connection<UserEntity>("Users");
+
+      const createdUser = await connection<UserEntity>('Users')
+        .insert({
+          ...args,
+          isPermanentlyTerminated: false,
+          isTemporaryTerminated: false,
+        })
+        .returning('id');
+
       await destroyConnection(connection);
 
-      return {
-        affectedIds: users.map((user) => user.id),
-        affectedRows: users,
-      };
+      if (createdUser.length === 0) {
+        return { affectedIds: [], affectedRows: [] };
+      }
+
+      return { affectedIds: [createdUser[0].id], affectedRows: [] };
     },
     findUserById: async ({ query }) => {
       if (query === undefined) {
@@ -22,8 +36,8 @@ const UserRemoteRepository = (): UserRepository => {
 
       const connection = createConnection();
 
-      const user = await connection<UserEntity>("Users")
-        .where("id", query?.id)
+      const user = await connection<UserEntity>('Users')
+        .where('id', query?.id)
         .first();
 
       await destroyConnection(connection);
@@ -41,10 +55,10 @@ const UserRemoteRepository = (): UserRepository => {
 
       const connection = createConnection();
 
-      const user = await connection<UserEntity>("Users")
-        .where("username", query.username)
-        .and.where("email", query.email)
-        .and.where("phoneNumber", query.phoneNumber)
+      const user = await connection<UserEntity>('Users')
+        .where('username', query.username)
+        .and.where('email', query.email)
+        .and.where('phoneNumber', query.phoneNumber)
         .first();
 
       await destroyConnection(connection);
@@ -62,10 +76,10 @@ const UserRemoteRepository = (): UserRepository => {
 
       const connection = createConnection();
 
-      const user = await connection<UserEntity>("Users")
-        .where("username", query.username)
-        .or.where("email", query.email)
-        .or.where("phoneNumber", query.phoneNumber)
+      const user = await connection<UserEntity>('Users')
+        .where('username', query.username)
+        .or.where('email', query.email)
+        .or.where('phoneNumber', query.phoneNumber)
         .first();
 
       await destroyConnection(connection);
@@ -76,58 +90,45 @@ const UserRemoteRepository = (): UserRepository => {
 
       return { affectedIds: [user.id], affectedRows: [user] };
     },
-    createUser: async ({ args }) => {
-      if (args === undefined) {
-        return { affectedIds: [], affectedRows: [] };
-      }
-
+    findUsers: async () => {
       const connection = createConnection();
-
-      const createdUser = await connection<UserEntity>("Users")
-        .insert({
-          ...args,
-          isTemporaryTerminated: false,
-          isPermanentlyTerminated: false,
-        })
-        .returning("id");
-
+      const users = await connection<UserEntity>('Users');
       await destroyConnection(connection);
 
-      if (createdUser.length === 0) {
-        return { affectedIds: [], affectedRows: [] };
-      }
-
-      return { affectedIds: [createdUser[0].id], affectedRows: [] };
+      return {
+        affectedIds: users.map((user) => user.id),
+        affectedRows: users,
+      };
     },
-    updateUserById: async ({ query, args }) => {
+    updateUserById: async ({ args, query }) => {
       if (query === undefined || args === undefined) {
         return { affectedIds: [], affectedRows: [] };
       }
 
       const connection = createConnection();
 
-      const foundUser = await connection<UserEntity>("Users")
-        .where("id", query.id)
+      const foundUser = await connection<UserEntity>('Users')
+        .where('id', query.id)
         .first();
 
       if (foundUser === undefined) {
         return { affectedIds: [], affectedRows: [] };
       }
 
-      const updatedUsers = await connection<UserEntity>("Users")
-        .where("id", query.id)
+      const updatedUsers = await connection<UserEntity>('Users')
+        .where('id', query.id)
         .update({
-          username: args.username || foundUser.username,
-          email: args.email || foundUser.email,
-          phoneNumber: args.phoneNumber || foundUser.phoneNumber,
-          phoneNumberCode: args.phoneNumberCode || foundUser.phoneNumberCode,
           accessCode: args.accessCode || foundUser.accessCode,
-          isTemporaryTerminated:
-            args.isTemporaryTerminated || foundUser.isTemporaryTerminated,
+          email: args.email || foundUser.email,
           isPermanentlyTerminated:
             args.isPermanentlyTerminated || foundUser.isPermanentlyTerminated,
+          isTemporaryTerminated:
+            args.isTemporaryTerminated || foundUser.isTemporaryTerminated,
+          phoneNumber: args.phoneNumber || foundUser.phoneNumber,
+          phoneNumberCode: args.phoneNumberCode || foundUser.phoneNumberCode,
+          username: args.username || foundUser.username,
         })
-        .returning("*");
+        .returning('*');
 
       await destroyConnection(connection);
 
