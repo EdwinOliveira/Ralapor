@@ -1,4 +1,4 @@
-import { DatabaseDatasource } from '../datasources/DatabaseDataSource';
+import { DatabaseDatasource } from '../datasources/DatabaseDatasource';
 import { UserEntity, UserRepository } from '../domains/user';
 
 const UserRemoteRepository = (): UserRepository => {
