@@ -1,44 +1,36 @@
 import { type Request, type Response } from 'express';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { CreateUserUseCase } from '.';
+import { CreateUserSessionUseCase } from '.';
 import {
   bodyMock,
   idMock,
   invalidEmailMock,
   invalidEmailSyntaxMock,
-  invalidPhoneNumberMock,
-  invalidUsernameMock,
+  userEntityMock,
 } from './index.spec.data';
 
-vi.mock('../../../providers/RandomProvider', () => ({
-  RandomProvider: () => ({
-    ...vi.importActual,
-    createAccessCode: vi.fn(),
-  }),
-}));
+const compareMock = vi.fn();
 
 vi.mock('../../../providers/HashProvider', () => ({
   HashProvider: () => ({
     ...vi.importActual,
-    hash: vi.fn(),
+    compare: compareMock,
   }),
 }));
 
-const createUserMock = vi.fn();
 const findUserByUsernameOrEmailOrPhoneNumberMock = vi.fn();
 
 vi.mock('../../../repositories/UserRemoteRepository', () => ({
   UserRemoteRepository: () => ({
     ...vi.importActual,
-    createUser: createUserMock,
     findUserByUsernameOrEmailOrPhoneNumber:
       findUserByUsernameOrEmailOrPhoneNumberMock,
   }),
 }));
 
-describe('CreateUserUseCase', () => {
-  const createUser = (override: Record<string, unknown>) => {
+describe('CreateUserSessionUseCase', () => {
+  const createUserSession = (override: Record<string, unknown>) => {
     const request = {
       body: override,
     } as unknown as Request;
@@ -47,7 +39,7 @@ describe('CreateUserUseCase', () => {
       status: () => ({ json: vi.fn() }),
     } as unknown as Response;
 
-    return CreateUserUseCase({ request, response }).createUser();
+    return CreateUserSessionUseCase({ request, response }).createUserSession();
   };
 
   afterEach(() => {
@@ -56,40 +48,56 @@ describe('CreateUserUseCase', () => {
 
   it('@returns {{ 201 }} and {{ ID }}', async () => {
     findUserByUsernameOrEmailOrPhoneNumberMock.mockResolvedValue({
-      affectedIds: [],
-    });
-
-    createUserMock.mockResolvedValue({ affectedIds: [idMock] });
-
-    const response = await createUser(bodyMock);
-    expect(response).toEqual({ data: { id: idMock }, status: 201 });
-  });
-
-  it('@returns {{ 409 }}', async () => {
-    findUserByUsernameOrEmailOrPhoneNumberMock.mockResolvedValue({
       affectedIds: [idMock],
+      affectedRows: [userEntityMock],
     });
 
-    const response = await createUser(bodyMock);
-    expect(response).toEqual({ status: 409 });
+    compareMock.mockResolvedValue(true);
+
+    const response = await createUserSession(bodyMock);
+    expect(response).toEqual({ data: { id: idMock }, status: 201 });
   });
 
   it.each([
     [
       { ...bodyMock, email: invalidEmailMock },
       { ...bodyMock, email: invalidEmailSyntaxMock },
-      { ...bodyMock, username: invalidUsernameMock },
-      { ...bodyMock, phoneNumber: invalidPhoneNumberMock },
+      { ...bodyMock, email: '' },
+      { ...bodyMock, username: '' },
+      { ...bodyMock, phoneNumber: '' },
+      { ...bodyMock, phoneNumberCode: '' },
     ],
   ])('@returns {{ 400 }}', async (data) => {
-    const response = await createUser(data);
+    const response = await createUserSession(data);
     expect(response).toMatchObject({ status: 400 });
+  });
+
+  it('@returns {{ 401 }}', async () => {
+    findUserByUsernameOrEmailOrPhoneNumberMock.mockResolvedValue({
+      affectedIds: [idMock],
+      affectedRows: [userEntityMock],
+    });
+
+    compareMock.mockResolvedValue(false);
+
+    const response = await createUserSession(bodyMock);
+    expect(response).toEqual({ status: 401 });
+  });
+
+  it('@returns {{ 404 }}', async () => {
+    findUserByUsernameOrEmailOrPhoneNumberMock.mockResolvedValue({
+      affectedIds: [],
+      affectedRows: [],
+    });
+
+    const response = await createUserSession(bodyMock);
+    expect(response).toEqual({ status: 404 });
   });
 
   it('@returns {{ 500 }}', async () => {
     findUserByUsernameOrEmailOrPhoneNumberMock.mockRejectedValue(new Error(''));
 
-    const response = await createUser(bodyMock);
+    const response = await createUserSession(bodyMock);
     expect(response).toEqual({ status: 500 });
   });
 });

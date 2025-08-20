@@ -45,6 +45,41 @@ const createUserSchema = z.object({
 
 type CreateUserRequest = z.infer<typeof createUserSchema>;
 
+const createUserSessionSchema = z.object({
+  body: z
+    .object({
+      accessCode: z.string().nonempty(),
+      email: z.string().email().optional(),
+      phoneNumber: z.string().optional(),
+      phoneNumberCode: z.enum(['+351', '+44']).optional(),
+      username: z.string().optional(),
+    })
+    .superRefine(({ email, phoneNumber, phoneNumberCode, username }, ctx) => {
+      const ERROR_MESSAGES = {
+        oneRequired: 'Missing Fields: Username, Email or PhoneNumber required',
+        phoneNumberCodeRequired:
+          'Missing Fields: PhoneNumber provided requires PhoneNumberCode.',
+      };
+
+      const addIssue = (message: string) => {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message,
+        });
+      };
+
+      if (!email && !phoneNumber && !username) {
+        addIssue(ERROR_MESSAGES.oneRequired);
+      }
+
+      if (phoneNumber && !phoneNumberCode) {
+        addIssue(ERROR_MESSAGES.phoneNumberCodeRequired);
+      }
+    }),
+});
+
+type CreateUserSessionRequest = z.infer<typeof createUserSessionSchema>;
+
 interface UserRepository {
   findUserById: ({
     queryParams,
@@ -76,6 +111,8 @@ interface UserRepository {
 export {
   type CreateUserRequest,
   createUserSchema,
+  type CreateUserSessionRequest,
+  createUserSessionSchema,
   type UserDTO,
   UserDTOMapper,
   type UserEntity,
