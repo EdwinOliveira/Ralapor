@@ -36,7 +36,7 @@ const UserDTOMapper = () => {
 
 const createUserSchema = z.object({
   body: z.object({
-    email: z.string().nonempty(),
+    email: z.string().email().nonempty(),
     phoneNumber: z.string().nonempty(),
     phoneNumberCode: z.enum(['+351', '+44']),
     username: z.string().nonempty(),

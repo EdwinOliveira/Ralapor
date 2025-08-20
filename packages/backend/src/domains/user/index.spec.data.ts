@@ -1,16 +1,18 @@
 import { UserDTO, UserEntity } from '.';
 
 const emailMock = 'dummyEmail@dummyEmail.com';
+const invalidEmailMock = 'dummyEmail';
 const phoneNumberMock = 'dummyPhoneNumber';
 const phoneNumberCodeMock = '+351';
+const invalidPhoneNumberCodeMock = '+351';
 const idMock = 1;
-const dummyUsername = 'dummyUsername';
-const dummyAccessCode = 'dummyAccessCode';
+const usernameMock = 'dummyUsername';
+const accessCodeMock = 'dummyAccessCode';
 const createdAtMock = new Date().getTime();
 const updatedAtMock = new Date().getTime();
 
 const userEntityMock = {
-  accessCode: dummyAccessCode,
+  accessCode: accessCodeMock,
   createdAt: createdAtMock,
   email: emailMock,
   id: idMock,
@@ -18,7 +20,7 @@ const userEntityMock = {
   phoneNumberCode: phoneNumberCodeMock,
   roleId: idMock,
   updatedAt: updatedAtMock,
-  username: dummyUsername,
+  username: usernameMock,
 } satisfies UserEntity;
 
 const userDTOMock = {
@@ -29,7 +31,16 @@ const userDTOMock = {
   phoneNumberCode: phoneNumberCodeMock,
   roleId: idMock,
   updatedAt: updatedAtMock,
-  username: dummyUsername,
+  username: usernameMock,
 } satisfies UserDTO;
 
-export { userDTOMock, userEntityMock };
+export {
+  emailMock,
+  invalidEmailMock,
+  invalidPhoneNumberCodeMock,
+  phoneNumberCodeMock,
+  phoneNumberMock,
+  userDTOMock,
+  userEntityMock,
+  usernameMock,
+};
